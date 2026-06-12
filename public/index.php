@@ -7,4 +7,5 @@ use app\core\Router;
 
 $router = new Router();
 
-$router->get('/', 'UsuarioController@index');   
+$router->get('/', 'HomepageController@homepage');
+$router->get('/login', 'HomepageController@login');
