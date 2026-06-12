@@ -17,7 +17,7 @@ if (DEV_ENVIRONMENT == true) {
 
 //Configuração do Sistema
 define('APP_NAME', 'LudoSkill');
-define('URL_BASE', 'http://localhost:8080');
+define('URL_BASE', 'http://localhost:8080/codigos/ludoskil');
 
 define('UPLOAD_PATH', __DIR__ . '/../../public/assets/uploads');
 
