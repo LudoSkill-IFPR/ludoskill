@@ -10,7 +10,7 @@
     <header>
         <div id="logo">
             <div id="logozinha"><img src="assets/imagens/skillo.png" alt=""></div>
-            <a href="../"><h2>LudoSkill</h2></a>
+            <a href="public"><h2>LudoSkill</h2></a>
         </div>
 
         <div>
@@ -32,6 +32,12 @@
 
             <label for="senha">Senha:</label><br>
             <input type="password" name="senha" id="senha" placeholder="euAMObolotas123!">
+
+            <div id="checkbox">
+                <input type="checkbox" name="lembrar" id="lembrar">
+                Lembrar de mim
+            </div>
+            
 
             <div class="espacinho"></div>
 

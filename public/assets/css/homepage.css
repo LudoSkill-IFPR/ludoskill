@@ -6,6 +6,18 @@
     box-sizing: border-box;
 }
 
+#lembrar{
+    width: min-content;
+    height: min-content;
+}
+
+#checkbox{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column-reverse;
+}
+
 body{
     color: white;
 }
@@ -185,3 +197,4 @@ body{
     background: linear-gradient(160deg,#8100a5 0%, #1caf80 100%);
     overflow: hidden;
 }
+

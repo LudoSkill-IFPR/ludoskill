@@ -23,9 +23,9 @@ define('UPLOAD_PATH', __DIR__ . '/../../public/assets/uploads');
 
 //Configurações do Banco de dados
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'db_projeto_integrador');
+define('DB_NAME', 'ludoskill');
 
 define('DB_USER', 'root');
-define('DB_PASS', '090908iza');
+define('DB_PASS', '');
 // define('DB_PASS', getenv('DB_PASS'));
 
