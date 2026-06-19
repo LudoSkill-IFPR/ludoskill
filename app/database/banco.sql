@@ -1,4 +1,4 @@
-create table if not exists Usuario(
+create table Usuario(
     id_usuario auto_increment primary key,
     nome_completo varchar(255) not null,
     data_nascimento date not null,

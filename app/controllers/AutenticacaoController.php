@@ -35,7 +35,7 @@ class AutenticacaoController extends Controller
 
             $dados['erros'] = "Uma linda mensagem de erro";
 
-            $this->view('autenticacao/login', $dados);
+            $this->view('login', $dados);
         }
     }
 }

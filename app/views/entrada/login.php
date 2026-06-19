@@ -24,9 +24,9 @@
         
     </header>
     <main>
-        <form action="" method="post">
+        <form action="<?= URL_BASE ?>/logar" method="post">
             <img src="assets/imagens/skillo.png" alt=""><br>
-        
+            <div id="erro">Erro</div>
             <label for="email">Email:</label><br>
             <input type="email" name="email" id="email" placeholder="skillo@bolotas.com"><br>
 
