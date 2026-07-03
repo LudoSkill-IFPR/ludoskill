@@ -1,95 +1,175 @@
-create table Usuario(
-    id_usuario auto_increment primary key,
-    nome_completo varchar(255) not null,
-    data_nascimento date not null,
-    cpf char(11) not null unique,
-    email varchar(255) not null unique,
-    senha char(60) not null,
-    numero_telefone char(20) not null unique,
-    perfil char(1) not null,
-    constraint check_perfil check (perfil in ('F', 'G', 'A')) --funcionario, gestor e administrador
-);
+CREATE DATABASE IF NOT EXISTS ludoskill;
+USE ludoskill;
 
-create table if not exists Empresa(
-    id_empresa auto_increment primary key,
-    nome varchar(255) not null,
-    cnpj char(14) not null unique,
-    numero_funcionarios int not null,
-    email varchar(255) not null,
-    plano char(1) not null,
-    constraint check_plano check (plano in ('B', 'P')) --basico e premium
-);
+-- ===========================
+-- USUÁRIO
+-- ===========================
+CREATE TABLE IF NOT EXISTS Usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nome_completo VARCHAR(255) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    cpf CHAR(11) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    senha CHAR(60) NOT NULL,
+    numero_telefone CHAR(20) NOT NULL UNIQUE,
+    perfil CHAR(1) NOT NULL,
+    CONSTRAINT check_perfil
+        CHECK (perfil IN ('F','G','A'))
+) ENGINE=InnoDB;
 
-create table if not exists Gestor(
-    id_usuario int not null,
-    id_empresa int not null,
-    id_gestor auto_increment primary key,
-    foreign key (id_usuario) references Usuario(id_usuario);
-    foreign key (id_empresa) references Empresa(id_empresa);
-);
+-- ===========================
+-- EMPRESA
+-- ===========================
+CREATE TABLE IF NOT EXISTS Empresa (
+    id_empresa INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    cnpj CHAR(14) NOT NULL UNIQUE,
+    numero_funcionarios INT NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    plano CHAR(1) NOT NULL,
+    CONSTRAINT check_plano
+        CHECK (plano IN ('B','P'))
+) ENGINE=InnoDB;
 
-create table if not exists Administrador(
-    id_usuario int not null,
-    id_administrador auto_increment primary key,
-    foreign key (id_usuario) references Usuario(id_usuario);
-);
+-- ===========================
+-- MÓDULOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS Modulo (
+    id_modulo INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    min_estrelas_liberacao INT NOT NULL
+) ENGINE=InnoDB;
 
-create table if not exists Modulo(
-    id_modulo auto_increment primary key,
-    nome varchar(255) not null,
-    descricao varchar(255) not null,
-    min_estrelas_liberacao int(3) not null
-);
+-- ===========================
+-- FASES
+-- ===========================
+CREATE TABLE IF NOT EXISTS Fase (
+    id_fase INT AUTO_INCREMENT PRIMARY KEY,
+    id_modulo INT NOT NULL,
+    tipo_fase CHAR(1) NOT NULL,
+    nome VARCHAR(255) NOT NULL,
+    tarefa JSON NOT NULL,
 
-create table if not exists Fase(
-    id_fase auto_increment primary key,
-    id_modulo int not null,
-    tipo_fase char(1) not null,
-    nome varchar(255) not null,
-    estado bit not null, --1 para concluído e 0 para não iniciado
-    estrelas_obtidas int(3) not null, 
-    tarefa json not null,
-    foreign key (id_modulo) references Modulo(id_modulo);
-    constraint check_tipo_fase check (tipo_fase in ('I', 'S', 'R')) --introdução, simulação e revisão
-    -- constraint check_estado check (estado in ('N', 'C')) --Não iniciado e concluído
-);
+    CONSTRAINT fk_fase_modulo
+        FOREIGN KEY (id_modulo)
+        REFERENCES Modulo(id_modulo),
 
-create table if not exists Progresso(
-    id_progresso auto_increment primary key,
-    id_funcionario int not null,
-    id_fase int not null,
-    id_modulo int not null,
-    estrelas_totais int(3) not null,
-    foreign key (id_funcionario) references Funcionario(id_funcionario);
-    foreign key (id_fase) references Fase(id_fase);
-    foreign key (id_modulo) references Modulo(id_modulo);
-);
+    CONSTRAINT check_tipo_fase
+        CHECK (tipo_fase IN ('I','S','R'))
+) ENGINE=InnoDB;
 
-create table if not exists Inventario(
-    id_inventario auto_increment primary key,
-    id_funcionario int not null,
-    foreign key (id_funcionario) references Funcionario(id_funcionario);
-);
+-- ===========================
+-- FUNCIONÁRIOS
+-- ===========================
+CREATE TABLE IF NOT EXISTS Funcionario (
+    id_funcionario INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    bolotas INT NOT NULL DEFAULT 0,
+    desempenho INT NOT NULL DEFAULT 0,
 
-create table if not exists Item(
-    id_item auto_increment primary key,
-    nome varchar(255) not null,
-    tipo char(1) not null,
-    estado bit not null, --1 para ativo e 0 para inativo
-    preco int(3) not null,
-    imagem varchar(255) not null,
-    constraint check_tipo check (tipo in ('B', 'P')) --bolota e power-up
-);
+    CONSTRAINT fk_funcionario_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario)
+) ENGINE=InnoDB;
 
-create table if not exists Funcionario(
-    id_funcionario auto_increment primary key,
-    id_usuario int not null,
-    id_progresso int not null,
-    id_inventario int not null,
-    bolotas int(7) not null,
-    desempenho int(3) not null,
-    foreign key (id_usuario) references Usuario(id_usuario);
-    foreign key (id_progresso) references Progresso(id_progresso);
-    foreign key (id_inventario) references Inventario(id_inventario);
-);
+-- ===========================
+-- GESTORES
+-- ===========================
+CREATE TABLE IF NOT EXISTS Gestor (
+    id_gestor INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_empresa INT NOT NULL,
 
+    CONSTRAINT fk_gestor_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario),
+
+    CONSTRAINT fk_gestor_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES Empresa(id_empresa)
+) ENGINE=InnoDB;
+
+-- ===========================
+-- ADMINISTRADORES
+-- ===========================
+CREATE TABLE IF NOT EXISTS Administrador (
+    id_administrador INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+
+    CONSTRAINT fk_admin_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario)
+) ENGINE=InnoDB;
+
+-- ===========================
+-- INVENTÁRIO
+-- ===========================
+CREATE TABLE IF NOT EXISTS Inventario (
+    id_inventario INT AUTO_INCREMENT PRIMARY KEY,
+    id_funcionario INT NOT NULL UNIQUE,
+
+    CONSTRAINT fk_inventario_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES Funcionario(id_funcionario)
+) ENGINE=InnoDB;
+
+-- ===========================
+-- ITENS
+-- ===========================
+CREATE TABLE IF NOT EXISTS Item (
+    id_item INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    tipo CHAR(1) NOT NULL,
+    estado BOOLEAN NOT NULL DEFAULT TRUE,
+    preco INT NOT NULL,
+    imagem VARCHAR(255) NOT NULL,
+
+    CONSTRAINT check_tipo_item
+        CHECK (tipo IN ('B','P'))
+) ENGINE=InnoDB;
+
+-- ===========================
+-- ITENS DO INVENTÁRIO
+-- ===========================
+CREATE TABLE IF NOT EXISTS Inventario_Item (
+    id_inventario INT NOT NULL,
+    id_item INT NOT NULL,
+    quantidade INT NOT NULL DEFAULT 1,
+
+    PRIMARY KEY (id_inventario, id_item),
+
+    CONSTRAINT fk_inv_item_inventario
+        FOREIGN KEY (id_inventario)
+        REFERENCES Inventario(id_inventario),
+
+    CONSTRAINT fk_inv_item_item
+        FOREIGN KEY (id_item)
+        REFERENCES Item(id_item)
+) ENGINE=InnoDB;
+
+-- ===========================
+-- PROGRESSO
+-- ===========================
+CREATE TABLE IF NOT EXISTS Progresso (
+    id_progresso INT AUTO_INCREMENT PRIMARY KEY,
+    id_funcionario INT NOT NULL,
+    id_modulo INT NOT NULL,
+    id_fase INT NOT NULL,
+
+    estado BOOLEAN NOT NULL DEFAULT FALSE,
+    estrelas_obtidas INT NOT NULL DEFAULT 0,
+    estrelas_totais INT NOT NULL DEFAULT 0,
+
+    CONSTRAINT fk_progresso_funcionario
+        FOREIGN KEY (id_funcionario)
+        REFERENCES Funcionario(id_funcionario),
+
+    CONSTRAINT fk_progresso_modulo
+        FOREIGN KEY (id_modulo)
+        REFERENCES Modulo(id_modulo),
+
+    CONSTRAINT fk_progresso_fase
+        FOREIGN KEY (id_fase)
+        REFERENCES Fase(id_fase)
+) ENGINE=InnoDB;

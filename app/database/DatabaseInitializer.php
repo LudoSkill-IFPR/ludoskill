@@ -11,11 +11,13 @@ class DatabaseInitializer
     {
         $connection->exec("CREATE DATABASE IF NOT EXISTS " . DB_NAME);
         $connection->exec("USE " . DB_NAME);
-        $scriptPath = __DIR__ . '/banco.sql';
+        $scriptPath = __DIR__ . '\banco.sql';
+        print($scriptPath);
         
         if (file_exists($scriptPath)) {
             
             $sql = file_get_contents($scriptPath);
+            print($sql);
             try {
                 $connection->exec($sql);
             } catch (\Exception $e) {

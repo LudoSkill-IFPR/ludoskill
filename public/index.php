@@ -11,4 +11,7 @@ $router->get('/', 'HomepageController@homepage');
 $router->get('/login', 'HomepageController@login');
 $router->post('/logar', 'AutenticacaoController@logar');
 
+$router->get('/usuarios/cadastrar', 'UsuarioController@cadastrar');
+
+
 $router->run();

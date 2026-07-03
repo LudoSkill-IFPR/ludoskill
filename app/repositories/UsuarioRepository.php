@@ -43,7 +43,7 @@ class UsuarioRepository{
     }
 
     public function getUsuarioByEmail(string $email): Usuario{
-        $stm = $this->connection->prepare("SELECT * FROM Usuario WHERE email = :email");
+        $stm = $this->connection->prepare("SELECT * FROM usuario WHERE email = :email");
         $stm->bindValue('email', $email);
 
         $stm->execute();
