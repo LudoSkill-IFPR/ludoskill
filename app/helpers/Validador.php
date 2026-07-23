@@ -4,28 +4,25 @@ namespace app\helpers;
 
 class Validador {
 
-    private array $erros = [];
+    public static function validarModulo(array $data): array {
+        $erros = [];
 
-    public function obrigatorio(string $campo, mixed $valor, ?string $mensagem = null) {
-
-        //! = = 
-        if (empty($valor) && $valor !== '0') {
-            $this->erros[$campo] = $mensagem ?? "O campo {$campo} é obrigatório";
+        if (empty($data['nome'])) {
+            $erros['nome'] = 'O campo nome é obrigatório.';
         }
 
-        return $this;
+        if (empty($data['descricao'])) {
+            $erros['descricao'] = 'O campo descrição é obrigatório.';
+        }
 
+        if (!isset($data['min_estrelas_liberacao']) || !is_numeric($data['min_estrelas_liberacao'])) {
+            $erros['min_estrelas_liberacao'] = 'O campo mínimo de estrelas para liberação deve ser um número.';
+        }
+
+        return $erros;
     }
 
-    public function temErros() : bool {
-
-        return !empty($this->erros);
-
-    }
-
-    public function getErros(){
-        return $this->erros;
-    }
+    //TODO: Implementar validações para outras entidades, como Usuário, atividade, etc. 
 
 }
 
