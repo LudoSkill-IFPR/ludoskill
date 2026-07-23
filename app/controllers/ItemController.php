@@ -7,7 +7,8 @@ use app\models\Item;
 use app\services\ItemService;
 use app\helpers\Validador;
 
-class ItemController extends Controller {
+class ItemController extends Controller 
+{
     private ItemService $itemService;
 
     public function __construct() {
