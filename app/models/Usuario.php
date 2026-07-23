@@ -13,7 +13,6 @@ class Usuario {
     private $email;
     private $senha;
     private $numeroTelefone;
-    private $perfil;
 
     public function __construct(
         $id,
@@ -22,8 +21,7 @@ class Usuario {
         $cpf,
         $email,
         $senha,
-        $numeroTelefone,
-        $perfil
+        $numeroTelefone
     ) {
         $this->id = $id;
         $this->nomeCompleto = $nomeCompleto;
@@ -32,7 +30,6 @@ class Usuario {
         $this->email = $email;
         $this->senha = $senha;
         $this->numeroTelefone = $numeroTelefone;
-        $this->perfil = $perfil;
     }
 
     public static function arrayParaObjeto(array $usuario)
@@ -44,8 +41,7 @@ class Usuario {
             $usuario['cpf'],
             $usuario['email'],
             $usuario['senha'],
-            $usuario['numero_telefone'],
-            $usuario['perfil']
+            $usuario['numero_telefone']
         );
     }
 
@@ -103,13 +99,5 @@ class Usuario {
 
     public function setNumeroTelefone($numeroTelefone) {
         $this->numeroTelefone = $numeroTelefone;
-    }
-
-    public function getPerfil() {
-        return $this->perfil;
-    }
-
-    public function setPerfil($perfil) {
-        $this->perfil = $perfil;
     }
 }

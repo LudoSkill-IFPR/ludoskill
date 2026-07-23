@@ -61,8 +61,7 @@ class UsuarioRepository{
                     cpf = :cpf,
                     email = :email,
                     senha = :senha,
-                    numero_telefone = :numeroTelefone,
-                    perfil = :perfil
+                    numero_telefone = :numeroTelefone
                 WHERE id_usuario = :id";
 
         $stmt = $this->connection->prepare($sql);
@@ -73,7 +72,6 @@ class UsuarioRepository{
         $stmt->bindValue(':email', $usuario->getEmail());
         $stmt->bindValue(':senha', $usuario->getSenha());
         $stmt->bindValue(':numeroTelefone', $usuario->getNumeroTelefone());
-        $stmt->bindValue(':perfil', $usuario->getPerfil());
         $stmt->bindValue(':id', $usuario->getId());
 
         return $stmt->execute();
@@ -82,9 +80,9 @@ class UsuarioRepository{
     public function saveUsuario(Usuario $usuario)
     {
         $sql = "INSERT INTO usuario 
-                (nome_completo, data_nascimento, cpf, email, senha, numero_telefone, perfil)
+                (nome_completo, data_nascimento, cpf, email, senha, numero_telefone)
                 VALUES
-                (:nomeCompleto, :dataNascimento, :cpf, :email, :senha, :numeroTelefone, :perfil)";
+                (:nomeCompleto, :dataNascimento, :cpf, :email, :senha, :numeroTelefone)";
 
         $stmt = $this->connection->prepare($sql);
 
@@ -94,7 +92,6 @@ class UsuarioRepository{
         $stmt->bindValue(':email', $usuario->getEmail());
         $stmt->bindValue(':senha', password_hash($usuario->getSenha(), PASSWORD_DEFAULT));
         $stmt->bindValue(':numeroTelefone', $usuario->getNumeroTelefone());
-        $stmt->bindValue(':perfil', $usuario->getPerfil());
 
         return $stmt->execute();
     }

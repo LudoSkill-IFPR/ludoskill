@@ -32,8 +32,7 @@ class UsuarioController extends Controller
             $_POST['cpf'],
             $_POST['email'],
             $_POST['senha'],
-            $_POST['numeroTelefone'],
-            $_POST['perfil']
+            $_POST['numeroTelefone']
         );
 
         if ($this->service->saveUsuario($usuario)) {
@@ -57,8 +56,7 @@ class UsuarioController extends Controller
             $_POST['cpf'],
             $_POST['email'],
             $_POST['senha'],
-            $_POST['numeroTelefone'],
-            $_POST['perfil']
+            $_POST['numeroTelefone']
         );
         $this->service->updateUsuario($usuario);
         $this->redirect(URL_BASE . '/usuarios');

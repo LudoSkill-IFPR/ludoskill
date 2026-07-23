@@ -37,6 +37,28 @@ class Validador {
         return $erros;
     }
 
+    public static function validarEmpresa(array $data): array {
+        $erros = [];
+
+        if (empty($data['cnpj'])) {
+            $erros['cnpj'] = 'O campo cnpj é obrigatório.';
+        }
+
+        if (empty($data['nome'])) {
+            $erros['nome'] = 'O campo nome é obrigatório.';
+        }
+
+        if (empty($data['email'])) {
+            $erros['email'] = 'O campo email é obrigatório.';
+        }
+
+        if (empty($data['plano'])) {
+            $erros['plano'] = 'O campo plano é obrigatório.';
+        }
+
+        return $erros;
+    }
+
     public static function validarItem(array $data): array {
         $erros = [];
 
@@ -62,5 +84,34 @@ class Validador {
 
         return $erros;
     }
-}
 
+    public static function validarUsuario(array $data): array {
+        $erros = [];
+
+        if (empty($data['nome_completo'])) {
+            $erros['nome_completo'] = 'O campo nome é obrigatório.';
+        }
+
+        if (empty($data['data_nascimento'])) {
+            $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
+        }
+
+        if (empty($data['cpf'])) {
+            $erros['cpf'] = 'O campo cpf é obrigatório.';
+        }
+
+        if (empty($data['email'])) {
+            $erros['email'] = 'O campo email é obrigatório.';
+        }
+
+        if (empty($data['senha'])) {
+            $erros['senha'] = 'O campo senha é obrigatório.';
+        }
+
+        if (empty($data['numero_telefone'])) {
+            $erros['numero_telefone'] = 'O campo número de telefone é obrigatório.';
+        }
+
+        return $erros;
+    }
+}

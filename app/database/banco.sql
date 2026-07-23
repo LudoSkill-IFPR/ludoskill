@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Usuarios (
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS Empresas (
     id_empresa INT AUTO_INCREMENT PRIMARY KEY,
-    CNPJ VARCHAR(14) NOT NULL UNIQUE,
+    cnpj VARCHAR(14) NOT NULL UNIQUE,
     nome VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     plano ENUM('BASICO', 'INTERMEDIARIO', 'AVANCADO', 'CORPORATIVO') NOT NULL DEFAULT 'BASICO'
