@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     CPF VARCHAR(11) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
-    numero_telefone VARCHAR(20),
-    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+    numero_telefone VARCHAR(20)
 );
 
 -- -----------------------------------------------------------------------------
