@@ -23,6 +23,18 @@ class Validador {
     }
 
     //TODO: Implementar validações para outras entidades, como Usuário, atividade, etc. 
+    public static function validarExercicio(array $data): array {
+        $erros = [];
 
+        if (empty($data['descricao'])) {
+            $erros['descricao'] = 'O campo descrição é obrigatório.';
+        }
+
+        if (empty($data['conteudo'])) {
+            $erros['conteudo'] = 'O campo conteúdo é obrigatório.';
+        }
+
+        return $erros;
+    }
 }
 
