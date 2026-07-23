@@ -8,7 +8,6 @@ class Modulo {
     private string $descricao;
     private int $minEstrelasLiberacao;
 
-    
 
     /**
      * Get the value of id
