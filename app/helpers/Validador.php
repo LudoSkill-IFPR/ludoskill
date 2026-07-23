@@ -36,5 +36,31 @@ class Validador {
 
         return $erros;
     }
+
+    public static function validarItem(array $data): array {
+        $erros = [];
+
+        if (empty($data['estado'])) {
+            $erros['estado'] = 'O campo estado é obrigatório.';
+        }
+
+        if (empty($data['nome'])) {
+            $erros['nome'] = 'O campo nome é obrigatório.';
+        }
+
+        if (empty($data['tipo'])) {
+            $erros['tipo'] = 'O campo tipo é obrigatório.';
+        }
+
+        if (!isset($data['preco']) || !is_numeric($data['preco'])) {
+            $erros['preco'] = 'O campo preço deve ser um número.';
+        }
+
+        if (empty($data['imagem'])) {
+            $erros['imagem'] = 'O campo imagem é obrigatório.';
+        }
+
+        return $erros;
+    }
 }
 
