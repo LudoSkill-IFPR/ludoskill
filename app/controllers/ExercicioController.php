@@ -20,7 +20,7 @@ class ExercicioController extends Controller{
         $this->view('exercicios/exercicios_list', $data);
     }
 
-    public function listarExercicios(){
+    public function listarExercicio(){
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/exercicios');
         }

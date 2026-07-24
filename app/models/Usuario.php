@@ -6,22 +6,22 @@ use DateTimeImmutable;
 
 class Usuario {
 
-    private $id;
-    private $nomeCompleto;
-    private $dataNascimento;
-    private $cpf;
-    private $email;
-    private $senha;
-    private $numeroTelefone;
+    private int $id;
+    private string $nomeCompleto;
+    private DateTimeImmutable $dataNascimento;
+    private string $cpf;
+    private string $email;
+    private string $senha;
+    private string $numeroTelefone;
 
     public function __construct(
-        $id,
-        $nomeCompleto,
-        $dataNascimento,
-        $cpf,
-        $email,
-        $senha,
-        $numeroTelefone
+        int $id,
+        string $nomeCompleto,
+        DateTimeImmutable $dataNascimento,
+        string $cpf,
+        string $email,
+        string $senha,
+        string  $numeroTelefone
     ) {
         $this->id = $id;
         $this->nomeCompleto = $nomeCompleto;
@@ -45,59 +45,133 @@ class Usuario {
         );
     }
 
-    public function getId() {
+    
+
+    
+
+    /**
+     * Get the value of id
+     */
+    public function getId(): int
+    {
         return $this->id;
     }
 
-    public function setId($id) {
+    /**
+     * Set the value of id
+     */
+    public function setId(int $id): self
+    {
         $this->id = $id;
+
+        return $this;
     }
 
-    public function getNomeCompleto() {
+    /**
+     * Get the value of nomeCompleto
+     */
+    public function getNomeCompleto(): string
+    {
         return $this->nomeCompleto;
     }
 
-    public function setNomeCompleto($nomeCompleto) {
+    /**
+     * Set the value of nomeCompleto
+     */
+    public function setNomeCompleto(string $nomeCompleto): self
+    {
         $this->nomeCompleto = $nomeCompleto;
+
+        return $this;
     }
 
-    public function getDataNascimento() {
+    /**
+     * Get the value of dataNascimento
+     */
+    public function getDataNascimento(): DateTimeImmutable
+    {
         return $this->dataNascimento;
     }
 
-    public function setDataNascimento($dataNascimento) {
+    /**
+     * Set the value of dataNascimento
+     */
+    public function setDataNascimento(DateTimeImmutable $dataNascimento): self
+    {
         $this->dataNascimento = $dataNascimento;
+
+        return $this;
     }
 
-    public function getCpf() {
+    /**
+     * Get the value of cpf
+     */
+    public function getCpf(): string
+    {
         return $this->cpf;
     }
 
-    public function setCpf($cpf) {
+    /**
+     * Set the value of cpf
+     */
+    public function setCpf(string $cpf): self
+    {
         $this->cpf = $cpf;
+
+        return $this;
     }
 
-    public function getEmail() {
+    /**
+     * Get the value of email
+     */
+    public function getEmail(): string
+    {
         return $this->email;
     }
 
-    public function setEmail($email) {
+    /**
+     * Set the value of email
+     */
+    public function setEmail(string $email): self
+    {
         $this->email = $email;
+
+        return $this;
     }
 
-    public function getSenha() {
+    /**
+     * Get the value of senha
+     */
+    public function getSenha(): string
+    {
         return $this->senha;
     }
 
-    public function setSenha($senha) {
+    /**
+     * Set the value of senha
+     */
+    public function setSenha(string $senha): self
+    {
         $this->senha = $senha;
+
+        return $this;
     }
 
-    public function getNumeroTelefone() {
+    /**
+     * Get the value of numeroTelefone
+     */
+    public function getNumeroTelefone(): string
+    {
         return $this->numeroTelefone;
     }
 
-    public function setNumeroTelefone($numeroTelefone) {
+    /**
+     * Set the value of numeroTelefone
+     */
+    public function setNumeroTelefone(string $numeroTelefone): self
+    {
         $this->numeroTelefone = $numeroTelefone;
+
+        return $this;
     }
 }

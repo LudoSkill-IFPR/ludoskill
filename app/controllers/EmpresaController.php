@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * TODO VERIFICAR SE ESTA CORRETO
+ */
+
 namespace app\controllers;
 
 use app\core\Controller;
@@ -20,7 +24,7 @@ class EmpresaController extends Controller{
         $this->view('empresas/empresas_list', $data);
     }
 
-    public function listarEmpresas(){
+    public function listarEmpresa(){
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/empresas');
         }

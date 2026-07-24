@@ -20,7 +20,7 @@ class ModuloController extends Controller
         $this->view('modulos/modulos_list', $data);
     }
 
-    public function listarModulos(){
+    public function listarModulo(){
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/modulos');
         }

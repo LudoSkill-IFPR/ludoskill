@@ -1,0 +1,35 @@
+<?php
+
+namespace app\services;
+
+use app\models\Gestor;
+use app\repositories\GestorRepository;
+
+class GestorService {
+    private GestorRepository $repository;
+
+    public function __construct(GestorRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function getGestores(): array {
+        return $this->repository->getGestores();
+    }
+
+    public function getGestorById(int $id) {
+        return $this->repository->getGestorById($id);
+    }
+
+    public function saveGestor(Gestor $gestor) {
+        return $this->repository->saveGestor($gestor);
+    }
+
+    public function deleteGestor(int $id) {
+        return $this->repository->deleteGestor($id);
+    }
+
+    public function updateGestor(Gestor $gestor) {
+        return $this->repository->updateGestor($gestor);
+    }
+}

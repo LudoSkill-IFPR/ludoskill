@@ -1,26 +1,30 @@
 <?php
 
+/**
+ * TODO VERIFICAR SE ESTA CORRETO
+ */
+
 namespace app\models;
 
 class Empresa{
-    private $id;
+    private int $id;
     private string $cnpj;
     private string $nome;
     private string $email;
-    private $plano;
+    private string $plano;
 
     /**
-     * Get the value of ID
+     * Get the value of id
      */
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * Set the value of Id
+     * Set the value of id
      */
-    public function setId(string $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
 
@@ -84,7 +88,7 @@ class Empresa{
     /**
      * Get the value of plano
      */
-    public function getPlano()
+    public function getPlano(): string
     {
         return $this->plano;
     }
@@ -92,7 +96,7 @@ class Empresa{
     /**
      * Set the value of plano
      */
-    public function setPlano($plano): self
+    public function setPlano(string $plano): self
     {
         $this->plano = $plano;
 
