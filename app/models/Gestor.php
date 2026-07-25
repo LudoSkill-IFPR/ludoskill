@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\models\Usuario;
+use app\models\Empresa;
 
 class Gestor extends Usuario{
     private int $id;

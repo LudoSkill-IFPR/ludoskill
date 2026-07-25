@@ -148,4 +148,38 @@ class Validador {
 
         return $erros;
     }
+
+    public static function validarFuncionario(array $data): array {
+        $erros = [];
+
+        if (empty($data['nome_completo'])) {
+            $erros['nome_completo'] = 'O campo nome é obrigatório.';
+        }
+
+        if (empty($data['data_nascimento'])) {
+            $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
+        }
+
+        if (empty($data['cpf'])) {
+            $erros['cpf'] = 'O campo cpf é obrigatório.';
+        }
+
+        if (empty($data['email'])) {
+            $erros['email'] = 'O campo email é obrigatório.';
+        }
+
+        if (empty($data['senha'])) {
+            $erros['senha'] = 'O campo senha é obrigatório.';
+        }
+
+        if (empty($data['numero_telefone'])) {
+            $erros['numero_telefone'] = 'O campo número de telefone é obrigatório.';
+        }
+
+        if (empty($data['id_empresa'])) {
+            $erros['id_empresa'] = 'O campo empresa é obrigatório.';
+        }
+
+        return $erros;
+    }
 }

@@ -6,6 +6,7 @@ class Exercicio {
     private int $id;
     private string $descricao;
     private string $conteudo;
+    // private Atividade $atividade; implementar crud att
 
     /**
      * Get the value of id
