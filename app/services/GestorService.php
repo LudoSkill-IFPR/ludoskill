@@ -8,9 +8,9 @@ use app\repositories\GestorRepository;
 class GestorService {
     private GestorRepository $repository;
 
-    public function __construct(GestorRepository $repository)
+    public function __construct()
     {
-        $this->repository = $repository;
+        $this->repository = new GestorRepository;
     }
 
     public function getGestores(): array {

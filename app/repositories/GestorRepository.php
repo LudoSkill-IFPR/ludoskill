@@ -6,7 +6,8 @@ use app\database\ConnectionFactory;
 use app\models\Gestor;
 use PDO;
 
-class GestorRepository{
+class GestorRepository
+{
     private PDO $connection;
 
     public function __construct(){
