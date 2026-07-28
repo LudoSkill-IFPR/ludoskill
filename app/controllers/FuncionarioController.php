@@ -10,8 +10,8 @@ use app\helpers\Validador;
 class FuncionarioController extends Controller {
     private FuncionarioService $funcionarioService;
 
-    public function __construct(FuncionarioService $funcionarioService) {
-        $this->funcionarioService = $funcionarioService;
+    public function __construct() {
+        $this->funcionarioService = new FuncionarioService();
     }
 
     public function listarTodos() {
@@ -35,10 +35,12 @@ class FuncionarioController extends Controller {
 
     public function salvar() {
         $erros = Validador::validarFuncionario($_POST);
+        print_r($erros);
         if (!empty($erros)) {
+            print("to aqui");
             $data['erros'] = $erros;
             $data['funcionario'] = $_POST;
-            $this->view('funcionarios/funcionario_create', $data);
+            $this->view('sistema/cadastros/funcionarios/funcionario_create', $data);
             return;
         }
 
@@ -56,9 +58,9 @@ class FuncionarioController extends Controller {
             0,
             1
         );
-
+        print("to aqui");
         $this->funcionarioService->saveFuncionario($funcionario);
-        $this->redirect(URL_BASE . '/funcionarios');
+        $this->redirect(URL_BASE . '/funcionario/salvar');
     }
 
     public function editar() {

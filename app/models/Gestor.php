@@ -4,10 +4,14 @@ namespace app\models;
 
 use app\models\Usuario;
 use app\models\Empresa;
+use app\models\Funcionario;
+use app\repositories\FuncionarioRepository;
 
-class Gestor extends Usuario{
+class Gestor extends Usuario
+{
     private int $id;
     private Empresa $empresa;
+    private FuncionarioRepository $funcionarioRepository;
 
     public function __construct(
         int $id,
@@ -21,6 +25,27 @@ class Gestor extends Usuario{
     ) {
         parent::__construct($id, $nomeCompleto, $dataNascimento, $cpf, $email, $senha, $numeroTelefone);
         $this->empresa = $empresa;
+        $this->funcionarioRepository = new FuncionarioRepository();
+    }
+
+    public function cadastrarFuncionario($funcionario)
+    {
+        $this->funcionarioRepository->saveFuncionario($funcionario);
+    }
+
+    public function editarFuncionario($funcionario)
+    {
+        $this->funcionarioRepository->updateFuncionario($funcionario);
+    }
+
+    public function desativarFuncionario()
+    {
+
+    }
+
+    public function emitirRelatorio()
+    {
+        //conversar sobre depois
     }
 
     /**

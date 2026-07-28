@@ -51,9 +51,7 @@ class Router
         $method = strtolower($_SERVER['REQUEST_METHOD']);
 
         foreach ($this->routes as $route) {
-
             if ($route['route'] == $uri && $route['method'] == $method) {
-
                 return $this->dispatch($route);
             }
         }

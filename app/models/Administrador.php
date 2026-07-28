@@ -57,7 +57,7 @@ class Administrador extends Usuario
 
     public function cadastrarFase($nome, array $dados)
     {
-
+        
     }
 
     public function editarFase($id, array $dados)
