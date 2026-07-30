@@ -1,9 +1,5 @@
 <?php
 
-/**
- * TODO VERIFICAR SE ESTA CORRETO
- */
-
 namespace app\models;
 
 class Empresa{
@@ -13,6 +9,13 @@ class Empresa{
     private string $email;
     private string $plano;
 
+    public function __construct($id, $cnpj, $nome, $email, $plano){
+        $this->id = $id;
+        $this->cnpj = $cnpj;
+        $this->nome = $nome;
+        $this->email = $email;
+        $this->plano = $plano;
+    }
     /**
      * Get the value of id
      */

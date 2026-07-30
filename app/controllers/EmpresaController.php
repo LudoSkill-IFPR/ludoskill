@@ -47,11 +47,7 @@ class EmpresaController extends Controller{
             return;
         }
 
-        $empresa = new Empresa();
-        $empresa->setCnpj($_POST['cnpj']);
-        $empresa->setNome($_POST['nome']);
-        $empresa->setEmail($_POST['email']);
-        $empresa->setPlano($_POST['plano']);
+        $empresa = new Empresa($_POST['id'], $_POST['cnpj'], $_POST['nome'], $_POST['email'], $_POST['plano']);
 
         $this->empresaService->saveEmpresa($empresa);
         $this->redirect(URL_BASE . '/empresas');
@@ -87,12 +83,7 @@ class EmpresaController extends Controller{
             return;
         }
 
-        $empresa = new Empresa();
-        $empresa->setId($_POST['id']);
-        $empresa->setCnpj($_POST['cnpj']);
-        $empresa->setNome($_POST['nome']);
-        $empresa->setEmail($_POST['email']);
-        $empresa->setPlano($_POST['plano']);
+        $empresa = new Empresa($_POST['id'], $_POST['cnpj'], $_POST['nome'], $_POST['email'], $_POST['plano']);
 
         $this->empresaService->updateEmpresa($empresa);
         $this->redirect(URL_BASE . '/empresas');

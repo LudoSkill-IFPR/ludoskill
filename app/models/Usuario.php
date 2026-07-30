@@ -33,14 +33,14 @@ class Usuario {
     }
 
     public static function arrayParaObjeto(array $usuario)
-    {
+    {   
         return new self(
             $usuario['id_usuario'],
             $usuario['nome_completo'],
-            $usuario['data_nascimento'],
-            $usuario['cpf'],
+            new dateTimeImmutable($usuario['data_nascimento']),
+            $usuario['CPF'],
             $usuario['email'],
-            $usuario['senha'],
+            $usuario['senha_hash'],
             $usuario['numero_telefone']
         );
     }

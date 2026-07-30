@@ -14,14 +14,14 @@ class UsuarioRepository{
     }
 
     public function getUsuarios(): array{
-        $sql = "SELECT * FROM Usuario";
+        $sql = "SELECT * FROM Usuarios";
         $stmt = $this->connection->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
     public function getUsuario(int $id): array{
-        $stm = $this->connection->prepare("SELECT * FROM Usuario WHERE id_usuario = :id");
+        $stm = $this->connection->prepare("SELECT * FROM Usuarios WHERE id_usuario = :id");
         $stm->bindValue('id_usuario', $id);
 
         $stm->execute();
@@ -32,7 +32,7 @@ class UsuarioRepository{
     }
 
     public function getUsuarioById(int $id): Usuario{
-        $stm = $this->connection->prepare("SELECT * FROM Usuario WHERE id_usuario = :id");
+        $stm = $this->connection->prepare("SELECT * FROM Usuarios WHERE id_usuario = :id");
         $stm->bindValue('id', $id);
 
         $stm->execute();

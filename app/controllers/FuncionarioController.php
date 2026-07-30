@@ -16,7 +16,7 @@ class FuncionarioController extends Controller {
 
     public function listarTodos() {
         $data['lista'] = $this->funcionarioService->getFuncionarios();
-        $this->view('funcionarios/funcionarios_list', $data);
+        $this->view('sistema/cadastros/funcionarios/funcionario_list', $data);
     }
 
     public function listarFuncionario() {
@@ -26,7 +26,7 @@ class FuncionarioController extends Controller {
 
         $id = $_GET['id'];
         $data['funcionario'] = $this->funcionarioService->getFuncionarioById($id);
-        $this->view('funcionarios/funcionario_show', $data);
+        $this->view('sistema/cadastros/funcionarios/funcionario_list', $data);
     }
 
     public function criar() {
@@ -58,9 +58,8 @@ class FuncionarioController extends Controller {
             0,
             1
         );
-        print("to aqui");
         $this->funcionarioService->saveFuncionario($funcionario);
-        $this->redirect(URL_BASE . '/funcionario/salvar');
+        $this->listarTodos();
     }
 
     public function editar() {
@@ -92,7 +91,7 @@ class FuncionarioController extends Controller {
             return;
         }
 
-        $empresa = new \app\models\Empresa($_POST['id_empresa'], '', '', '', '', '', '');
+        $empresa = new \app\models\Empresa($_POST['empresa_id'], '', '', '', '', '', '');
         $funcionario = new Funcionario(
             $_POST['id'],
             $_POST['nome_completo'],

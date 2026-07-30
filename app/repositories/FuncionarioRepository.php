@@ -32,14 +32,22 @@ class FuncionarioRepository{
     }
 
     public function saveFuncionario(Funcionario $funcionario){
-        $sql = "INSERT INTO Funcionarios (nome_completo, data_nascimento, cpf, email, senha, numero_telefone, bolotas_totais, pontuacao_total, nivel, id_empresa) VALUES (:nomeCompleto, :dataNascimento, :cpf, :email, :senha, :numeroTelefone, :idEmpresa)";
+
+        $sql = "INSERT INTO Usuarios (nome_completo, data_nascimento, cpf, email, senha_hash, numero_telefone) VALUES (:nomeCompleto, :dataNascimento, :cpf, :email, :senha_hash, :numeroTelefone)";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('nomeCompleto', $funcionario->getNomeCompleto());
         $stm->bindValue('dataNascimento', $funcionario->getDataNascimento()->format('Y-m-d'));
         $stm->bindValue('cpf', $funcionario->getCpf());
         $stm->bindValue('email', $funcionario->getEmail());
-        $stm->bindValue('senha', password_hash($funcionario->getSenha(), PASSWORD_DEFAULT));
+        $stm->bindValue('senha_hash', password_hash($funcionario->getSenha(), PASSWORD_DEFAULT));
         $stm->bindValue('numeroTelefone', $funcionario->getNumeroTelefone());
+        $stm->execute();
+
+        $lastId = $this->connection->lastInsertId(); 
+
+        $sql = "INSERT INTO Funcionarios (id_usuario, bolotas_totais, pontuacao_total, nivel, id_empresa) VALUES (:idUsuario, :bolotasTotais, :pontuacaoTotal, :nivel, :idEmpresa)";
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('idUsuario', $lastId);
         $stm->bindValue('bolotasTotais', $funcionario->getBolotasTotais());
         $stm->bindValue('pontuacaoTotal', $funcionario->getPontuacaoTotal());
         $stm->bindValue('nivel', $funcionario->getNivel());
