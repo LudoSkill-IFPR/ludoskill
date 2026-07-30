@@ -139,5 +139,3 @@ CREATE TABLE IF NOT EXISTS Inventarios (
     CONSTRAINT fk_inventario_item FOREIGN KEY (id_item) 
         REFERENCES Itens(id_item) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-INSERT INTO

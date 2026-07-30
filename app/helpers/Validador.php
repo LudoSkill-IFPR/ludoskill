@@ -182,4 +182,34 @@ class Validador {
 
         return $erros;
     }
+
+    public static function validarAtividade(array $data): array {
+        $erros = [];
+
+        if (empty($data['nome'])) {
+            $erros['nome'] = 'O campo nome é obrigatório.';
+        }
+
+        if (empty($data['tipo_atividade'])) {
+            $erros['tipo_atividade'] = 'O campo tipo de atividade é obrigatório.';
+        }
+
+        if (empty($data['estado'])) {
+            $erros['estado'] = 'O campo estado é obrigatório.';
+        }
+
+        if (!isset($data['pontuacao']) || !is_numeric($data['pontuacao'])) {
+            $erros['pontuacao'] = 'O campo pontuação deve ser um número.';
+        }
+
+        if (!isset($data['estrelas']) || !is_numeric($data['estrelas'])) {
+            $erros['estrelas'] = 'O campo estrelas deve ser um número.';
+        }
+
+        if (empty($data['modulo_id'])) {
+            $erros['modulo_id'] = 'O campo módulo é obrigatório.';
+        }
+
+        return $erros;
+    }
 }

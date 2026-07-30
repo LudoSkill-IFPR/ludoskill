@@ -32,8 +32,9 @@ class ExercicioRepository {
     }
 
     public function saveExercicio(Exercicio $exercicio){
-        $sql = "INSERT INTO Exercicios (descricao, conteudo) VALUES (:descricao, :conteudo)";
+        $sql = "INSERT INTO Exercicios (id_atividade, descricao, conteudo) VALUES (:id_atividade, :descricao, :conteudo)";
         $stm = $this->connection->prepare($sql);
+        $stm->bindValue('id_atividade', $exercicio->getAtividade()->getId());
         $stm->bindValue('descricao', $exercicio->getDescricao());
         $stm->bindValue('conteudo', $exercicio->getConteudo());
         return $stm->execute();
@@ -46,8 +47,9 @@ class ExercicioRepository {
     }
 
     public function updateExercicio(Exercicio $exercicio){
-        $sql = "UPDATE Exercicios SET descricao = :descricao, conteudo = :conteudo WHERE id_exercicio = :id";
+        $sql = "UPDATE Exercicios SET id_atividade = :id_atividade, descricao = :descricao, conteudo = :conteudo WHERE id_exercicio = :id";
         $stm = $this->connection->prepare($sql);
+        $stm->bindValue('id_atividade', $exercicio->getAtividade()->getId());
         $stm->bindValue('descricao', $exercicio->getDescricao());
         $stm->bindValue('conteudo', $exercicio->getConteudo());
         $stm->bindValue('id', $exercicio->getId());

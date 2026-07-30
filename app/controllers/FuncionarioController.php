@@ -44,7 +44,7 @@ class FuncionarioController extends Controller {
             return;
         }
 
-        $empresa = new \app\models\Empresa($_POST['empresa_id'], '', '', '', '', '', '');
+        $empresa = new \app\models\Empresa($_POST['id_empresa'], '', '', '', '', '', '');
         $funcionario = new Funcionario(
             0,
             $_POST['nome_completo'],
@@ -92,7 +92,7 @@ class FuncionarioController extends Controller {
             return;
         }
 
-        $empresa = new \app\models\Empresa($_POST['empresa_id'], '', '', '', '', '', '');
+        $empresa = new \app\models\Empresa($_POST['id_empresa'], '', '', '', '', '', '');
         $funcionario = new Funcionario(
             $_POST['id'],
             $_POST['nome_completo'],

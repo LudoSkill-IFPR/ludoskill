@@ -6,7 +6,8 @@ class Exercicio {
     private int $id;
     private string $descricao;
     private string $conteudo;
-    // private Atividade $atividade; implementar crud att
+    private Atividade $atividade;
+
 
     /**
      * Get the value of id
@@ -58,6 +59,24 @@ class Exercicio {
     public function setConteudo(string $conteudo): self
     {
         $this->conteudo = $conteudo;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of atividade
+     */
+    public function getAtividade(): Atividade
+    {
+        return $this->atividade;
+    }
+
+    /**
+     * Set the value of atividade
+     */
+    public function setAtividade(Atividade $atividade): self
+    {
+        $this->atividade = $atividade;
 
         return $this;
     }
