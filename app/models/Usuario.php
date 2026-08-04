@@ -2,26 +2,26 @@
 
 namespace app\models;
 
-use DateTimeImmutable;
-
-class Usuario {
-
+class Usuario
+{
     private int $id;
     private string $nomeCompleto;
-    private DateTimeImmutable $dataNascimento;
+    private string $dataNascimento;
     private string $cpf;
     private string $email;
     private string $senha;
-    private string $numeroTelefone;
+    private ?string $numeroTelefone;
+    private ?string $perfil;
 
     public function __construct(
-        int $id,
-        string $nomeCompleto,
-        DateTimeImmutable $dataNascimento,
-        string $cpf,
-        string $email,
-        string $senha,
-        string  $numeroTelefone
+        int $id = 0,
+        string $nomeCompleto = '',
+        string $dataNascimento = '',
+        string $cpf = '',
+        string $email = '',
+        string $senha = '',
+        ?string $numeroTelefone = null,
+        ?string $perfil = null
     ) {
         $this->id = $id;
         $this->nomeCompleto = $nomeCompleto;
@@ -30,36 +30,28 @@ class Usuario {
         $this->email = $email;
         $this->senha = $senha;
         $this->numeroTelefone = $numeroTelefone;
+        $this->perfil = $perfil;
     }
 
-    public static function arrayParaObjeto(array $usuario)
-    {   
+    public static function arrayParaObjeto(array $usuario): self
+    {
         return new self(
-            $usuario['id_usuario'],
-            $usuario['nome_completo'],
-            new dateTimeImmutable($usuario['data_nascimento']),
-            $usuario['CPF'],
-            $usuario['email'],
-            $usuario['senha_hash'],
-            $usuario['numero_telefone']
+            (int) ($usuario['id_usuario'] ?? 0),
+            $usuario['nome_completo'] ?? '',
+            $usuario['data_nascimento'] ?? '',
+            $usuario['CPF'] ?? $usuario['cpf'] ?? '',
+            $usuario['email'] ?? '',
+            $usuario['senha_hash'] ?? $usuario['senha'] ?? '',
+            $usuario['numero_telefone'] ?? null,
+            $usuario['perfil'] ?? null
         );
     }
 
-    
-
-    
-
-    /**
-     * Get the value of id
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set the value of id
-     */
     public function setId(int $id): self
     {
         $this->id = $id;
@@ -67,17 +59,11 @@ class Usuario {
         return $this;
     }
 
-    /**
-     * Get the value of nomeCompleto
-     */
     public function getNomeCompleto(): string
     {
         return $this->nomeCompleto;
     }
 
-    /**
-     * Set the value of nomeCompleto
-     */
     public function setNomeCompleto(string $nomeCompleto): self
     {
         $this->nomeCompleto = $nomeCompleto;
@@ -85,35 +71,23 @@ class Usuario {
         return $this;
     }
 
-    /**
-     * Get the value of dataNascimento
-     */
-    public function getDataNascimento(): DateTimeImmutable
+    public function getDataNascimento(): string
     {
         return $this->dataNascimento;
     }
 
-    /**
-     * Set the value of dataNascimento
-     */
-    public function setDataNascimento(DateTimeImmutable $dataNascimento): self
+    public function setDataNascimento(string $dataNascimento): self
     {
         $this->dataNascimento = $dataNascimento;
 
         return $this;
     }
 
-    /**
-     * Get the value of cpf
-     */
     public function getCpf(): string
     {
         return $this->cpf;
     }
 
-    /**
-     * Set the value of cpf
-     */
     public function setCpf(string $cpf): self
     {
         $this->cpf = $cpf;
@@ -121,17 +95,11 @@ class Usuario {
         return $this;
     }
 
-    /**
-     * Get the value of email
-     */
     public function getEmail(): string
     {
         return $this->email;
     }
 
-    /**
-     * Set the value of email
-     */
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -139,17 +107,11 @@ class Usuario {
         return $this;
     }
 
-    /**
-     * Get the value of senha
-     */
     public function getSenha(): string
     {
         return $this->senha;
     }
 
-    /**
-     * Set the value of senha
-     */
     public function setSenha(string $senha): self
     {
         $this->senha = $senha;
@@ -157,20 +119,26 @@ class Usuario {
         return $this;
     }
 
-    /**
-     * Get the value of numeroTelefone
-     */
-    public function getNumeroTelefone(): string
+    public function getNumeroTelefone(): ?string
     {
         return $this->numeroTelefone;
     }
 
-    /**
-     * Set the value of numeroTelefone
-     */
-    public function setNumeroTelefone(string $numeroTelefone): self
+    public function setNumeroTelefone(?string $numeroTelefone): self
     {
         $this->numeroTelefone = $numeroTelefone;
+
+        return $this;
+    }
+
+    public function getPerfil(): ?string
+    {
+        return $this->perfil;
+    }
+
+    public function setPerfil(?string $perfil): self
+    {
+        $this->perfil = $perfil;
 
         return $this;
     }

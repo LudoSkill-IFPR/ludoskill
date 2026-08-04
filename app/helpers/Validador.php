@@ -2,6 +2,8 @@
 
 namespace app\helpers;
 
+use app\database\ConnectionFactory;
+
 class Validador {
 
     public static function validarModulo(array $data): array {
@@ -11,6 +13,28 @@ class Validador {
             $erros['nome'] = 'O campo nome é obrigatório.';
         }
 
+        if (!empty($data['nome'])) {
+            $sql = 'SELECT 1 FROM Modulos WHERE nome = :nome'; //Evita de carregar todos os dados do módulo, apenas verifica se existe
+
+            if (!empty($data['id'])) {
+                $sql .= ' AND id_modulo <> :id';
+            }
+
+            $sql .= ' LIMIT 1'; //Interrompe a busca após encontrar o primeiro registro
+            $stm = ConnectionFactory::getConnection()->prepare($sql); //TODO: verificar com o prof se pode ficar aqui
+            $stm->bindValue('nome', $data['nome']);
+
+            if (!empty($data['id'])) {
+                $stm->bindValue('id', $data['id'], \PDO::PARAM_INT);
+            }
+
+            $stm->execute();
+
+            if ($stm->fetchColumn() !== false) {
+                $erros['nome'] = 'Já existe um módulo com este nome.';
+            }
+        }
+
         if (empty($data['descricao'])) {
             $erros['descricao'] = 'O campo descrição é obrigatório.';
         }
@@ -18,6 +42,7 @@ class Validador {
         if (!isset($data['min_estrelas_liberacao']) || !is_numeric($data['min_estrelas_liberacao'])) {
             $erros['min_estrelas_liberacao'] = 'O campo mínimo de estrelas para liberação deve ser um número.';
         }
+
 
         return $erros;
     }

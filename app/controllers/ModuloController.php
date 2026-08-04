@@ -17,7 +17,7 @@ class ModuloController extends Controller
 
     public function listarTodos() {
         $data['lista'] = $this->moduloService->getModulos();
-        $this->view('modulos/modulos_list', $data);
+        $this->view('modulos/modulo_list', $data);
     }
 
     public function listarModulo(){

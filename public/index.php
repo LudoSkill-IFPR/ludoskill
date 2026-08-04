@@ -8,11 +8,17 @@ use app\core\Router;
 $router = new Router();
 
 $router->get('/', 'HomepageController@homepage');
+
 $router->get('/login', 'HomepageController@login');
 $router->post('/logar', 'AutenticacaoController@logar');
 
-$router->post('/funcionario/salvar', 'FuncionarioController@salvar');
-$router->get('/funcionario/cadastrar', 'FuncionarioController@salvar');
-$router->get('/funcionario/lista', 'FuncionarioController@listarTodos');
+$router->post('/funcionarios/salvar', 'FuncionarioController@salvar');
+$router->get('/funcionarios/cadastrar', 'FuncionarioController@salvar');
+$router->get('/funcionarios/lista', 'FuncionarioController@listarTodos');
+
+$router->get('/modulos', 'ModuloController@listarTodos');
+$router->get('/modulos/cadastrar', 'ModuloController@criar');
+$router->get('/modulos/editar', 'ModuloController@editar');
+$router->post('/modulos/salvar', 'ModuloController@salvar');
 
 $router->run();
