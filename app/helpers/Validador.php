@@ -4,6 +4,8 @@ namespace app\helpers;
 
 use app\database\ConnectionFactory;
 
+//TODO: IMPLEMENTAR MAIS VALIDACOES! iza e vini
+
 class Validador {
 
     public static function validarModulo(array $data): array {
@@ -38,9 +40,17 @@ class Validador {
         if (empty($data['descricao'])) {
             $erros['descricao'] = 'O campo descrição é obrigatório.';
         }
+        
+        if (!empty($data['descricao']) && strlen($data['descricao']) < 30) {
+            $erros['descricao'] = 'O campo descrição deve ter pelo menos 30 caracteres.';
+        }
 
         if (!isset($data['min_estrelas_liberacao']) || !is_numeric($data['min_estrelas_liberacao'])) {
             $erros['min_estrelas_liberacao'] = 'O campo mínimo de estrelas para liberação deve ser um número.';
+        }
+        
+        if (isset($data['min_estrelas_liberacao']) && is_numeric($data['min_estrelas_liberacao']) && $data['min_estrelas_liberacao'] <= 0) {
+            $erros['min_estrelas_liberacao'] = 'O numero de estrelas deve ser positivo.';
         }
 
 
