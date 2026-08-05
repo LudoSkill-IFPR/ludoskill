@@ -1,1 +1,5 @@
-Temos que ver se os codigos estao padronizados, com comentarios explicativos de funcoes confusas e, no meu caso, com o portugues correto.
+Temos que ver se os codigos estao padronizados, com comentarios explicativos de funcoes confusas e, no meu caso, com o portugues correto - meu teclado nao tem acento grafico.
+Sobre a estrutura dos views: Como teremos telas que obrigatoriamente passarao por autenticacao e validacao para serem executadas apenas por usuarios especificos - como o crud de modulos para o administrador - optei por fazer da seguinte maneira (ainda temos que ver se e a melhor opcao ou se e viavel dessa forma)
+views/administrador -> telas/cruds que ele pode acessar
+views/gestor -> ""
+views/funcionario -> telas que ele pode acessar (como a listagem dos modulos com as atividades, como nos prototipos)

@@ -17,7 +17,7 @@ class ModuloController extends Controller
 
     public function listarTodos() {
         $data['lista'] = $this->moduloService->getModulos();
-        $this->view('/administradores/modulos/modulo_list', $data);
+        $this->view('/administrador/modulos/modulo_list', $data);
     }
 
     public function listarModulo(){
@@ -27,11 +27,11 @@ class ModuloController extends Controller
 
         $id = $_GET['id']; 
         $data['modulo'] = $this->moduloService->getModuloById($id);
-        $this->view('/administradores/modulos/modulo_show', $data);
+        $this->view('/administrador/modulos/modulo_show', $data);
     }
 
     public function criar(){
-        $this->view('/administradores/modulos/modulo_create', []);
+        $this->view('/administrador/modulos/modulo_create', []);
     }
 
     public function salvar(){
@@ -39,7 +39,7 @@ class ModuloController extends Controller
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['modulo'] = $_POST;
-            $this->view('/administradores/modulos/modulo_create', $data);
+            $this->view('/administrador/modulos/modulo_create', $data);
             return;
         }
 
@@ -59,7 +59,7 @@ class ModuloController extends Controller
 
         $id = $_GET['id'];
         $data['modulo'] = $this->moduloService->getModuloById($id);
-        $this->view('/administradores/modulos/modulo_edit', $data);
+        $this->view('/administrador/modulos/modulo_edit', $data);
     }
 
     public function excluir(){
@@ -69,7 +69,7 @@ class ModuloController extends Controller
         }
 
         $this->moduloService->deleteModulo($id);
-        $this->redirect(URL_BASE . '/administradores/modulos');
+        $this->redirect(URL_BASE . '/administrador/modulos');
     }
 
     public function atualizar(){
@@ -82,7 +82,7 @@ class ModuloController extends Controller
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['modulo'] = $_POST;
-            $this->view('/administradores/modulos/modulo_edit', $data);
+            $this->view('/administrador/modulos/modulo_edit', $data);
             return;
         }
 
@@ -93,6 +93,6 @@ class ModuloController extends Controller
         $modulo->setMinEstrelasLiberacao((int) $_POST['min_estrelas_liberacao']);
 
         $this->moduloService->updateModulo($modulo);
-        $this->redirect(URL_BASE . '/administradores/modulos');
+        $this->redirect(URL_BASE . '/administrador/modulos');
     }
 }
