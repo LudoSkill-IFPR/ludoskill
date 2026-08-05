@@ -45,6 +45,10 @@ class Validador {
             $erros['descricao'] = 'O campo descrição deve ter pelo menos 30 caracteres.';
         }
 
+        if (!empty($data['descricao']) && strlen($data['descricao']) > 254) {
+            $erros['descricao'] = 'O campo descrição deve ter no máximo 254 caracteres.';
+        }
+
         if (!isset($data['min_estrelas_liberacao']) || !is_numeric($data['min_estrelas_liberacao'])) {
             $erros['min_estrelas_liberacao'] = 'O campo mínimo de estrelas para liberação deve ser um número.';
         }

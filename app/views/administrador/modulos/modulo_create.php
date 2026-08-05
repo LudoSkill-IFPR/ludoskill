@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
-<!-- implementar aqui uma atenticacao para que apenas administradores possam acessar a pagina de cadastro de modulos -->
+<!-- implementar aqui uma atenticacao para que apenas administrador possam acessar a pagina de cadastro de modulos -->
     <div class="container">
         <div>
 
             <h1 class="mt-5">Cadastro de Módulos</h1>
-            <form action="<?= URL_BASE ?>/administradores/modulos/salvar" method="post">
+            <form action="<?= URL_BASE ?>/administrador/modulos/salvar" method="post">
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome:</label>
                     <input type="text" class="form-control" id="nome" name="nome" value="<?= isset($modulo['nome']) ? htmlspecialchars($modulo['nome']) : '' ?>">

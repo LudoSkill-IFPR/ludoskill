@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <h1 class="mt-5">Edição de Módulo</h1>
-        <form action="<?= URL_BASE ?>/administradores/modulos/atualizar" method="post">
+        <form action="<?= URL_BASE ?>/administrador/modulos/atualizar" method="post">
             <input type="hidden" name="id" value="<?= htmlspecialchars($modulo['id_modulo'] ?? '') ?>">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome:</label>
