@@ -19,6 +19,8 @@ if (DEV_ENVIRONMENT == true) {
 define('APP_NAME', 'LudoSkill');
 define('URL_BASE', 'http://localhost/ludoskill');
 
+// Iza: define('URL_BASE', 'http://localhost/ludoskill');
+
 define('UPLOAD_PATH', __DIR__ . '/../../public/assets/uploads');
 
 //Configurações do Banco de dados

@@ -13,7 +13,7 @@
         <div>
 
             <h1 class="mt-5">Cadastro de Módulos</h1>
-            <form action="<?= URL_BASE ?>/modulos/salvar" method="post">
+            <form action="<?= URL_BASE ?>/administradores/modulos/salvar" method="post">
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome:</label>
                     <input type="text" class="form-control" id="nome" name="nome" value="<?= isset($modulo['nome']) ? htmlspecialchars($modulo['nome']) : '' ?>">

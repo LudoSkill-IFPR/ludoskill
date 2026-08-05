@@ -17,7 +17,7 @@ class ModuloController extends Controller
 
     public function listarTodos() {
         $data['lista'] = $this->moduloService->getModulos();
-        $this->view('modulos/modulo_list', $data);
+        $this->view('/administradores/modulos/modulo_list', $data);
     }
 
     public function listarModulo(){
@@ -27,11 +27,11 @@ class ModuloController extends Controller
 
         $id = $_GET['id']; 
         $data['modulo'] = $this->moduloService->getModuloById($id);
-        $this->view('modulos/modulo_show', $data);
+        $this->view('/administradores/modulos/modulo_show', $data);
     }
 
     public function criar(){
-        $this->view('modulos/modulo_create', []);
+        $this->view('/administradores/modulos/modulo_create', []);
     }
 
     public function salvar(){
@@ -39,7 +39,7 @@ class ModuloController extends Controller
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['modulo'] = $_POST;
-            $this->view('modulos/modulo_create', $data);
+            $this->view('/administradores/modulos/modulo_create', $data);
             return;
         }
 
@@ -59,35 +59,40 @@ class ModuloController extends Controller
 
         $id = $_GET['id'];
         $data['modulo'] = $this->moduloService->getModuloById($id);
-        $this->view('modulos/modulo_edit', $data);
+        $this->view('/administradores/modulos/modulo_edit', $data);
     }
 
     public function excluir(){
-        if (!isset($_GET['id'])) {
+        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+        if (empty($id)) {
             $this->redirect(URL_BASE . '/modulos');
         }
 
-        $id = $_GET['id'];
         $this->moduloService->deleteModulo($id);
-        $this->redirect(URL_BASE . '/modulos');
+        $this->redirect(URL_BASE . '/administradores/modulos');
     }
 
     public function atualizar(){
+        $id = $_POST['id'] ?? $_POST['id_modulo'] ?? null;
+        if ($id !== null) {
+            $_POST['id'] = $id;
+        }
+
         $erros = Validador::validarModulo($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['modulo'] = $_POST;
-            $this->view('modulos/modulo_edit', $data);
+            $this->view('/administradores/modulos/modulo_edit', $data);
             return;
         }
 
         $modulo = new Modulo();
-        $modulo->setId($_POST['id']);
+        $modulo->setId((int) $_POST['id']);
         $modulo->setNome($_POST['nome']);
         $modulo->setDescricao($_POST['descricao']);
-        $modulo->setMinEstrelasLiberacao($_POST['min_estrelas_liberacao']);
+        $modulo->setMinEstrelasLiberacao((int) $_POST['min_estrelas_liberacao']);
 
         $this->moduloService->updateModulo($modulo);
-        $this->redirect(URL_BASE . '/modulos');
+        $this->redirect(URL_BASE . '/administradores/modulos');
     }
 }
