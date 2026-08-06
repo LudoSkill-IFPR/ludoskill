@@ -36,6 +36,8 @@ class Controller
         return true;
     }
 
+    //VERFICACAO DE PERFIL DE USUARIO, reaproveitar a funcao abaixo!
+
     public function adminRequired()
     {
         if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado']->getPerfil() !== 'admin') {

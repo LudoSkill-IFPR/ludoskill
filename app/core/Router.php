@@ -48,10 +48,19 @@ class Router
             $uri = '/' . $uri;
         }
 
+        if ($uri !== '/' && str_ends_with($uri, '/')) {
+            $uri = rtrim($uri, '/');
+        }
+
         $method = strtolower($_SERVER['REQUEST_METHOD']);
 
         foreach ($this->routes as $route) {
-            if ($route['route'] == $uri && $route['method'] == $method) {
+            $routePath = $route['route'];
+            if ($routePath !== '/' && str_ends_with($routePath, '/')) {
+                $routePath = rtrim($routePath, '/');
+            }
+
+            if ($routePath == $uri && $route['method'] == $method) {
                 return $this->dispatch($route);
             }
         }

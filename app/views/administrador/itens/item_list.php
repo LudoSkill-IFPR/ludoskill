@@ -29,12 +29,28 @@
             </thead>
             <tbody>
                 <?php foreach (($lista ?? []) as $item): ?>
+                    <?php
+                        $imagem = $item['imagem'] ?? '';
+                        if (!empty($imagem)) {
+                            if (strpos($imagem, 'http://') === 0 || strpos($imagem, 'https://') === 0 || strpos($imagem, '/') === 0) {
+                                $imagemUrl = $imagem;
+                            } else {
+                                $imagemUrl = URL_BASE . '/' . $imagem;
+                            }
+                        } else {
+                            $imagemUrl = '';
+                        }
+                    ?>
                     <tr>
                         <td><?= htmlspecialchars($item['id_item'] ?? '') ?></td>
                         <td><?= htmlspecialchars($item['nome'] ?? '') ?></td>
                         <td><?= htmlspecialchars($item['descricao'] ?? '') ?></td>
                         <td><?= htmlspecialchars($item['preco'] ?? '') ?></td>
-                        <td><img src="<?= htmlspecialchars($item['imagem'] ?? '') ?>" alt="<?= htmlspecialchars($item['nome'] ?? '') ?>" style="max-width: 100px; max-height: 100px;"></td>
+                        <td>
+                            <?php if (!empty($imagemUrl)): ?>
+                                <img src="<?= htmlspecialchars($imagemUrl) ?>" alt="<?= htmlspecialchars($item['nome'] ?? '') ?>" style="max-width: 100px; max-height: 100px;">
+                            <?php endif; ?>
+                        </td>
                         <td class="px-4 py-3 align-middle text-end">
                             <a href="<?= URL_BASE ?>/administrador/itens/editar?id=<?= $item['id_item'] ?>" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil"></i> Editar

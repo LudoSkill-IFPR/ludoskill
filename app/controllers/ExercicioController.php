@@ -24,6 +24,10 @@ class ExercicioController extends Controller{
     }
 
     public function listarExercicio(){
+
+    
+
+
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/exercicios');
         }
