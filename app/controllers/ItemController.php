@@ -56,34 +56,34 @@ class ItemController extends Controller
 
     public function editar() {
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/items');
+            $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
 
         $id = $_GET['id'];
         $data['item'] = $this->itemService->getItemById($id);
-        $this->view('items/item_edit', $data);
+        $this->view('/administrador/itens/item_edit', $data);
     }
 
     public function excluir(){
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/items');
+            $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
 
         $id = $_GET['id'];
         $this->itemService->deleteItem($id);
-        $this->redirect(URL_BASE . '/items');
+        $this->redirect(URL_BASE . '/administrador/itens/item_list');
     }
 
     public function atualizar() {
         if (!isset($_POST['id'])) {
-            $this->redirect(URL_BASE . '/items');
+            $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
 
         $erros = Validador::validarItem($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['item'] = $_POST;
-            $this->view('items/item_edit', $data);
+            $this->view('/administrador/itens/item_edit', $data);
             return;
         }
 
@@ -96,6 +96,6 @@ class ItemController extends Controller
         $item->setImagem($_POST['imagem']);
 
         $this->itemService->updateItem($item);
-        $this->redirect(URL_BASE . '/items');
+        $this->redirect(URL_BASE . '/administrador/itens/item_list');
     }
 }

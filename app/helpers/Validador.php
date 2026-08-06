@@ -82,6 +82,28 @@ class Validador {
             $erros['cnpj'] = 'O campo cnpj é obrigatório.';
         }
 
+        if (!empty($data['cnpj'])) {
+            $sql = 'SELECT 1 FROM Empresas WHERE cnpj = :cnpj'; //Evita de carregar todos os dados da empresa, apenas verifica se existe
+
+            if (!empty($data['id'])) {
+                $sql .= ' AND id_empresa <> :id';
+            }
+
+            $sql .= ' LIMIT 1'; //Interrompe a busca após encontrar o primeiro registro
+            $stm = ConnectionFactory::getConnection()->prepare($sql); //TODO: verificar com o prof se pode ficar aqui
+            $stm->bindValue('cnpj', $data['cnpj']);
+
+            if (!empty($data['id'])) {
+                $stm->bindValue('id', $data['id'], \PDO::PARAM_INT);
+            }
+
+            $stm->execute();
+
+            if ($stm->fetchColumn() !== false) {
+                $erros['cnpj'] = 'Já existe uma empresa com este CNPJ.';
+            }
+        }
+
         if (empty($data['nome'])) {
             $erros['nome'] = 'O campo nome é obrigatório.';
         }

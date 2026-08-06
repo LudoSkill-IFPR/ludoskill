@@ -14,14 +14,14 @@ class ItemRepository{
     }
 
     public function getItems(): array{
-        $stm = $this->connection->prepare("SELECT * FROM Item");
+        $stm = $this->connection->prepare("SELECT * FROM Itens");
         $stm->execute();
         $items = $stm->fetchAll();
         return $items;
     }
 
     public function getItemById(int $id){
-        $stm = $this->connection->prepare("SELECT * FROM Item WHERE id_item = :id");
+        $stm = $this->connection->prepare("SELECT * FROM Itens WHERE id_item = :id");
         $stm->bindValue('id', $id);
 
         $stm->execute();
@@ -32,7 +32,7 @@ class ItemRepository{
     }
 
     public function saveItem(Item $item){
-        $sql = "INSERT INTO Item (estado, nome, tipo, preco, imagem) VALUES (:estado, :nome, :tipo, :preco, :imagem)";
+        $sql = "INSERT INTO Itens (estado, nome, tipo, preco, imagem) VALUES (:estado, :nome, :tipo, :preco, :imagem)";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('estado', $item->getEstado());
         $stm->bindValue('nome', $item->getNome());
@@ -43,13 +43,13 @@ class ItemRepository{
     }
 
     public function deleteItem(int $id){
-        $stm = $this->connection->prepare("DELETE FROM Item WHERE id_item = :id");
+        $stm = $this->connection->prepare("DELETE FROM Itens WHERE id_item = :id");
         $stm->bindValue('id', $id);
         return $stm->execute();
     }
 
     public function updateItem(Item $item){
-        $sql = "UPDATE Item SET estado = :estado, nome = :nome, tipo = :tipo, preco = :preco, imagem = :imagem WHERE id_item = :id";
+        $sql = "UPDATE Itens SET estado = :estado, nome = :nome, tipo = :tipo, preco = :preco, imagem = :imagem WHERE id_item = :id";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('estado', $item->getEstado());
         $stm->bindValue('nome', $item->getNome());

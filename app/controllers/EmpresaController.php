@@ -55,12 +55,12 @@ class EmpresaController extends Controller{
         $empresa->setPlano($_POST['plano']);
 
         $this->empresaService->saveEmpresa($empresa);
-        $this->redirect(URL_BASE . '/administrador/empresas');
+        $this->redirect(URL_BASE . '/empresas');
     }
 
     public function editar(){
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/administrador/empresas');
+            $this->redirect(URL_BASE . '/empresas');
         }
 
         $id = $_GET['id'];
@@ -70,11 +70,16 @@ class EmpresaController extends Controller{
     }
 
     public function excluir(){
-        if (!isset($_GET['id'])) {
+        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+        // if (!isset($_GET['id'])) {
+        //     $this->redirect(URL_BASE . '/empresas');
+        // }
+
+        if (empty($id)) {
             $this->redirect(URL_BASE . '/administrador/empresas');
         }
 
-        $id = $_GET['id'];
+        // $id = $_GET['id'];
         $this->empresaService->deleteEmpresa($id);
         $this->redirect(URL_BASE . '/administrador/empresas');
     }
