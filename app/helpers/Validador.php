@@ -4,7 +4,7 @@ namespace app\helpers;
 
 use app\database\ConnectionFactory;
 
-//TODO: IMPLEMENTAR MAIS VALIDACOES! iza e vini
+//TODO: IMPLEMENTAR MAIS VALIDACOES! @iza e @vini
 
 class Validador {
 
@@ -61,7 +61,6 @@ class Validador {
         return $erros;
     }
 
-    //TODO: Implementar validações para outras entidades, como Usuário, atividade, etc. 
     public static function validarExercicio(array $data): array {
         $erros = [];
 

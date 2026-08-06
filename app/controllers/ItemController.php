@@ -17,17 +17,17 @@ class ItemController extends Controller
 
     public function listarTodos() {
         $data['lista'] = $this->itemService->getItems();
-        $this->view('items/items_list', $data);
+        $this->view('/administrador/itens/item_list', $data);
     }
 
     public function listarItem() {
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/items');
+            $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
 
         $id = $_GET['id'];
         $data['item'] = $this->itemService->getItemById($id);
-        $this->view('items/item_show', $data);
+        $this->view('/administrador/itens/items_show', $data);
     }
 
     public function criar() {
@@ -39,7 +39,7 @@ class ItemController extends Controller
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['item'] = $_POST;
-            $this->view('items/item_create', $data);
+            $this->view('/administrador/itens/item_create', $data);
             return;
         }
 
@@ -51,7 +51,7 @@ class ItemController extends Controller
         $item->setImagem($_POST['imagem']);
 
         $this->itemService->saveItem($item);
-        $this->redirect(URL_BASE . '/items');
+        $this->redirect(URL_BASE . '/administrador/itens/item_list');
     }
 
     public function editar() {
