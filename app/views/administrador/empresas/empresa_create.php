@@ -23,7 +23,7 @@
                 </div>
                 <div>
                     <label for="cnpj" class="form-label">CNPJ</label>
-                    <input class="form-control" type="text" id="cnpj" name="cnpj" value="<?= isset($empresa['cnpj']) ? htmlspecialchars($empresa['cnpj']) : '' ?>">
+                    <input class="form-control" type="text" id="cnpj" name="cnpj" maxlength="18" value="<?= isset($empresa['cnpj']) ? htmlspecialchars($empresa['cnpj']) : '' ?>">
                     <?php if (isset($erros['cnpj'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['cnpj']) ?></span>
                     <?php endif; ?>
@@ -54,6 +54,29 @@
         </div>
 
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cnpjInput = document.getElementById('cnpj');
+            if (!cnpjInput) return;
+
+            const formatCnpj = (value) => {
+                const digits = (value || '').replace(/\D/g, '').slice(0, 14);
+                if (!digits) return '';
+                return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+            };
+
+            cnpjInput.value = formatCnpj(cnpjInput.value);
+
+            cnpjInput.addEventListener('input', function () {
+                cnpjInput.value = formatCnpj(cnpjInput.value);
+            });
+
+            cnpjInput.closest('form').addEventListener('submit', function () {
+                cnpjInput.value = cnpjInput.value.replace(/\D/g, '');
+            });
+        });
+    </script>
     
 </body>
 </html>
