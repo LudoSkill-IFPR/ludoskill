@@ -23,4 +23,11 @@ $router->post('/administrador/modulos/salvar', 'ModuloController@salvar');
 $router->post('/administrador/modulos/atualizar', 'ModuloController@atualizar');
 $router->post('/administrador/modulos/excluir', 'ModuloController@excluir');
 
+$router->get('/administrador/empresas', 'EmpresaController@listarTodos');
+$router->get('/administrador/empresas/cadastrar', 'EmpresaController@criar');
+$router->get('/administrador/empresas/editar', 'EmpresaController@editar');
+$router->post('/administrador/empresas/salvar', 'EmpresaController@salvar');
+$router->post('/administrador/empresas/atualizar', 'EmpresaController@atualizar');
+$router->post('/administrador/empresas/excluir', 'EmpresaController@excluir');
+
 $router->run();

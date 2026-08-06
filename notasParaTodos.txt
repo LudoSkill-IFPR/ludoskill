@@ -3,3 +3,4 @@ Sobre a estrutura dos views: Como teremos telas que obrigatoriamente passarao po
 views/administrador -> telas/cruds que ele pode acessar
 views/gestor -> ""
 views/funcionario -> telas que ele pode acessar (como a listagem dos modulos com as atividades, como nos prototipos)
+Temos que ver sobre o css. Um arquivo geral ou um arquivo para cada tela?

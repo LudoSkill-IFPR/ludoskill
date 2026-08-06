@@ -22,7 +22,7 @@ class ModuloController extends Controller
 
     public function listarModulo(){
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/modulos');
+            $this->redirect(URL_BASE . '/administrador/modulos');
         }
 
         $id = $_GET['id']; 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TODO VERIFICAR SE ESTA CORRETO
+ * CORRIGIDO
  */
 
 namespace app\controllers;
@@ -21,21 +21,21 @@ class EmpresaController extends Controller{
 
     public function listarTodos() {
         $data['lista'] = $this->empresaService->getEmpresas();
-        $this->view('empresas/empresas_list', $data);
+        $this->view('/administrador/empresas/empresa_list', $data);
     }
 
     public function listarEmpresa(){
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/empresas');
+            $this->redirect(URL_BASE . '/administrador/empresas');
         }
 
         $id = $_GET['id']; 
         $data['empresa'] = $this->empresaService->getEmpresaById($id);
-        $this->view('empresas/empresa_show', $data);
+        $this->view('/administrador/empresas/empresa_show', $data);
     }
 
     public function criar(){
-        $this->view('empresas/empresa_create', []);
+        $this->view('/administrador/empresas/empresa_create', []);
     }
 
     public function salvar(){
@@ -43,35 +43,40 @@ class EmpresaController extends Controller{
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['empresa'] = $_POST;
-            $this->view('empresas/empresa_create', $data);
+            $this->view('/administrador/empresas/empresa_create', $data);
             return;
         }
 
-        $empresa = new Empresa($_POST['id'], $_POST['cnpj'], $_POST['nome'], $_POST['email'], $_POST['plano']);
+        $empresa = new Empresa();
+        $empresa->setId((int) $_POST['id']);
+        $empresa->setCnpj($_POST['cnpj']);
+        $empresa->setNome($_POST['nome']);
+        $empresa->setEmail($_POST['email']);
+        $empresa->setPlano($_POST['plano']);
 
         $this->empresaService->saveEmpresa($empresa);
-        $this->redirect(URL_BASE . '/empresas');
+        $this->redirect(URL_BASE . '/administrador/empresas');
     }
 
     public function editar(){
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/empresas');
+            $this->redirect(URL_BASE . '/administrador/empresas');
         }
 
         $id = $_GET['id'];
 
         $data['empresa'] = $this->empresaService->getEmpresaById($id);
-        $this->view('empresas/empresa_edit', $data);
+        $this->view('/administrador/empresas/empresa_edit', $data);
     }
 
     public function excluir(){
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/empresas');
+            $this->redirect(URL_BASE . '/administrador/empresas');
         }
 
         $id = $_GET['id'];
         $this->empresaService->deleteEmpresa($id);
-        $this->redirect(URL_BASE . '/empresas');
+        $this->redirect(URL_BASE . '/administrador/empresas');
     }
 
     public function atualizar(){
@@ -79,14 +84,19 @@ class EmpresaController extends Controller{
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['empresa'] = $_POST;
-            $this->view('empresas/empresa_edit', $data);
+            $this->view('/administrador/empresas/empresa_edit', $data);
             return;
         }
 
-        $empresa = new Empresa($_POST['id'], $_POST['cnpj'], $_POST['nome'], $_POST['email'], $_POST['plano']);
+        $empresa = new Empresa();
+        $empresa->setId((int) $_POST['id']);
+        $empresa->setCnpj($_POST['cnpj']);
+        $empresa->setNome($_POST['nome']);
+        $empresa->setEmail($_POST['email']);
+        $empresa->setPlano($_POST['plano']);
 
         $this->empresaService->updateEmpresa($empresa);
-        $this->redirect(URL_BASE . '/empresas');
+        $this->redirect(URL_BASE . '/administrador/empresas');
     }
 
 }

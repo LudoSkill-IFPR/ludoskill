@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TODO VERIFICAR SE ESTA CORRETO
+ * CORRIGIDO
  */
 
 namespace app\repositories;
