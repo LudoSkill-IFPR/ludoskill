@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\models\Usuario;
 use app\models\Empresa;
+use DateTimeImmutable;
 
 class Funcionario extends Usuario{
     private int $id;
@@ -16,7 +17,7 @@ class Funcionario extends Usuario{
     public function __construct(
         int $id,
         string $nomeCompleto,
-        \DateTimeImmutable $dataNascimento,
+        DateTimeImmutable $dataNascimento,
         string $cpf,
         string $email,
         string $senha,
