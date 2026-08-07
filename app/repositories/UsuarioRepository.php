@@ -60,7 +60,7 @@ class UsuarioRepository{
                     data_nascimento = :dataNascimento,
                     cpf = :cpf,
                     email = :email,
-                    senha = :senha,
+                    senha_hash = :senha,
                     numero_telefone = :numeroTelefone
                 WHERE id_usuario = :id";
 
@@ -80,7 +80,7 @@ class UsuarioRepository{
     public function saveUsuario(Usuario $usuario)
     {
         $sql = "INSERT INTO usuario 
-                (nome_completo, data_nascimento, cpf, email, senha, numero_telefone)
+                (nome_completo, data_nascimento, cpf, email, senha_hash, numero_telefone)
                 VALUES
                 (:nomeCompleto, :dataNascimento, :cpf, :email, :senha, :numeroTelefone)";
 
