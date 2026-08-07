@@ -44,6 +44,7 @@ class FuncionarioRepository{
         $stm->execute();
 
         $lastId = $this->connection->lastInsertId(); 
+        $empresa = $funcionario->getEmpresa();
 
         $sql = "INSERT INTO Funcionarios (id_usuario, bolotas_totais, pontuacao_total, nivel, id_empresa) VALUES (:idUsuario, :bolotasTotais, :pontuacaoTotal, :nivel, :idEmpresa)";
         $stm = $this->connection->prepare($sql);
@@ -51,7 +52,7 @@ class FuncionarioRepository{
         $stm->bindValue('bolotasTotais', $funcionario->getBolotasTotais());
         $stm->bindValue('pontuacaoTotal', $funcionario->getPontuacaoTotal());
         $stm->bindValue('nivel', $funcionario->getNivel());
-        $stm->bindValue('idEmpresa', $funcionario->getEmpresa()->getId());
+        $stm->bindValue('idEmpresa', $empresa->getId());
         return $stm->execute();
     }
 
@@ -65,7 +66,7 @@ class FuncionarioRepository{
         $sql = "UPDATE Funcionarios SET nome_completo = :nomeCompleto, data_nascimento = :dataNascimento, cpf = :cpf, email = :email, senha = :senha, numero_telefone = :numeroTelefone, bolotas_totais = :bolotasTotais, pontuacao_total = :pontuacaoTotal, nivel = :nivel, id_empresa = :idEmpresa WHERE id_funcionario = :id";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('nomeCompleto', $funcionario->getNomeCompleto());
-        $stm->bindValue('dataNascimento', $funcionario->getDataNascimento()->format('Y-m-d'));
+        $stm->bindValue('dataNascimento', $funcionario->getDataNascimento());
         $stm->bindValue('cpf', $funcionario->getCpf());
         $stm->bindValue('email', $funcionario->getEmail());
         $stm->bindValue('senha', password_hash($funcionario->getSenha(), PASSWORD_DEFAULT));
