@@ -40,11 +40,11 @@ $router->post('/administrador/itens/salvar', 'ItemController@salvar');
 $router->post('/administrador/itens/atualizar', 'ItemController@atualizar');
 $router->post('/administrador/itens/excluir', 'ItemController@excluir');
 
-$router->get('/administrador/funcionario', 'FuncionarioController@listarTodos');
-$router->get('/administrador/funcionario/cadastrar', 'FuncionarioController@criar');
-$router->get('/administrador/funcionario/editar', 'FuncionarioController@editar');
-$router->post('/administrador/funcionario/salvar', 'FuncionarioController@salvar');
-$router->post('/administrador/funcionario/atualizar', 'FuncionarioController@atualizar');
-$router->post('/administrador/funcionario/excluir', 'FuncionarioController@excluir');
+$router->get('/gestor/funcionarios', 'FuncionarioController@listarTodos');
+$router->get('/gestor/funcionarios/cadastrar', 'FuncionarioController@criar');
+$router->get('/gestor/funcionarios/editar', 'FuncionarioController@editar');
+$router->post('/gestor/funcionarios/salvar', 'FuncionarioController@salvar');
+$router->post('/gestor/funcionarios/atualizar', 'FuncionarioController@atualizar');
+$router->post('/gestor/funcionarios/excluir', 'FuncionarioController@excluir');
 
 $router->run();

@@ -25,8 +25,7 @@
                 <div class="mb-3">
                     <label for="estado" class="form-label">Estado:</label>
                     <select name="estado" id="estado" class="form-control">
-                        <option value="">Selecione um estado</option>
-                        <option value="1" <?= isset($item['estado']) && $item['estado'] === '1' ? 'selected' : '' ?>>Ativo</option>
+                        <option value="1" <?= (!isset($item['estado']) || $item['estado'] === '1' || $item['estado'] === '') ? 'selected' : '' ?>>Ativo</option>
                         <option value="0" <?= isset($item['estado']) && $item['estado'] === '0' ? 'selected' : '' ?>>Inativo</option>
                     </select>
                     <?php if (isset($erros['estado'])): ?>
@@ -51,12 +50,23 @@
                         <div class="text-danger"><?= $erros['preco'] ?></div>
                     <?php endif; ?>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" id="campo-imagem">
                     <label for="imagem" class="form-label">Imagem:</label>
-                    <?php if (!empty($item['imagem'])): ?>
+                    <?php
+                        $imagemAtual = $item['imagem'] ?? '';
+                        $imagemUrl = !empty($imagemAtual)
+                            ? URL_BASE . '/' . ltrim($imagemAtual, '/')
+                            : '';
+                    ?>
+                    <?php if (!empty($imagemUrl)): ?>
                         <div class="mb-2">
-                            <img src="<?= htmlspecialchars((strpos($item['imagem'], 'http://') === 0 || strpos($item['imagem'], 'https://') === 0 || strpos($item['imagem'], '/') === 0) ? $item['imagem'] : URL_BASE . '/' . $item['imagem']) ?>" alt="<?= htmlspecialchars($item['nome'] ?? '') ?>" style="max-width: 120px; max-height: 120px; display: block; margin-bottom: 0.5rem;">
-                            <small class="text-muted">Deixe em branco para manter a imagem atual.</small>
+                            <img src="<?= htmlspecialchars($imagemUrl) ?>"
+                                alt="<?= htmlspecialchars($item['nome'] ?? '') ?>"
+                                style="max-width: 120px; max-height: 120px; display: block; margin-bottom: 0.5rem;">
+
+                            <small class="text-muted">
+                                Deixe em branco para manter a imagem atual.
+                            </small>
                         </div>
                     <?php endif; ?>
                     <input type="file" class="form-control" id="imagem" name="imagem">
@@ -64,9 +74,33 @@
                         <div class="text-danger"><?= $erros['imagem'] ?></div>
                     <?php endif; ?>
                 </div>
+                <div class="alert alert-light border d-none" id="info-tema">
+                    Tema usa a imagem fixa do sistema e não aceita upload.
+                </div>
                 <button type="submit" class="btn btn-primary">Atualizar</button>
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tipo = document.getElementById('tipo');
+            const campoImagem = document.getElementById('campo-imagem');
+            const inputImagem = document.getElementById('imagem');
+            const infoTema = document.getElementById('info-tema');
+
+            function atualizarTipoItem() {
+                const eTema = tipo.value === 'TEMA';
+                campoImagem.style.display = eTema ? 'none' : 'block';
+                inputImagem.disabled = eTema;
+                infoTema.classList.toggle('d-none', !eTema);
+                if (eTema) {
+                    inputImagem.value = '';
+                }
+            }
+
+            tipo.addEventListener('change', atualizarTipoItem);
+            atualizarTipoItem();
+        });
+    </script>
 </body>
 </html>

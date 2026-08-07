@@ -122,8 +122,9 @@ class Validador {
     public static function validarItem(array $data, array $files = []): array {
         $erros = [];
 
-        if (empty($data['estado'])) {
-            $erros['estado'] = 'O campo estado é obrigatório.';
+        $data['estado'] = $data['estado'] ?? '1';
+        if ($data['estado'] === '') {
+            $data['estado'] = '1';
         }
 
         if (empty($data['nome'])) {
@@ -140,28 +141,31 @@ class Validador {
             $erros['preco'] = 'O preço deve ser um valor positivo.';
         }
 
-        $imagemAtua = !empty($data['imagem_atual']);
-        $imagemFile = $files['imagem'] ?? null;
+        $tipo = strtoupper((string)($data['tipo'] ?? ''));
+        if ($tipo !== 'TEMA') {
+            $imagemAtua = !empty($data['imagem_atual']);
+            $imagemFile = $files['imagem'] ?? null;
 
-        if ($imagemFile && $imagemFile['error'] !== UPLOAD_ERR_NO_FILE) {
-            if ($imagemFile['error'] !== UPLOAD_ERR_OK) {
-                $erros['imagem'] = 'Erro no upload da imagem.';
-            } else {
-                $tamanhoMaximo = 2 * 1024 * 1024;
-                if ($imagemFile['size'] > $tamanhoMaximo) {
-                    $erros['imagem'] = 'A imagem deve ter no máximo 2MB.';
+            if ($imagemFile && $imagemFile['error'] !== UPLOAD_ERR_NO_FILE) {
+                if ($imagemFile['error'] !== UPLOAD_ERR_OK) {
+                    $erros['imagem'] = 'Erro no upload da imagem.';
+                } else {
+                    $tamanhoMaximo = 2 * 1024 * 1024;
+                    if ($imagemFile['size'] > $tamanhoMaximo) {
+                        $erros['imagem'] = 'A imagem deve ter no máximo 2MB.';
+                    }
+
+                    $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                    $mimeType = $finfo->file($imagemFile['tmp_name']);
+                    $tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp'];
+
+                    if (!in_array($mimeType, $tiposPermitidos, true)) {
+                        $erros['imagem'] = 'Formato de imagem inválido. Use JPG, PNG ou WEBP.';
+                    }
                 }
-
-                $finfo = new \finfo(FILEINFO_MIME_TYPE);
-                $mimeType = $finfo->file($imagemFile['tmp_name']);
-                $tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp'];
-
-                if (!in_array($mimeType, $tiposPermitidos, true)) {
-                    $erros['imagem'] = 'Formato de imagem inválido. Use JPG, PNG ou WEBP.';
-                }
+            } elseif (!$imagemAtua) {
+                $erros['imagem'] = 'O campo imagem é obrigatório.';
             }
-        } elseif (!$imagemAtua) {
-            $erros['imagem'] = 'O campo imagem é obrigatório.';
         }
 
         return $erros;

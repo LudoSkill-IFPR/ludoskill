@@ -76,6 +76,38 @@ class ItemController extends Controller
         $this->view('/administrador/itens/item_create', []);
     }
 
+    private function removerImagemAntiga(?string $imagem): void {
+        if (empty($imagem)) {
+            return;
+        }
+
+        if (strpos($imagem, 'http://') === 0 || strpos($imagem, 'https://') === 0) {
+            return;
+        }
+
+        if (str_starts_with(ltrim($imagem, '/'), 'assets/imagens/')) {
+            return;
+        }
+
+        $caminhoNormalizado = ltrim($imagem, '/');
+        $pathLocal = null;
+
+        if (str_starts_with($caminhoNormalizado, 'assets/')) {
+            $pathLocal = dirname(__DIR__, 2) . '/public/' . $caminhoNormalizado;
+        } elseif (str_starts_with($caminhoNormalizado, 'public/')) {
+            $pathLocal = dirname(__DIR__, 2) . '/' . $caminhoNormalizado;
+        }
+
+        if ($pathLocal !== null && is_file($pathLocal)) {
+            @unlink($pathLocal);
+        }
+    }
+
+    private function getImagemTemaPadrao(): string
+    {
+        return 'assets/imagens/imagemTEMA.png';
+    }
+
     private function converterEstadoParaBit($estado): int {
         if ($estado === 'ATIVO' || $estado === '1' || $estado === 1 || $estado === true) {
             return 1;
@@ -85,6 +117,11 @@ class ItemController extends Controller
     }
 
     public function salvar() {
+        $_POST['estado'] = $_POST['estado'] ?? '1';
+        if ($_POST['estado'] === '') {
+            $_POST['estado'] = '1';
+        }
+
         $erros = Validador::validarItem($_POST, $_FILES);
         if (!empty($erros)) {
             $data['erros'] = $erros;
@@ -93,7 +130,10 @@ class ItemController extends Controller
             return;
         }
 
-        $imagem = $this->processarUploadImagem($_FILES['imagem'], $erros);
+        $imagem = $_POST['tipo'] === 'TEMA'
+            ? $this->getImagemTemaPadrao()
+            : $this->processarUploadImagem($_FILES['imagem'], $erros);
+
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['item'] = $_POST;
@@ -137,6 +177,11 @@ class ItemController extends Controller
             $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
 
+        $_POST['estado'] = $_POST['estado'] ?? '1';
+        if ($_POST['estado'] === '') {
+            $_POST['estado'] = '1';
+        }
+
         $erros = Validador::validarItem($_POST, $_FILES);
         if (!empty($erros)) {
             $data['erros'] = $erros;
@@ -146,7 +191,11 @@ class ItemController extends Controller
         }
 
         $imagem = $_POST['imagem_atual'] ?? '';
-        if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
+        if (($_POST['tipo'] ?? '') === 'TEMA') {
+            $this->removerImagemAntiga($imagem);
+            $imagem = $this->getImagemTemaPadrao();
+        } elseif (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
+            $this->removerImagemAntiga($imagem);
             $imagem = $this->processarUploadImagem($_FILES['imagem'], $erros);
             if (!empty($erros)) {
                 $data['erros'] = $erros;

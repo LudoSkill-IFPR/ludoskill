@@ -21,7 +21,6 @@
                 <tr>
                     <th>ID</th>
                     <th>Nome</th>
-                    <th>Descrição</th>
                     <th>Preço</th>
                     <th>Imagem</th>
                     <th>Ações</th>
@@ -31,20 +30,13 @@
                 <?php foreach (($lista ?? []) as $item): ?>
                     <?php
                         $imagem = $item['imagem'] ?? '';
-                        if (!empty($imagem)) {
-                            if (strpos($imagem, 'http://') === 0 || strpos($imagem, 'https://') === 0 || strpos($imagem, '/') === 0) {
-                                $imagemUrl = $imagem;
-                            } else {
-                                $imagemUrl = URL_BASE . '/' . $imagem;
-                            }
-                        } else {
-                            $imagemUrl = '';
-                        }
+                        $imagemUrl = !empty($imagem)
+                            ? URL_BASE . '/' . ltrim($imagem, '/')
+                            : '';
                     ?>
                     <tr>
                         <td><?= htmlspecialchars($item['id_item'] ?? '') ?></td>
                         <td><?= htmlspecialchars($item['nome'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($item['descricao'] ?? '') ?></td>
                         <td><?= htmlspecialchars($item['preco'] ?? '') ?></td>
                         <td>
                             <?php if (!empty($imagemUrl)): ?>

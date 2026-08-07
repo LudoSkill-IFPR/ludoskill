@@ -55,12 +55,12 @@ class EmpresaController extends Controller{
         $empresa->setPlano($_POST['plano']);
 
         $this->empresaService->saveEmpresa($empresa);
-        $this->redirect(URL_BASE . '/empresas');
+        $this->redirect(URL_BASE . '/administrador/empresas');
     }
 
     public function editar(){
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/empresas');
+            $this->redirect(URL_BASE . '/administrador/empresas');
         }
 
         $id = $_GET['id'];
