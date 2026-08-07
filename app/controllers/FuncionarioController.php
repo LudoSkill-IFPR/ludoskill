@@ -6,6 +6,9 @@ use app\core\Controller;
 use app\models\Funcionario;
 use app\services\FuncionarioService;
 use app\helpers\Validador;
+use DateTimeImmutable;
+
+use app\models\Empresa;
 
 class FuncionarioController extends Controller {
     private FuncionarioService $funcionarioService;
@@ -30,34 +33,35 @@ class FuncionarioController extends Controller {
     }
 
     public function criar() {
-        $this->view('funcionarios/funcionario_create', []);
+        $this->view('administrador/funcionario/funcionario_create', []);
     }
 
     public function salvar() {
         $erros = Validador::validarFuncionario($_POST);
         print_r($erros);
         if (!empty($erros)) {
-            print("to aqui");
             $data['erros'] = $erros;
             $data['funcionario'] = $_POST;
-            $this->view('sistema/cadastros/funcionarios/funcionario_create', $data);
+            $this->view('administrador/funcionario/funcionario_create', $data);
             return;
         }
 
-        $empresa = new \app\models\Empresa($_POST['id_empresa'], '', '', '', '', '', '');
+        $empresa = new Empresa($_POST['id_empresa'], '', '', '', '', '', '');
+        
         $funcionario = new Funcionario(
             0,
             $_POST['nome_completo'],
-            new \DateTimeImmutable($_POST['data_nascimento']),
+            new DateTimeImmutable($_POST['data_nascimento']),
             $_POST['cpf'],
             $_POST['email'],
-            $_POST['senha'],
+            $_POST['senha_hash'],
             $_POST['numero_telefone'],
             $empresa,
             0,
             0,
             1
         );
+
         $this->funcionarioService->saveFuncionario($funcionario);
         $this->listarTodos();
     }
