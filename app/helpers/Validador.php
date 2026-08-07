@@ -250,8 +250,8 @@ class Validador {
             $erros['email'] = 'O campo email é obrigatório.';
         }
 
-        if (empty($data['senha'])) {
-            $erros['senha'] = 'O campo senha é obrigatório.';
+        if (empty($data['senha_hash'])) {
+            $erros['senha_hash'] = 'O campo senha é obrigatório.';
         }
 
         if (empty($data['numero_telefone'])) {
