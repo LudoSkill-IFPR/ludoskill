@@ -65,6 +65,6 @@ class UsuarioController extends Controller
     public function excluir() {
         $id = $_GET['id'];
         $this->service->deleteUsuario($id);
-        $this->redirect(URL_BASE . '/usuarios');
+        $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
 }

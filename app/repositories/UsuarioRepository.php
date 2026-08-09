@@ -22,7 +22,7 @@ class UsuarioRepository{
 
     public function getUsuario(int $id): array{
         $stm = $this->connection->prepare("SELECT * FROM Usuarios WHERE id_usuario = :id");
-        $stm->bindValue('id_usuario', $id);
+        $stm->bindValue(':id', $id);
 
         $stm->execute();
 

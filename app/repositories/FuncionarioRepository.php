@@ -45,6 +45,7 @@ class FuncionarioRepository{
 
         $lastId = $this->connection->lastInsertId(); 
         $empresa = $funcionario->getEmpresa();
+        print_r($empresa, "\n");
 
         $sql = "INSERT INTO Funcionarios (id_usuario, bolotas_totais, pontuacao_total, nivel, id_empresa) VALUES (:idUsuario, :bolotasTotais, :pontuacaoTotal, :nivel, :idEmpresa)";
         $stm = $this->connection->prepare($sql);

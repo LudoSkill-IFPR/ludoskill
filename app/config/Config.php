@@ -17,18 +17,19 @@ if (DEV_ENVIRONMENT == true) {
 
 //Configuração do Sistema
 define('APP_NAME', 'LudoSkill');
-define('URL_BASE', 'http://localhost/ludoskill');
+define('URL_BASE', 'http://localhost/codigos/ludoskill-main');
 
 // Iza: define('URL_BASE', 'http://localhost/ludoskill');
+// Brevesteky: define('URL_BASE', 'http://localhost/codigos/ludoskill-main');
 
 define('UPLOAD_PATH', __DIR__ . '/../../public/assets/uploads');
 
 //Configurações do Banco de dados
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'db_ludoskill');
+define('DB_NAME', 'ludoskill');
 
 define('DB_USER', 'root');
-define('DB_PASS', '090908iza');
+define('DB_PASS', '');
 
 // -------- Configuração do Banco de dados via variáveis de ambiente 
 // define('DB_HOST', 'localhost');

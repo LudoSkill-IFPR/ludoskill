@@ -7,7 +7,6 @@ use app\models\Funcionario;
 use app\services\FuncionarioService;
 use app\helpers\Validador;
 use DateTimeImmutable;
-
 use app\models\Empresa;
 
 class FuncionarioController extends Controller {
@@ -19,7 +18,7 @@ class FuncionarioController extends Controller {
 
     public function listarTodos() {
         $data['lista'] = $this->funcionarioService->getFuncionarios();
-        $this->view('sistema/cadastros/funcionarios/funcionario_list', $data);
+        $this->view('administrador/funcionario/funcionario_list', $data);
     }
 
     public function listarFuncionario() {
@@ -46,7 +45,8 @@ class FuncionarioController extends Controller {
             return;
         }
 
-        $empresa = new Empresa($_POST['id_empresa'], '', '', '', '', '', '');
+        $empresa = new Empresa();
+        $empresa->setId($_POST['id_empresa']);
         
         $funcionario = new Funcionario(
             0,
@@ -73,17 +73,17 @@ class FuncionarioController extends Controller {
 
         $id = $_GET['id'];
         $data['funcionario'] = $this->funcionarioService->getFuncionarioById($id);
-        $this->view('funcionarios/funcionario_edit', $data);
+        $this->view('administrador/funcionario/funcionario_edit', $data);
     }
 
     public function excluir() {
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/funcionarios');
+            $this->redirect(URL_BASE . '/gestor/funcionarios');
         }
 
         $id = $_GET['id'];
         $this->funcionarioService->deleteFuncionario($id);
-        $this->redirect(URL_BASE . '/funcionarios');
+        $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
 
     public function atualizar() {
@@ -91,7 +91,7 @@ class FuncionarioController extends Controller {
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['funcionario'] = $_POST;
-            $this->view('funcionarios/funcionario_edit', $data);
+            $this->view('admnistrador/funcionario/funcionario_edit', $data);
             return;
         }
 
