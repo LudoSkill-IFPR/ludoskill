@@ -2,13 +2,13 @@
 
 namespace app\models;
 
-use DateTimeImmutable;
+// use DateTimeImmutable;
 
 class Usuario
 {
     private int $id;
     private string $nomeCompleto;
-    private dateTimeImmutable $dataNascimento;
+    private string $dataNascimento; //talvez tenha que mudar o tipo.
     private string $cpf;
     private string $email;
     private string $senha;
@@ -18,7 +18,7 @@ class Usuario
     public function __construct(
         int $id = 0,
         string $nomeCompleto = '',
-        DateTimeImmutable $dataNascimento = new DateTimeImmutable(),
+        string $dataNascimento = '',
         string $cpf = '',
         string $email = '',
         string $senha = '',
@@ -71,18 +71,6 @@ class Usuario
         $this->nomeCompleto = $nomeCompleto;
 
         return $this;
-    }
-
-    public function getDataNascimento(): DateTimeImmutable
-    {
-        return $this->dataNascimento;
-    }
-
-    public function setDataNascimento(DateTimeImmutable $dataNascimento): DateTimeImmutable
-    {
-        $this->dataNascimento = $dataNascimento;
-
-        return $this->dataNascimento;
     }
 
     public function getCpf(): string
@@ -141,6 +129,18 @@ class Usuario
     public function setPerfil(?string $perfil): self
     {
         $this->perfil = $perfil;
+
+        return $this;
+    }
+
+    public function getDataNascimento(): string
+    {
+        return $this->dataNascimento;
+    }
+
+    public function setDataNascimento(string $dataNascimento): self
+    {
+        $this->dataNascimento = $dataNascimento;
 
         return $this;
     }

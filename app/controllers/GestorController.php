@@ -6,13 +6,24 @@ use app\core\Controller;
 use app\models\Gestor;
 use app\models\Empresa;
 use app\services\GestorService;
+use app\services\EmpresaService;
 use app\helpers\Validador;
 
 class GestorController extends Controller {
 
     private GestorService $gestorService;
+    private EmpresaService $empresaService;
+
+    public function inicial()
+    {
+        $this->autenticacaoRequired();
+
+        $this->view('gestor/inicial');
+    }
+
     public function __construct() {
         $this->gestorService = new GestorService();
+        $this->empresaService = new EmpresaService();
     }
 
     public function listarTodos() {
@@ -31,7 +42,7 @@ class GestorController extends Controller {
     }
 
     public function criar() {
-        $data['empresas'] = $this->gestorService->getEmpresas();
+        $data['empresas'] = $this->empresaService->getEmpresas();
         $this->view('gestores/gestor_create', $data);
     }
 
@@ -40,7 +51,7 @@ class GestorController extends Controller {
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['gestor'] = $_POST;
-            $data['empresas'] = $this->gestorService->getEmpresas();
+            $data['empresas'] = $this->empresaService->getEmpresas();
             $this->view('gestores/gestor_create', $data);
             return;
         }
@@ -68,7 +79,7 @@ class GestorController extends Controller {
 
         $id = $_GET['id'];
         $data['gestor'] = $this->gestorService->getGestorById($id);
-        $data['empresas'] = $this->gestorService->getEmpresas();
+        $data['empresas'] = $this->empresaService->getEmpresas();
         $this->view('gestores/gestor_edit', $data);
     }
 
@@ -87,7 +98,7 @@ class GestorController extends Controller {
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['gestor'] = $_POST;
-            $data['empresas'] = $this->gestorService->getEmpresas();
+            $data['empresas'] = $this->empresaService->getEmpresas();
             $this->view('gestores/gestor_edit', $data);
             return;
         }

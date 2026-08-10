@@ -9,19 +9,30 @@ use app\helpers\Validador;
 use DateTimeImmutable;
 use app\models\Empresa;
 
-class FuncionarioController extends Controller {
+class FuncionarioController extends Controller
+{
     private FuncionarioService $funcionarioService;
 
-    public function __construct() {
+    public function inicial()
+    {
+        $this->autenticacaoRequired();
+
+        $this->view('funcionario/inicial');
+    }
+
+    public function __construct()
+    {
         $this->funcionarioService = new FuncionarioService();
     }
 
-    public function listarTodos() {
+    public function listarTodos()
+    {
         $data['lista'] = $this->funcionarioService->getFuncionarios();
         $this->view('administrador/funcionario/funcionario_list', $data);
     }
 
-    public function listarFuncionario() {
+    public function listarFuncionario()
+    {
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/funcionarios');
         }
@@ -31,11 +42,13 @@ class FuncionarioController extends Controller {
         $this->view('sistema/cadastros/funcionarios/funcionario_list', $data);
     }
 
-    public function criar() {
+    public function criar()
+    {
         $this->view('administrador/funcionario/funcionario_create', []);
     }
 
-    public function salvar() {
+    public function salvar()
+    {
         $erros = Validador::validarFuncionario($_POST);
         print_r($erros);
         if (!empty($erros)) {
@@ -47,7 +60,7 @@ class FuncionarioController extends Controller {
 
         $empresa = new Empresa();
         $empresa->setId($_POST['id_empresa']);
-        
+
         $funcionario = new Funcionario(
             0,
             $_POST['nome_completo'],
@@ -66,7 +79,8 @@ class FuncionarioController extends Controller {
         $this->listarTodos();
     }
 
-    public function editar() {
+    public function editar()
+    {
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/funcionarios');
         }
@@ -76,7 +90,8 @@ class FuncionarioController extends Controller {
         $this->view('administrador/funcionario/funcionario_edit', $data);
     }
 
-    public function excluir() {
+    public function excluir()
+    {
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/gestor/funcionarios');
         }
@@ -86,7 +101,8 @@ class FuncionarioController extends Controller {
         $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
 
-    public function atualizar() {
+    public function atualizar()
+    {
         $erros = Validador::validarFuncionario($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;

@@ -32,4 +32,5 @@ class GestorService {
     public function updateGestor(Gestor $gestor) {
         return $this->repository->updateGestor($gestor);
     }
+
 }

@@ -23,19 +23,46 @@ class AutenticacaoController extends Controller
 
     public function logar()
     {
+        $email = $_POST['email'] ?? '';
+        $senha = $_POST['senha'] ?? '';
 
-        $email = $_POST['email'];
-        $senha = $_POST['senha'];
+        $usuario = $this->autenticacaoService->logar($email, $senha);
 
-        $resultado = $this->autenticacaoService->logar($email, $senha);
-
-        if ($resultado) {
-            $this->redirect(URL_BASE . '/jogadores');
-        } else {
-
-            $dados['erros'] = "Uma linda mensagem de erro";
-
-            $this->view('login', $dados);
+        if (!$usuario) {
+            $data['erro'] = 'E-mail ou senha incorretos.';
+            $this->view('entrada/login', $data);
+            return;
         }
+
+        if ($usuario->getPerfil() === null) {
+            session_destroy();
+
+            $this->redirect(URL_BASE . '/cadastro-nao-liberado');
+        }
+
+        switch ($usuario->getPerfil()) {
+
+            case 'admin':
+                $this->redirect(URL_BASE . '/administrador/inicial');
+                break;
+
+            case 'gestor':
+                $this->redirect(URL_BASE . '/gestor/inicial');
+                break;
+
+            case 'funcionario':
+                $this->redirect(URL_BASE . '/funcionario/inicial');
+                break;
+
+            default:
+                session_destroy();
+
+                $this->redirect(URL_BASE . '/cadastro-nao-liberado');
+        }
+    }
+
+    public function cadastroNaoLiberado()
+    {
+        $this->view('entrada/cadastro_nao_liberado');
     }
 }

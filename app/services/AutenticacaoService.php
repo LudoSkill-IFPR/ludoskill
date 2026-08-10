@@ -1,37 +1,38 @@
-<?php 
+<?php
 
 namespace app\services;
 
 use app\repositories\UsuarioRepository;
+use app\models\Usuario;
 
-class AutenticacaoService {
-
+class AutenticacaoService
+{
     private UsuarioRepository $usuarioRepository;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->usuarioRepository = new UsuarioRepository();
     }
 
-
-    public function logar(string $email, string $senha) : bool {
-
+    public function logar(string $email, string $senha): ?Usuario
+    {
         $usuario = $this->usuarioRepository->getUsuarioByEmail($email);
 
-        if ($usuario && password_verify($senha, $usuario->getSenha())) {
-
-            $_SESSION['usuario_logado'] = $usuario;
-            return true;
-            
+        if (!$usuario) {
+            return null;
         }
 
-        return false;
+        if (!password_verify($senha, $usuario->getSenha())) {
+            return null;
+        }
+
+        $_SESSION['usuario_logado'] = $usuario;
+
+        return $usuario;
     }
 
-    public function logout(){
+    public function logout(): void
+    {
         session_destroy();
     }
-
-
-
-
 }

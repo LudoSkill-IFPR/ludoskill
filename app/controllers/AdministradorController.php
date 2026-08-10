@@ -1,8 +1,5 @@
 <?php
 
-/**
- * TODO VERIFICAR SE ESTA CORRETO
- */
 
 namespace app\controllers;
 
@@ -12,5 +9,10 @@ use app\services\UsuarioService;
 
 class AdministradorController extends UsuarioController
 {
-    //Vai ter função para um caralho
+    public function inicial()
+    {
+        $this->adminRequired();
+
+        $this->view('administrador/inicial');
+    }
 }

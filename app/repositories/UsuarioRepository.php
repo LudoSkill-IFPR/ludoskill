@@ -42,20 +42,43 @@ class UsuarioRepository{
         return Usuario::arrayParaObjeto($usuario);
     }
 
-    public function getUsuarioByEmail(string $email): Usuario{
-        $stm = $this->connection->prepare("SELECT * FROM usuario WHERE email = :email");
-        $stm->bindValue('email', $email);
+    public function getUsuarioByEmail(string $email): ?Usuario
+    {
+        $sql = "
+            SELECT 
+                u.*,
+                CASE
+                    WHEN a.id_administrador IS NOT NULL THEN 'admin'
+                    WHEN g.id_gestor IS NOT NULL THEN 'gestor'
+                    WHEN f.id_funcionario IS NOT NULL THEN 'funcionario'
+                    ELSE NULL
+                END AS perfil
+            FROM Usuarios u
+            LEFT JOIN Administradores a 
+                ON a.id_usuario = u.id_usuario
+            LEFT JOIN Gestores g 
+                ON g.id_usuario = u.id_usuario
+            LEFT JOIN Funcionarios f 
+                ON f.id_usuario = u.id_usuario
+            WHERE u.email = :email
+        ";
 
-        $stm->execute();
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindValue(':email', $email);
+        $stmt->execute();
 
-        $usuario = $stm->fetch();
+        $usuario = $stmt->fetch();
+
+        if (!$usuario) {
+            return null;
+        }
 
         return Usuario::arrayParaObjeto($usuario);
     }
 
     public function updateUsuario(Usuario $usuario): bool
     {
-        $sql = "UPDATE usuario
+        $sql = "UPDATE Usuarios
                 SET nome_completo = :nomeCompleto,
                     data_nascimento = :dataNascimento,
                     cpf = :cpf,
@@ -79,7 +102,7 @@ class UsuarioRepository{
 
     public function saveUsuario(Usuario $usuario)
     {
-        $sql = "INSERT INTO usuario 
+        $sql = "INSERT INTO Usuarios 
                 (nome_completo, data_nascimento, cpf, email, senha_hash, numero_telefone)
                 VALUES
                 (:nomeCompleto, :dataNascimento, :cpf, :email, :senha, :numeroTelefone)";
