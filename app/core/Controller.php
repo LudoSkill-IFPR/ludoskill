@@ -46,4 +46,27 @@ class Controller
 
         return true;
     }
+
+    protected function gestorRequired()
+    {
+        if (
+            !isset($_SESSION['usuario_logado']) ||
+            $_SESSION['usuario_logado']->getPerfil() !== 'gestor'
+        ) {
+            $this->redirect(URL_BASE . '/login');
+        }
+
+        return true;
+    }
+
+    protected function funcionarioRequired()
+    {
+        if (
+            !isset($_SESSION['usuario_logado']) ||
+            $_SESSION['usuario_logado']->getPerfil() !== 'funcionario'
+        ) {
+            $this->redirect(URL_BASE . '/login');
+        }
+        return true;
+    }
 }

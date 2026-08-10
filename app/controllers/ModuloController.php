@@ -49,12 +49,12 @@ class ModuloController extends Controller
         $modulo->setMinEstrelasLiberacao($_POST['min_estrelas_liberacao']);
 
         $this->moduloService->saveModulo($modulo);
-        $this->redirect(URL_BASE . '/modulos');
+        $this->redirect(URL_BASE . '/administrador/modulos');
     }
 
     public function editar(){
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/modulos');
+            $this->redirect(URL_BASE . '/administrador/modulos');
         }
 
         $id = $_GET['id'];
@@ -65,7 +65,7 @@ class ModuloController extends Controller
     public function excluir(){
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         if (empty($id)) {
-            $this->redirect(URL_BASE . '/modulos');
+            $this->redirect(URL_BASE . '/administrador/modulos');
         }
 
         $this->moduloService->deleteModulo($id);
