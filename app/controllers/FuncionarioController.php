@@ -50,7 +50,6 @@ class FuncionarioController extends Controller
     public function salvar()
     {
         $erros = Validador::validarFuncionario($_POST);
-        print_r($erros);
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['funcionario'] = $_POST;
@@ -107,23 +106,28 @@ class FuncionarioController extends Controller
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['funcionario'] = $_POST;
-            $this->view('admnistrador/funcionario/funcionario_edit', $data);
+            $this->view('administrador/funcionario/funcionario_edit', $data); // corrige o typo "admnistrador"
             return;
         }
 
-        $empresa = new \app\models\Empresa($_POST['empresa_id'], '', '', '', '', '', '');
+        // Busca a senha atual para não sobrescrever quando o campo vier em branco
+        $funcionarioAtual = $this->funcionarioService->getFuncionarioById($_POST['id_funcionario']);
+        $senha = !empty($_POST['senha_hash']) ? $_POST['senha_hash'] : $funcionarioAtual->getSenha();
+
+        $empresa = (new Empresa())->setId((int) $_POST['id_empresa']); // usa setId() em vez de passar no construtor
+
         $funcionario = new Funcionario(
-            $_POST['id'],
+            (int) $_POST['id_funcionario'],
             $_POST['nome_completo'],
             new \DateTimeImmutable($_POST['data_nascimento']),
             $_POST['cpf'],
             $_POST['email'],
-            $_POST['senha'],
+            $senha,
             $_POST['numero_telefone'],
             $empresa,
-            $_POST['bolotas_totais'],
-            $_POST['pontuacao_total'],
-            $_POST['nivel']
+            (int) $_POST['bolotas_totais'],
+            (int) $_POST['pontuacao_total'],
+            (int) $_POST['nivel']
         );
 
         $this->funcionarioService->updateFuncionario($funcionario);

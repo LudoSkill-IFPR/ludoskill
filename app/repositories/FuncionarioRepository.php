@@ -64,19 +64,24 @@ class FuncionarioRepository{
     }
 
     public function updateFuncionario(Funcionario $funcionario){
-        $sql = "UPDATE Funcionarios SET nome_completo = :nomeCompleto, data_nascimento = :dataNascimento, cpf = :cpf, email = :email, senha = :senha, numero_telefone = :numeroTelefone, bolotas_totais = :bolotasTotais, pontuacao_total = :pontuacaoTotal, nivel = :nivel, id_empresa = :idEmpresa WHERE id_funcionario = :id";
+        $sql = "UPDATE Usuarios SET nome_completo = :nomeCompleto, data_nascimento = :dataNascimento, cpf = :cpf, email = :email, senha = :senha, numero_telefone = :numeroTelefone WHERE id_usuario = :id";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('nomeCompleto', $funcionario->getNomeCompleto());
-        $stm->bindValue('dataNascimento', $funcionario->getDataNascimento());
+        $stm->bindValue('dataNascimento', $funcionario->getDataNascimento()->format('Y-m-d'));
         $stm->bindValue('cpf', $funcionario->getCpf());
         $stm->bindValue('email', $funcionario->getEmail());
-        $stm->bindValue('senha', password_hash($funcionario->getSenha(), PASSWORD_DEFAULT));
+        $stm->bindValue('senha_hash', password_hash($funcionario->getSenha(), PASSWORD_DEFAULT));
         $stm->bindValue('numeroTelefone', $funcionario->getNumeroTelefone());
+        $stm->bindValue('id_usuario', $_POST['id_usuario']);
+        $stm->execute();
+
+        $sql = "UPDATE Funcionarios SET bolotas_totais = :bolotasTotais, pontuacao_total = :pontuacaoTotal, nivel = :nivel, id_empresa = :idEmpresa WHERE id_funcionario = :id";
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('idUsuario', $_POST['id_usuario']);
         $stm->bindValue('bolotasTotais', $funcionario->getBolotasTotais());
         $stm->bindValue('pontuacaoTotal', $funcionario->getPontuacaoTotal());
         $stm->bindValue('nivel', $funcionario->getNivel());
         $stm->bindValue('idEmpresa', $funcionario->getEmpresa()->getId());
-        $stm->bindValue('id', $funcionario->getId());
         return $stm->execute();
     }
 
