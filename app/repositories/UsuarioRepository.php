@@ -4,6 +4,7 @@ namespace app\repositories;
 
 use app\database\ConnectionFactory;
 use app\models\Usuario;
+use DateTimeImmutable;
 use PDO;
 
 class UsuarioRepository{
@@ -72,6 +73,10 @@ class UsuarioRepository{
         if (!$usuario) {
             return null;
         }
+
+        $usuario['data_nascimento'] = new DateTimeImmutable($usuario['data_nascimento']);
+
+        var_dump($usuario);
 
         return Usuario::arrayParaObjeto($usuario);
     }

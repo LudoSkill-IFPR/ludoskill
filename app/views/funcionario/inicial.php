@@ -1,10 +1,29 @@
+<?php
+use app\repositories\FuncionarioRepository;
+
+$funcionarioRepository = new FuncionarioRepository();
+
+$usuario = $_SESSION['usuario_logado'];
+
+$funcionarios = $funcionarioRepository->getFuncionarios();
+$funcionario = "";
+
+foreach ($funcionarios as $func) {
+    if($usuario->getId() == $func['id_usuario']){
+        $funcionario = $func;
+        break;
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="assets/css/inicialFuncionario.css">
+    <link rel="stylesheet" href="../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../assets/css/inicialFuncionario.css">
     <title>LudoSkill</title>
 </head>
 <body>
@@ -16,18 +35,18 @@
     <main>
         <div class="container">
 
-            <h1>Olá, [nome do funcionário]!</h1>
+            <h1>Olá, <?= $usuario->getNomeCompleto() ?>!</h1>
             <h2 class="mensagem">Continue trilhando seu caminho para a qualificação</h2>
             
             <section class="infobase">
                 <div class="card">
                     <h3>Saldo de bolotas:</h3>
-                    <span>B$[N° de bolotas]</span>
+                    <span>B$<?= $funcionario['bolotas_totais'] ?></span>
                 </div>
 
                 <div class="card">
                     <h3>Desempenho atual:</h3>
-                    <span><i class="bi bi-star-fill brilhinho"></i> [Desempenho]</span>
+                    <span><i class="bi bi-star-fill brilhinho"></i></span>
                 </div>
                 
                 <div id="loja" class="card verde">

@@ -31,7 +31,7 @@
 
     <main>
         <div class="card">
-            <form action="" method="post">
+            <form action="<?= URL_BASE ?>/logar" method="post">
                 <img id="skillo" src="assets/imagens/icone-ludoskill-transparente.png" alt="">
                 <h1>Bem vindo de volta!</h1>
             
