@@ -1,0 +1,65 @@
+:root{
+    --verde: #38ff4c;
+    --verde-escuro: #1fad54;
+    --verde-claro: #9bff95;
+    --verde-escurao: #09704b;
+
+    --roxo: #9933dd;
+    --roxo-claro: #c156ed;
+    --roxo-escuro: #631da8;
+    --roxo-escurao: #37116d;
+
+    --cinza-escuro: #333333;
+    --cinza-escurao: #222222;
+    --cinza-ultraescuro: #111111;
+}
+
+main{
+    width: 100vw;
+
+    display: flex;
+    justify-content: center;
+}
+
+.card{
+    margin-top: 50px;
+    width: 400px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.formgroup{
+    margin: 10px 0px;
+    width: 90%;
+}
+
+.formgroup label:not(.lembrar){
+    display: block;
+}
+.formgroup input:not(.lembrar){
+    width: 100%;
+}
+
+button{
+    margin-top: 20px;
+    width: 90%;
+}
+
+label.lembrar{
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+#skillo{
+    width: 150px;
+    margin-bottom: 10px;
+}
+
+h1{
+    margin-bottom: 30px;
+}

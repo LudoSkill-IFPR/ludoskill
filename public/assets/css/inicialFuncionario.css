@@ -1,0 +1,106 @@
+main{
+    display: flex;
+    justify-content: center;
+}
+
+.container{
+    width: 80%;
+}
+
+h1{
+    font-size: 25px;
+}
+
+.mensagem{
+    font-weight: 400;
+    font-size: 18px;
+}
+
+section{
+    margin-bottom: 20px;
+}
+
+.card{
+    background: radial-gradient(at right bottom, var(--cinza-escuro), var(--cinza-ultraescuro) 60%);
+    
+}
+
+.verde{
+    background: linear-gradient(to top, var(--verde-escurao), var(--verde-escuro));
+    border: 2px solid var(--verde-escurao);
+}
+
+#loja a{
+    color: white;
+}
+
+.brilhinho:hover{
+    text-shadow: 0px 0px 5px white;
+    transition: 0.3s;
+}
+
+.card-secundario{
+    width: fit-content;
+    padding: 20px;
+    
+    border-radius: 20px;
+    border: 2px solid var(--cinza-escurao);
+    background: var(--cinza-ultraescuro);
+}
+
+.infobase{
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.infobase .card{
+    width: 350px;
+    height: 100px;
+    margin-top: 20px;
+}
+
+.progresso{
+    display: flex;
+    justify-content: space-between;
+}
+
+.progresso #fase{
+    width: 750px;
+}
+
+.progresso #progresso{
+    width: 400px;
+}
+
+h2, #fase h3, .inventario p{
+    margin-bottom: 20px;
+}
+
+#fase .card-secundario{
+    height: 200px;
+    width: 100%;
+}
+
+#fase .botao{
+    display: block;
+    
+    width: 200px;
+    margin-top: 20px;
+    
+    text-align: center;
+}
+
+#inventario{
+    list-style-type: none;
+    flex-flow: row wrap;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.inventario .card{
+    width: 100%;
+}

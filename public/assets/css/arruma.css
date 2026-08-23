@@ -1,0 +1,35 @@
+:root{
+    --verde: #38ff4c;
+    --verde-escuro: #1fad54;
+    --verde-claro: #9bff95;
+    --verde-escurao: #09704b;
+
+    --roxo: #9933dd;
+    --roxo-claro: #c156ed;
+    --roxo-escuro: #631da8;
+    --roxo-escurao: #37116d;
+}
+
+#apresentacao{
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.container{
+    width: 45%;
+}
+
+.container h1{
+    font-size: 45pt;
+    line-height: 1;
+}
+
+.container p{
+    margin: 30px 0px;
+}
+
+.container img{
+    width: 100%;
+}

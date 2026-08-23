@@ -1,0 +1,128 @@
+:root{
+    --verde: #38ff4c;
+    --verde-escuro: #1fad54;
+    --verde-claro: #9bff95;
+    --verde-escurao: #09704b;
+
+    --roxo: #9933dd;
+    --roxo-claro: #c156ed;
+    --roxo-escuro: #631da8;
+    --roxo-escurao: #37116d;
+
+    --cinza-escuro: #333333;
+    --cinza-escurao: #222222;
+    --cinza-ultraescuro: #111111;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    box-sizing: border-box;
+    color: white;
+}
+
+body{
+    background: black;
+    background: radial-gradient(at right bottom, var(--roxo), black 50%);
+    
+    height: 100vh;
+    overflow: hidden;
+}
+
+nav{
+    height: 70px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#homepage{
+    height: 50px;
+    width: 900px;
+    padding-left: 10px;
+}
+
+#icone, #logo{
+    height: inherit;
+}
+
+#navegacao{
+    width: 400px;
+
+    list-style-type: none;
+
+    display: flex;
+    justify-content: space-evenly;
+}
+
+a{
+    text-decoration: none;  
+}
+
+a:hover:not(.botao){
+    color: var(--verde-escuro);
+}
+
+strong{
+    color: var(--verde-escuro);
+}
+
+.botao{
+    background: radial-gradient(at left bottom, var(--cinza-ultraescuro), var(--cinza-escuro));
+    border: 2px solid var(--cinza-escurao);
+
+    padding: 10px;
+    border-radius: 10px;
+
+    transition: 0.3s;
+}
+
+.brilho:hover{
+    background: radial-gradient(at left bottom, var(--verde-escurao), var(--verde-escuro));
+    border-color: var(--verde-escuro);
+    box-shadow: 0px 0px 10px var(--verde-escuro);
+}
+
+.seletor{
+    appearance: base-select;
+
+    background: radial-gradient(at left bottom, var(--cinza-ultraescuro), var(--cinza-escuro));
+    border: 2px solid var(--cinza-escurao);
+
+    width: 100px;
+    padding: 5px 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.seletor:hover{
+    background: radial-gradient(at left bottom, var(--cinza-escurao), #444444);
+}
+
+.seletor::picker(select){
+    appearance: base-select;
+    background-color: var(--cinza-escurao);
+    /* border: 2px solid var(--cinza-escurao); */
+
+    border-radius: 0px 0px 5px 5px;
+}
+
+.seletor option{
+    padding: 5px;
+}
+
+.seletor option::checkmark{
+    display: none;
+}
+
+.card{
+    width: fit-content;
+    padding: 20px;
+    
+    border: 2px solid var(--cinza-escurao);
+    border-radius: 20px;
+    background: radial-gradient(at right bottom, var(--cinza-escuro), var(--cinza-ultraescuro) 60%);
+}
