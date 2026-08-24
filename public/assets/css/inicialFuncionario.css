@@ -1,51 +1,13 @@
-main{
-    display: flex;
-    justify-content: center;
-}
-
-.container{
-    width: 80%;
-}
-
 h1{
     font-size: 25px;
-}
-
-.mensagem{
-    font-weight: 400;
-    font-size: 18px;
 }
 
 section{
     margin-bottom: 20px;
 }
 
-.card{
-    background: radial-gradient(at right bottom, var(--cinza-escuro), var(--cinza-ultraescuro) 60%);
-    
-}
-
-.verde{
-    background: linear-gradient(to top, var(--verde-escurao), var(--verde-escuro));
-    border: 2px solid var(--verde-escurao);
-}
-
 #loja a{
     color: white;
-}
-
-.brilhinho:hover{
-    text-shadow: 0px 0px 5px white;
-    transition: 0.3s;
-}
-
-.card-secundario{
-    width: fit-content;
-    padding: 20px;
-    
-    border-radius: 20px;
-    border: 2px solid var(--cinza-escurao);
-    background: var(--cinza-ultraescuro);
 }
 
 .infobase{
@@ -95,9 +57,11 @@ h2, #fase h3, .inventario p{
 
 #inventario{
     list-style-type: none;
-    flex-flow: row wrap;
+
     display: flex;
+    flex-flow: row wrap;
     justify-content: center;
+    align-items: start;
     gap: 20px;
 }
 
