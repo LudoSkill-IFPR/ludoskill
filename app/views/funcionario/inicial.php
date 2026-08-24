@@ -30,7 +30,7 @@ foreach ($funcionarios as $func) {
 <body>
 
     <header>
-        <?php include_once(__DIR__ . "/../includes/menuFuncionario.html"); ?>
+        <?php include_once(__DIR__ . "/../includes/menuFuncionario.php"); ?>
     </header>
 
     <main>
@@ -52,7 +52,7 @@ foreach ($funcionarios as $func) {
                 
                 <div id="loja" class="card verde">
                     <h3><i class="bi bi-cart-fill"></i> Loja</h3>
-                    <a class="brilhinho" href="#">Acessar loja <i class="bi bi-caret-right-fill"></i></a>
+                    <a class="brilhinho" href="loja">Acessar loja <i class="bi bi-caret-right-fill"></i></a>
                 </div>
             </section>
             

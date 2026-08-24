@@ -62,6 +62,11 @@ class ItemController extends Controller
         $this->view('/administrador/itens/item_list', $data);
     }
 
+    public function listarTodosFuncionario() {
+        $data['lista'] = $this->itemService->getItems();
+        $this->view('/funcionario/loja', $data);
+    }
+
     public function listarItem() {
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/administrador/itens/item_list');

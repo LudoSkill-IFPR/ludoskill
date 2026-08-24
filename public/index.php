@@ -51,4 +51,7 @@ $router->get('/administrador/inicial', 'AdministradorController@inicial');
 $router->get('/gestor/inicial', 'GestorController@inicial');
 $router->get('/funcionario/inicial', 'FuncionarioController@inicial');
 
+$router->get('/funcionario/loja', 'ItemController@listarTodosFuncionario');
+$router->get('/funcionario/modulos', 'ModuloController@listarTodosFuncionario');
+
 $router->run();

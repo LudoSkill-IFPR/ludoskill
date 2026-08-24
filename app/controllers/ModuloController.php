@@ -20,6 +20,11 @@ class ModuloController extends Controller
         $this->view('/administrador/modulos/modulo_list', $data);
     }
 
+    public function listarTodosFuncionario() {
+        $data['lista'] = $this->moduloService->getModulos();
+        $this->view('/funcionario/modulos', $data);
+    }
+
     public function listarModulo(){
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/administrador/modulos');

@@ -91,11 +91,10 @@ class FuncionarioController extends Controller
 
     public function excluir()
     {
-        if (!isset($_GET['id'])) {
+        if (!isset($_POST['id'])) {
             $this->redirect(URL_BASE . '/gestor/funcionarios');
         }
-
-        $id = $_GET['id'];
+        $id = $_POST['id'];
         $this->funcionarioService->deleteFuncionario($id);
         $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
@@ -131,6 +130,6 @@ class FuncionarioController extends Controller
         );
 
         $this->funcionarioService->updateFuncionario($funcionario);
-        $this->redirect(URL_BASE . '/funcionarios');
+        $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
 }

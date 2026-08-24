@@ -33,7 +33,7 @@ class FuncionarioRepository{
 
     public function saveFuncionario(Funcionario $funcionario){
 
-        $sql = "INSERT INTO Usuarios (nome_completo, data_nascimento, cpf, email, senha_hash, numero_telefone) VALUES (:nomeCompleto, :dataNascimento, :cpf, :email, :senha_hash, :numeroTelefone)";
+        $sql = "INSERT INTO Usuarios (nome_completo, data_nascimento, CPF, email, senha_hash, numero_telefone) VALUES (:nomeCompleto, :dataNascimento, :cpf, :email, :senha_hash, :numeroTelefone)";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('nomeCompleto', $funcionario->getNomeCompleto());
         $stm->bindValue('dataNascimento', $funcionario->getDataNascimento()->format('Y-m-d'));
@@ -64,20 +64,20 @@ class FuncionarioRepository{
     }
 
     public function updateFuncionario(Funcionario $funcionario){
-        $sql = "UPDATE Usuarios SET nome_completo = :nomeCompleto, data_nascimento = :dataNascimento, cpf = :cpf, email = :email, senha = :senha, numero_telefone = :numeroTelefone WHERE id_usuario = :id";
+        $sql = "UPDATE Usuarios SET nome_completo = :nomeCompleto, data_nascimento = :dataNascimento, CPF = :cpf, email = :email, senha_hash = :senha, numero_telefone = :numeroTelefone WHERE id_usuario = :id";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('nomeCompleto', $funcionario->getNomeCompleto());
         $stm->bindValue('dataNascimento', $funcionario->getDataNascimento()->format('Y-m-d'));
         $stm->bindValue('cpf', $funcionario->getCpf());
         $stm->bindValue('email', $funcionario->getEmail());
-        $stm->bindValue('senha_hash', password_hash($funcionario->getSenha(), PASSWORD_DEFAULT));
+        $stm->bindValue('senha', password_hash($funcionario->getSenha(), PASSWORD_DEFAULT));
         $stm->bindValue('numeroTelefone', $funcionario->getNumeroTelefone());
-        $stm->bindValue('id_usuario', $_POST['id_usuario']);
+        $stm->bindValue('id', $_POST['id_usuario']);
         $stm->execute();
 
-        $sql = "UPDATE Funcionarios SET bolotas_totais = :bolotasTotais, pontuacao_total = :pontuacaoTotal, nivel = :nivel, id_empresa = :idEmpresa WHERE id_funcionario = :id";
+        $sql = "UPDATE Funcionarios SET bolotas_totais = :bolotasTotais, pontuacao_total = :pontuacaoTotal, nivel = :nivel, id_empresa = :idEmpresa WHERE id_usuario = :id";
         $stm = $this->connection->prepare($sql);
-        $stm->bindValue('idUsuario', $_POST['id_usuario']);
+        $stm->bindValue('id', $_POST['id_usuario']);
         $stm->bindValue('bolotasTotais', $funcionario->getBolotasTotais());
         $stm->bindValue('pontuacaoTotal', $funcionario->getPontuacaoTotal());
         $stm->bindValue('nivel', $funcionario->getNivel());
