@@ -14,11 +14,6 @@
         <?php include_once (__DIR__. "/../includes/menuFuncionario.html") ?>
     </header>
 
-    <body>
-    <header>
-        <?php include_once (__DIR__. "/../includes/menuFuncionario.html") ?>
-    </header>
-
     <main>
         <div class="container">
             <div class="topo">
