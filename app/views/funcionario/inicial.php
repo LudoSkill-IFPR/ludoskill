@@ -25,6 +25,7 @@ foreach ($funcionarios as $func) {
     <link rel="stylesheet" href="../assets/css/geralUsuario.css">
     <link rel="stylesheet" href="../assets/css/inicialFuncionario.css">
     <title>LudoSkill</title>
+    
 </head>
 <body>
 
@@ -40,18 +41,18 @@ foreach ($funcionarios as $func) {
             
             <section class="infobase">
                 <div class="card">
-                    <h3>Saldo de bolotas:</h3>
-                    <span>B$<?= $funcionario['bolotas_totais'] ?></span>
+                    <h3><img src="" alt="icone de bolotas">Saldo de bolotas:</h3>
+                    <p>B$<?= $funcionario['bolotas_totais'] ?></p>
                 </div>
 
                 <div class="card">
                     <h3>Desempenho atual:</h3>
-                    <span><i class="bi bi-star-fill brilhinho"></i></span>
+                    <p><i class="bi bi-star-fill brilhinho"></i>[Desempenho]</p>
                 </div>
                 
                 <div id="loja" class="card verde">
-                    <p>Loja</p>
-                    <a class="brilhinho" href="">Acessar loja <i class="bi bi-caret-right-fill"></i></a>
+                    <h3><i class="bi bi-cart-fill"></i> Loja</h3>
+                    <a class="brilhinho" href="#">Acessar loja <i class="bi bi-caret-right-fill"></i></a>
                 </div>
             </section>
             
@@ -64,7 +65,7 @@ foreach ($funcionarios as $func) {
                         <p>[Nome da fase]</p>
                         <p>[descrição da fase]</p>
             
-                        <a href="" class="botao brilho">iniciar</a>
+                        <a href="#" class="botao brilho">iniciar</a>
                     </div>
                 </div>
 
@@ -77,7 +78,7 @@ foreach ($funcionarios as $func) {
 
             <section class="inventario">
                 <div class="card">
-                    <h2>Inventário</h2>
+                    <h2><i class="bi bi-backpack4-fill"></i> Inventário</h2>
                     <p>Nossa, olha o que você já conquistou!</p>
 
                     <ul id="inventario">
