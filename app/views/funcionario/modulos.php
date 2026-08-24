@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../assets/css/geralUsuario.css">
     
     <title>LudoSkill - Módulos</title>
 </head>
 <body>
     
     <header>
-        <?php include_once (__DIR__. "/../includes/menuFuncionario.html") ?>
+        <?php include_once (__DIR__. "/../includes/menuFuncionario.php") ?>
     </header>
     
     <!-- tenho que ver como caralhos funciona o span e onde usar ele -->

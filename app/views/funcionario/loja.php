@@ -1,17 +1,35 @@
+<?php
+use app\repositories\FuncionarioRepository;
+
+$funcionarioRepository = new FuncionarioRepository();
+
+$usuario = $_SESSION['usuario_logado'];
+
+$funcionarios = $funcionarioRepository->getFuncionarios();
+$funcionario = "";
+
+foreach ($funcionarios as $func) {
+    if($usuario->getId() == $func['id_usuario']){
+        $funcionario = $func;
+        break;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="assets/css/lojaFuncionario.css">
+    <link rel="stylesheet" href="../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../assets/css/lojaFuncionario.css">
     
     <title>LudoSkill - Loja</title>
 </head>
 
 <body>
     <header>
-        <?php include_once (__DIR__. "/../includes/menuFuncionario.html") ?>
+        <?php include_once (__DIR__. "/../includes/menuFuncionario.php") ?>
     </header>
 
     <main>
