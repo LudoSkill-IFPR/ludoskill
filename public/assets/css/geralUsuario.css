@@ -61,6 +61,20 @@ nav{
     justify-content: space-between;
 }
 
+main{
+    display: flex;
+    justify-content: center;
+}
+
+.mensagem{
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.container{
+    width: 80%;
+}
+
 .card{
     width: fit-content;
     padding: 20px;
@@ -68,6 +82,15 @@ nav{
     border: 2px solid var(--cinza-escurao);
     border-radius: 20px;
     background: radial-gradient(at right bottom, var(--cinza-escuro), var(--cinza-ultraescuro) 60%);
+}
+
+.card-secundario{
+    width: fit-content;
+    padding: 20px;
+    
+    border-radius: 20px;
+    border: 2px solid var(--cinza-escurao);
+    background: var(--cinza-ultraescuro);
 }
 
 a{
@@ -94,3 +117,12 @@ a:hover:not(.botao){
     box-shadow: 0px 0px 10px var(--verde-escuro);
 }
 
+.brilhinho:hover{
+    text-shadow: 0px 0px 5px white;
+    transition: 0.3s;
+}
+
+.verde{
+    background: linear-gradient(to top, var(--verde-escurao), var(--verde-escuro));
+    border: 2px solid var(--verde-escurao);
+}
