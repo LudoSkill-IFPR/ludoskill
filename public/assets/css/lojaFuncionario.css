@@ -1,0 +1,40 @@
+#loja{
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+#itens{
+    width: 75%;
+}
+
+#itens ul{
+    list-style-type: none;
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+#itens a{
+    display: block;
+
+    margin-top: 10px;
+    text-align: center;
+}
+
+h2, h3{
+    margin-bottom: 20px;
+}
+
+.topo{
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+.card-secundario{
+    margin-bottom: 10px;
+}
