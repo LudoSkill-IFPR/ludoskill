@@ -14,7 +14,7 @@
             <a class="botao brilho" href="#"><i class="bi bi-person-circle"></i> Perfil</a>
 
             <div class="dropdown-menu">
-                <a href=""><i class="bi bi-door-open-fill"></i> Logout</a>
+                <a href="<?= URL_BASE ?>/logout"><i class="bi bi-door-open-fill"></i> Logout</a>
             </div>
         </li>
         
