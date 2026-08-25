@@ -9,10 +9,14 @@
         <li><a href="<?= URL_BASE ?>/funcionario/modulos">Módulos</a></li>
         <li><a href="<?= URL_BASE ?>/funcionario/loja">Loja</a></li>
         <!-- <li><a class="botao brilho" href="<?= URL_BASE ?>/funcionario/inicial"><i class="bi bi-person-circle"></i>Perfil</a></li> -->
-        <li><div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Dropdown button
-            </button>
-        </div></li>
+        
+        <li class="dropdown">
+            <a class="botao brilho" href="#"><i class="bi bi-person-circle"></i> Perfil</a>
+
+            <div class="dropdown-menu">
+                <a href=""><i class="bi bi-door-open-fill"></i> Logout</a>
+            </div>
+        </li>
+        
     </ul>
 </nav>
