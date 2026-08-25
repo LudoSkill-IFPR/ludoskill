@@ -19,6 +19,7 @@ class ExercicioController extends Controller{
     }
 
     public function listarTodos() {
+        $this->adminRequired();
         $data['lista'] = $this->exercicioService->getExercicios();
         $this->view('exercicios/exercicios_list', $data);
     }
@@ -27,6 +28,8 @@ class ExercicioController extends Controller{
 
     
 
+
+        $this->adminRequired();
 
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/exercicios');
@@ -38,10 +41,12 @@ class ExercicioController extends Controller{
     }
 
     public function criar(){
+        $this->adminRequired();
         $this->view('exercicios/exercicio_create', []);
     }
 
     public function salvar(){
+        $this->adminRequired();
         $erros = Validador::validarExercicio($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
@@ -62,6 +67,7 @@ class ExercicioController extends Controller{
     }
 
     public function editar(){
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/exercicios');
         }
@@ -73,6 +79,7 @@ class ExercicioController extends Controller{
     }
 
     public function excluir(){
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/exercicios');
         }
@@ -83,6 +90,7 @@ class ExercicioController extends Controller{
     }
 
     public function atualizar(){
+        $this->adminRequired();
         $erros = Validador::validarExercicio($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;

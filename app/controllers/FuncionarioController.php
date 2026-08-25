@@ -27,6 +27,7 @@ class FuncionarioController extends Controller
 
     public function listarTodos()
     {
+        $this->gestorRequired();
         $data['lista'] = $this->funcionarioService->getFuncionarios();
         $this->view('administrador/funcionario/funcionario_list', $data);
     }
@@ -44,11 +45,13 @@ class FuncionarioController extends Controller
 
     public function criar()
     {
+        $this->gestorRequired();
         $this->view('administrador/funcionario/funcionario_create', []);
     }
 
     public function salvar()
     {
+        $this->gestorRequired();
         $erros = Validador::validarFuncionario($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
@@ -80,6 +83,7 @@ class FuncionarioController extends Controller
 
     public function editar()
     {
+        $this->gestorRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/funcionarios');
         }
@@ -91,6 +95,7 @@ class FuncionarioController extends Controller
 
     public function excluir()
     {
+        $this->gestorRequired();
         if (!isset($_POST['id'])) {
             $this->redirect(URL_BASE . '/gestor/funcionarios');
         }
@@ -101,6 +106,7 @@ class FuncionarioController extends Controller
 
     public function atualizar()
     {
+        $this->gestorRequired();
         $erros = Validador::validarFuncionario($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;

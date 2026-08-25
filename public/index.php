@@ -11,6 +11,7 @@ $router->get('/', 'HomepageController@homepage');
 
 $router->get('/login', 'HomepageController@login');
 $router->post('/logar', 'AutenticacaoController@logar');
+$router->get('/logout', 'AutenticacaoController@logout');
 
 
 //modulos

@@ -1,3 +1,7 @@
+<?php
+use app\helpers\Auth;
+Auth::funcionario_required();
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

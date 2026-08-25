@@ -65,4 +65,10 @@ class AutenticacaoController extends Controller
     {
         $this->view('entrada/cadastro_nao_liberado');
     }
+
+    public function logout()
+    {
+        $this->autenticacaoService->logout();
+        $this->redirect(URL_BASE . '/');
+    }
 }

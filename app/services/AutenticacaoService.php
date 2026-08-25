@@ -33,6 +33,7 @@ class AutenticacaoService
 
     public function logout(): void
     {
+        unset($_SESSION['usuario_logado']);
         session_destroy();
     }
 }

@@ -58,16 +58,20 @@ class ItemController extends Controller
     }
 
     public function listarTodos() {
+        $this->adminRequired();
         $data['lista'] = $this->itemService->getItems();
         $this->view('/administrador/itens/item_list', $data);
     }
 
     public function listarTodosFuncionario() {
+        $this->autenticacaoRequired();
         $data['lista'] = $this->itemService->getItems();
         $this->view('/funcionario/loja', $data);
     }
 
     public function listarItem() {
+        $this->adminRequired();
+
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
@@ -78,6 +82,7 @@ class ItemController extends Controller
     }
 
     public function criar() {
+        $this->adminRequired();
         $this->view('/administrador/itens/item_create', []);
     }
 
@@ -122,6 +127,7 @@ class ItemController extends Controller
     }
 
     public function salvar() {
+        $this->adminRequired();
         $_POST['estado'] = $_POST['estado'] ?? '1';
         if ($_POST['estado'] === '') {
             $_POST['estado'] = '1';
@@ -158,6 +164,7 @@ class ItemController extends Controller
     }
 
     public function editar() {
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/administrador/itens');
         }
@@ -168,6 +175,7 @@ class ItemController extends Controller
     }
 
     public function excluir(){
+        $this->adminRequired();
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         if (!$id) {
             $this->redirect(URL_BASE . '/administrador/itens/item_list');
@@ -178,6 +186,7 @@ class ItemController extends Controller
     }
 
     public function atualizar() {
+        $this->adminRequired();
         if (!isset($_POST['id'])) {
             $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }

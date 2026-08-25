@@ -12,6 +12,7 @@
     --cinza-escuro: #333333;
     --cinza-escurao: #222222;
     --cinza-ultraescuro: #111111;
+    --verde-legal: #256f49;
 }
 
 *{
@@ -25,7 +26,7 @@
 
 body{
     background: black;
-    background: radial-gradient(at right bottom, var(--roxo), black 50%) fixed;
+    background: radial-gradient(at right bottom, var(--roxo), var(--verde-legal) 50%) fixed;
 
     height: 100vh;
 }

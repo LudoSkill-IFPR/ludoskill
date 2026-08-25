@@ -1,5 +1,8 @@
 <?php
 use app\repositories\FuncionarioRepository;
+use app\helpers\Auth;
+
+Auth::funcionario_required();
 
 $funcionarioRepository = new FuncionarioRepository();
 

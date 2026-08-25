@@ -14,6 +14,8 @@
         </a>
     </div>
 
+    <div><a href="<?= URL_BASE ?>/logout" class="btn btn-danger">logout</a></div>
+
     <div class="container">
         <h1 class="mt-5">Listagem de Itens</h1>
         <table class="table table-striped mt-3">

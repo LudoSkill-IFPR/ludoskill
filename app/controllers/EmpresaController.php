@@ -20,11 +20,14 @@ class EmpresaController extends Controller{
     }
 
     public function listarTodos() {
+        $this->adminRequired();
         $data['lista'] = $this->empresaService->getEmpresas();
         $this->view('/administrador/empresas/empresa_list', $data);
     }
 
     public function listarEmpresa(){
+        $this->adminRequired();
+
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/administrador/empresas');
         }
@@ -35,10 +38,12 @@ class EmpresaController extends Controller{
     }
 
     public function criar(){
+        $this->adminRequired();
         $this->view('/administrador/empresas/empresa_create', []);
     }
 
     public function salvar(){
+        $this->adminRequired();
         $erros = Validador::validarEmpresa($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
@@ -59,6 +64,7 @@ class EmpresaController extends Controller{
     }
 
     public function editar(){
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/administrador/empresas');
         }
@@ -70,6 +76,7 @@ class EmpresaController extends Controller{
     }
 
     public function excluir(){
+        $this->adminRequired();
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         // if (!isset($_GET['id'])) {
         //     $this->redirect(URL_BASE . '/empresas');
@@ -85,6 +92,7 @@ class EmpresaController extends Controller{
     }
 
     public function atualizar(){
+        $this->adminRequired();
         $erros = Validador::validarEmpresa($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;

@@ -10,7 +10,7 @@
 </head>
 <body>
     <header>
-        <?php include_once(__DIR__ . '\..\includes\menuEntrada.php'); ?>
+        <?php include_once(__DIR__ . '/../includes/menuEntrada.php'); ?>
     </header>
 
     <main>

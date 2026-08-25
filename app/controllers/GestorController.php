@@ -27,11 +27,14 @@ class GestorController extends Controller {
     }
 
     public function listarTodos() {
+        $this->adminRequired();
         $data['lista'] = $this->gestorService->getGestores();
         $this->view('gestores/gestores_list', $data);
     }
 
     public function listarGestor() {
+        $this->adminRequired();
+
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/gestores');
         }
@@ -42,11 +45,13 @@ class GestorController extends Controller {
     }
 
     public function criar() {
+        $this->adminRequired();
         $data['empresas'] = $this->empresaService->getEmpresas();
         $this->view('gestores/gestor_create', $data);
     }
 
     public function salvar() {
+        $this->adminRequired();
         $erros = Validador::validarGestor($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
@@ -73,6 +78,7 @@ class GestorController extends Controller {
     }
 
     public function editar() {
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/gestores');
         }
@@ -84,6 +90,7 @@ class GestorController extends Controller {
     }
 
     public function excluir() {
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/gestores');
         }
@@ -94,6 +101,7 @@ class GestorController extends Controller {
     }
 
     public function atualizar() {
+        $this->adminRequired();
         $erros = Validador::validarGestor($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;

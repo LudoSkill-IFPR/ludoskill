@@ -16,16 +16,20 @@ class ModuloController extends Controller
     }
 
     public function listarTodos() {
+        $this->adminRequired();
         $data['lista'] = $this->moduloService->getModulos();
         $this->view('/administrador/modulos/modulo_list', $data);
     }
 
     public function listarTodosFuncionario() {
+        $this->autenticacaoRequired();
         $data['lista'] = $this->moduloService->getModulos();
         $this->view('/funcionario/modulos', $data);
     }
 
     public function listarModulo(){
+        $this->adminRequired();
+
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/administrador/modulos');
         }
@@ -36,10 +40,12 @@ class ModuloController extends Controller
     }
 
     public function criar(){
+        $this->adminRequired();
         $this->view('/administrador/modulos/modulo_create', []);
     }
 
     public function salvar(){
+        $this->adminRequired();
         $erros = Validador::validarModulo($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
@@ -58,6 +64,7 @@ class ModuloController extends Controller
     }
 
     public function editar(){
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/administrador/modulos');
         }
@@ -68,6 +75,7 @@ class ModuloController extends Controller
     }
 
     public function excluir(){
+        $this->adminRequired();
         $id = $_POST['id'] ?? $_GET['id'] ?? null;
         if (empty($id)) {
             $this->redirect(URL_BASE . '/administrador/modulos');
@@ -78,6 +86,7 @@ class ModuloController extends Controller
     }
 
     public function atualizar(){
+        $this->adminRequired();
         $id = $_POST['id'] ?? $_POST['id_modulo'] ?? null;
         if ($id !== null) {
             $_POST['id'] = $id;

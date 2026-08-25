@@ -20,12 +20,15 @@ class AtividadeController extends Controller
     }
 
     public function listarTodos() {
+        $this->adminRequired();
         $data['lista'] = $this->atividadeService->getAtividades();
         $this->view('atividades/atividades_list', $data);
     }
 
     //
     public function listarAtividade() {
+        $this->adminRequired();
+
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/atividades');
         }
@@ -36,10 +39,12 @@ class AtividadeController extends Controller
     }
 
     public function criar() {
+        $this->adminRequired();
         $this->view('atividades/atividade_create', []);
     }
 
     public function salvar() {
+        $this->adminRequired();
         $erros = Validador::validarAtividade($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
@@ -65,6 +70,7 @@ class AtividadeController extends Controller
     }
 
     public function editar() {
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/atividades');
         }
@@ -75,6 +81,7 @@ class AtividadeController extends Controller
     }
 
     public function excluir() {
+        $this->adminRequired();
         if (!isset($_GET['id'])) {
             $this->redirect(URL_BASE . '/atividades');
         }
@@ -85,6 +92,7 @@ class AtividadeController extends Controller
     }
 
     public function atualizar(){
+        $this->adminRequired();
         
         $erros = Validador::validarAtividade($_POST);
         if (!empty($erros)) {

@@ -12,5 +12,8 @@
         Bem-vindo, <?= htmlspecialchars($_SESSION['usuario_logado']->getNomeCompleto()) ?>!
     </p>
 
+    <a href="itens/">Lista</a>
+    <a href="modulos/">Modulos</a>
+
 </body>
 </html>

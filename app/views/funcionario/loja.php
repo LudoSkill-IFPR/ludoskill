@@ -1,5 +1,8 @@
 <?php
 use app\repositories\FuncionarioRepository;
+use app\helpers\Auth;
+
+Auth::funcionario_required();
 
 $funcionarioRepository = new FuncionarioRepository();
 
@@ -42,7 +45,7 @@ foreach ($funcionarios as $func) {
                 
                 <div class="card verde">
                     <p><img src="" alt="icone de bolotas">Saldo de bolotas:</p>
-                    <p>B$[quantidade de bolotas]</p>
+                    <p>B$ <?= htmlspecialchars($funcionario['bolotas'] ?? 0) ?></p>
                 </div>
             </div>
 
@@ -91,8 +94,19 @@ foreach ($funcionarios as $func) {
                 <section id="itens">
                     <h3>Itens</h3>
                     <ul>
+                        <?php foreach (($itens ?? []) as $item): ?>
+                            <li>
+                                <div class="card">
+                                    <img src="<?= htmlspecialchars($item['imagem'] ?? '') ?>" alt="imagem do item">
+                                    <h4><?= htmlspecialchars($item['nome'] ?? '') ?></h4>
+                                    <p>B$<?= htmlspecialchars($item['preco'] ?? '') ?></p>
+                    
+                                    <a class="botao brilho" href=""><i class="bi bi-bag-plus-fill"></i> Comprar</a>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
                         <!-- usar uma estrutura de repetição com base no html abaixo para adicionar os itens -->
-                        <li>
+                        <!-- <li>
                             <div class="card">
                                 <img src="" alt="imagem do item">
                                 <h4>[tipo produto+nome]</h4>
@@ -100,7 +114,7 @@ foreach ($funcionarios as $func) {
                 
                                 <a class="botao brilho" href=""><i class="bi bi-bag-plus-fill"></i> Comprar</a>
                             </div>
-                        </li>
+                        </li> -->
                     </ul>
                 </section>
                 
