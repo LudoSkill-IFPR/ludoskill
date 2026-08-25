@@ -29,6 +29,7 @@ foreach ($funcionarios as $func) {
     <link rel="stylesheet" href="../assets/css/inicialFuncionario.css">
     <title>LudoSkill</title>
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 
@@ -44,7 +45,7 @@ foreach ($funcionarios as $func) {
             
             <section class="infobase">
                 <div class="card">
-                    <h3><img src="" alt="icone de bolotas">Saldo de bolotas:</h3>
+                    <h3><img src="/public/assets/imagens/bolotona.png" alt="icone de bolotas">Saldo de bolotas:</h3>
                     <p>B$<?= $funcionario['bolotas_totais'] ?></p>
                 </div>
 

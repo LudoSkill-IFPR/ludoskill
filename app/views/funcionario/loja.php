@@ -44,8 +44,8 @@ foreach ($funcionarios as $func) {
                 </div>
                 
                 <div class="card verde">
-                    <p><img src="" alt="icone de bolotas">Saldo de bolotas:</p>
-                    <p>B$ <?= htmlspecialchars($funcionario['bolotas'] ?? 0) ?></p>
+                    <p><img src="/public/assets/imagens/bolotona.png" alt="icone de bolotas">Saldo de bolotas:</p>
+                    <p>B$ <?= htmlspecialchars($funcionario['bolotas_totais'] ?? 0) ?></p>
                 </div>
             </div>
 
@@ -94,10 +94,10 @@ foreach ($funcionarios as $func) {
                 <section id="itens">
                     <h3>Itens</h3>
                     <ul>
-                        <?php foreach (($itens ?? []) as $item): ?>
+                        <?php foreach (($lista ?? []) as $item): ?>
                             <li>
                                 <div class="card">
-                                    <img src="<?= htmlspecialchars($item['imagem'] ?? '') ?>" alt="imagem do item">
+                                    <img src="../public/<?= htmlspecialchars($item['imagem'] ?? '') ?>" alt="imagem do item" width="200px">
                                     <h4><?= htmlspecialchars($item['nome'] ?? '') ?></h4>
                                     <p>B$<?= htmlspecialchars($item['preco'] ?? '') ?></p>
                     

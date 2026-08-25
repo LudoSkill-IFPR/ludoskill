@@ -14,7 +14,7 @@
         </a>
     </div>
 
-    <div><a href="<?= URL_BASE ?>/logout" class="btn btn-danger">logout</a></div>
+    <div><a href="<?= URL_BASE ?>/logout" class="btn btn-danger">logout</a></div> <!--IMPLEMENTAR EM TODAS AS TELAS-->
 
     <div class="container">
         <h1 class="mt-5">Listagem de Itens</h1>
