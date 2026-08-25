@@ -12,8 +12,9 @@
     --cinza-escuro: #333333;
     --cinza-escurao: #222222;
     --cinza-ultraescuro: #111111;
-    --verde-legal: #27503b;
 }
+
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
 
 *{
     margin: 0;
@@ -25,8 +26,8 @@
 }
 
 body{
-    background: rgb(215, 200, 200);
-    background: radial-gradient(at right bottom, var(--roxo), var(--verde-legal) 50%) fixed;
+    background: black;
+    background: radial-gradient(at right bottom, var(--roxo), black 50%) fixed;
 
     height: 100vh;
 }
@@ -60,6 +61,36 @@ nav{
 
     display: flex;
     justify-content: space-between;
+}
+
+#navegacao li:not(.dropdown){
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+}
+
+.dropdown{
+    width: 100px;
+}
+
+.dropdown:hover .dropdown-menu{
+    display: block;
+}
+
+.dropdown-menu{
+    background: var(--cinza-ultraescuro);
+    border: 2px solid var(--cinza-escurao);
+    border-top: 0px;
+    border-radius: 0 0 10px 10px;
+
+    display: none;
+    position: absolute;
+    width: inherit;
+    padding: 10px;
+}
+
+.dropdown-menu a{
+    display: block;
 }
 
 main{
@@ -106,11 +137,19 @@ a:hover:not(.botao){
     background: radial-gradient(at left bottom, var(--cinza-ultraescuro), var(--cinza-escuro));
     border: 2px solid var(--cinza-escurao);
 
+    display: block;
     padding: 10px;
     border-radius: 10px;
 
+    text-align: center;
+
     transition: 0.3s;
 }
+
+.dropdown:hover .botao{
+    border-radius: 10px 10px 0 0;
+}
+
 
 .brilho:hover{
     background: radial-gradient(at left bottom, var(--verde-escurao), var(--verde-escuro));
