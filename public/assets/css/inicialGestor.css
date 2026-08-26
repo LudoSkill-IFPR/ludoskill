@@ -1,0 +1,119 @@
+.infobase{
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.infobase .card{
+    width: calc(25% - 12px);
+    min-width: 250px;
+    height: auto;
+    min-height: 120px;
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.infobase .card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.infobase .card h3 i {
+    font-size: 24px;
+    color: var(--verde-claro);
+}
+
+.infobase .card p {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--verde);
+    margin: 0;
+}
+
+.infobase .card a {
+    color: var(--verde-claro);
+    text-decoration: none;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.infobase .card a:hover {
+    color: var(--verde);
+}
+
+.grafico{
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    height: 400px;
+    margin-top: 30px;
+}
+
+#grafico{
+    width: calc(70% - 8px);
+    min-width: 600px;
+}
+
+#legenda{
+    width: calc(30% - 8px);
+    min-width: 250px;
+}
+
+#legenda ol{
+    list-style-type: none;
+    padding: 0;
+}
+
+.card-secundario{
+    width: auto;
+    margin-top: 10px;
+    padding: 15px;
+}
+
+.card-secundario p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--cinza-claro, #ccc);
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+    .infobase .card{
+        width: calc(50% - 8px);
+    }
+
+    .grafico{
+        flex-direction: column;
+        height: auto;
+    }
+
+    #grafico,
+    #legenda{
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .infobase .card{
+        width: 100%;
+    }
+
+    .grafico{
+        flex-direction: column;
+    }
+
+    #grafico,
+    #legenda{
+        width: 100%;
+    }
+}

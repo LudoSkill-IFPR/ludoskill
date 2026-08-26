@@ -44,7 +44,7 @@ foreach ($funcionarios as $func) {
                 </div>
                 
                 <div class="card verde">
-                    <p><img src="/public/assets/imagens/bolotona.png" alt="icone de bolotas">Saldo de bolotas:</p>
+                    <p><img src="assets/imagens/bolotona.png" alt="icone de bolotas">Saldo de bolotas:</p>
                     <p>B$ <?= htmlspecialchars($funcionario['bolotas_totais'] ?? 0) ?></p>
                 </div>
             </div>

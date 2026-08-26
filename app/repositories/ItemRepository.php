@@ -80,4 +80,10 @@ class ItemRepository{
         $stm->bindValue('id', $item->getId(), PDO::PARAM_INT);
         return $stm->execute();
     }
+
+    public function countItens(): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Itens");
+        $stm->execute();
+        return (int) $stm->fetchColumn();
+    }
 }

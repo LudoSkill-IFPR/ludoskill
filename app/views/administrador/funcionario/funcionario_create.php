@@ -20,7 +20,7 @@
         <h1 class="">Cadastro de Funcionarios</h1>
         <p class="mensagem">Provisório</p>
 
-            <form class="card" action="" method="post">
+            <form class="card" action="<?= URL_BASE ?>/administrador/funcionarios/cadastrar" method="post">
                 <div class="formgroup">
                     <label for="nome_completo">Nome</label>
                     <input class="card-secundario" type="text" id="nome_completo" name="nome_completo" value="<?= isset($funcionario['nome_completo']) ? htmlspecialchars($funcionario['nome_completo']) : '' ?>">

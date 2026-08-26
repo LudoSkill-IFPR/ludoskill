@@ -85,4 +85,17 @@ class FuncionarioRepository{
         return $stm->execute();
     }
 
+    public function countFuncionarios(): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Funcionarios");
+        $stm->execute();
+        return (int) $stm->fetchColumn();
+    }
+
+    public function countFuncionariosByEmpresa(int $idEmpresa): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Funcionarios WHERE id_empresa = :idEmpresa");
+        $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
+        $stm->execute();
+        return (int) $stm->fetchColumn();
+    }
+
 }

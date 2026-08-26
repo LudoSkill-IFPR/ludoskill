@@ -32,4 +32,12 @@ class FuncionarioService
     public function updateFuncionario(Funcionario $funcionario) {
         return $this->funcionarioRepository->updateFuncionario($funcionario);
     }
+
+    public function countFuncionarios(): int {
+        return $this->funcionarioRepository->countFuncionarios();
+    }
+
+    public function countFuncionariosByEmpresa(int $idEmpresa): int {
+        return $this->funcionarioRepository->countFuncionariosByEmpresa($idEmpresa);
+    }
 }

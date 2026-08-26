@@ -64,5 +64,11 @@ class GestorRepository
         $stm->bindValue('id', $gestor->getId());
         return $stm->execute();
     }
+
+    public function countGestores(): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Gestores");
+        $stm->execute();
+        return (int) $stm->fetchColumn();
+    }
     
 }

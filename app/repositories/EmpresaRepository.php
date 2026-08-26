@@ -61,4 +61,10 @@ class EmpresaRepository {
         $stm->bindValue('id', $empresa->getId());
         return $stm->execute();
     }
+
+    public function countEmpresas(): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Empresas");
+        $stm->execute();
+        return (int) $stm->fetchColumn();
+    }
 }

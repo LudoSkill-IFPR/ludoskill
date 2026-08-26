@@ -13,6 +13,7 @@ class ModuloRepository {
         $this->connection = ConnectionFactory::getConnection();
     }
 
+
     public function getModulos(): array {
         $stm = $this->connection->prepare("SELECT * FROM Modulos");
         $stm->execute();
@@ -54,5 +55,11 @@ class ModuloRepository {
         $stm->bindValue('minEstrelasLiberacao', $modulo->getMinEstrelasLiberacao());
         $stm->bindValue('id', $modulo->getId());
         return $stm->execute();
+    }
+
+    public function countModulos(): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Modulos");
+        $stm->execute();
+        return (int) $stm->fetchColumn();
     }
 }

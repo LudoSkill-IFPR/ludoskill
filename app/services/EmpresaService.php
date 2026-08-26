@@ -36,4 +36,8 @@ class EmpresaService {
     public function updateEmpresa(Empresa $empresa) {
         return $this->empresaRepository->updateEmpresa($empresa);
     }
+
+    public function countEmpresas(): int {
+        return $this->empresaRepository->countEmpresas();
+    }
 }

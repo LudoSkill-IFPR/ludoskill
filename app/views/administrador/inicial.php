@@ -18,27 +18,34 @@
         <div class="container">
 
             <h1>Área do Administrador</h1>
-            <p class="mensagem">Bem vindo, !</p>
+            <p class="mensagem">Bem-vindo, <?= htmlspecialchars($_SESSION['usuario_logado']->getNomeCompleto()) ?>!</p>
 
             <section class="infobase">
                 <div class="card">
                     <h3><i class="bi bi-briefcase-fill"></i> Empresas assinantes</h3>
-                    <p>[numero de empresas no sistema]</p>
+                    <p><?= $quantidadeEmpresas ?></p>
                 </div>
 
                 <div class="card">
                     <h3><i class="bi bi-person-badge-fill"></i><a href="<?= URL_BASE ?>/administrador/gestores/">Gestores cadastrados</a></h3>
-                    <p>[numero de gestores no sistema]</p>
+                    <p><?= $quantidadeGestores ?></p>
                 </div>
 
                 <div class="card">
-                    <h3><i class="bi bi-file-post"></i><a href="<?= URL_BASE ?>/administrador/modulos/">Módulos cadastrados</a></h3>
-                    <p>[quantidade de módulos no sistema]</p>
+
+                    <h3>
+                    <i class="bi bi-file-post"></i>
+
+                    <a href="<?= URL_BASE ?>/administrador/modulos/">
+                        Módulos cadastrados (<?= $quantidadeModulos ?>)
+                    </a>
+                </h3>
+
                 </div>
 
                 <div class="card">
                     <h3><i class="bi bi-tags-fill"></i><a href="<?= URL_BASE ?>/administrador/itens/">Itens cadastrados</a></h3>
-                    <p>[quantidade de itens no sistema]</p>
+                    <p><?= $quantidadeItens ?></p>
                 </div>
             </section>
 

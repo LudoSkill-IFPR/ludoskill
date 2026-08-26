@@ -7,23 +7,55 @@ use app\models\Gestor;
 use app\models\Empresa;
 use app\services\GestorService;
 use app\services\EmpresaService;
+use app\services\FuncionarioService;
 use app\helpers\Validador;
 
 class GestorController extends Controller {
 
     private GestorService $gestorService;
     private EmpresaService $empresaService;
+    private FuncionarioService $funcionarioService;
 
     public function inicial()
     {
         $this->autenticacaoRequired();
 
-        $this->view('gestor/inicial');
+        // Obter dados do gestor logado
+        $usuarioLogado = $_SESSION['usuario_logado'];
+        $idUsuario = $usuarioLogado->getId();
+        
+        // Obter gestor e sua empresa
+        $gestores = $this->gestorService->getGestores();
+        $gestor = null;
+        $idEmpresa = null;
+        
+        foreach ($gestores as $g) {
+            if ($g['id_usuario'] == $idUsuario) {
+                $gestor = $g;
+                $idEmpresa = $g['id_empresa'];
+                break;
+            }
+        }
+        
+        // Obter quantidade de funcionários cadastrados por este gestor
+        $quantidadeFuncionarios = 0;
+        $empresa = null;
+        if ($idEmpresa) {
+            $quantidadeFuncionarios = $this->funcionarioService->countFuncionariosByEmpresa($idEmpresa);
+            $empresa = $this->empresaService->getEmpresaById($idEmpresa);
+        }
+        
+        $this->view('gestor/inicial', [
+            'quantidadeFuncionarios' => $quantidadeFuncionarios,
+            'gestor' => $gestor,
+            'empresa' => $empresa
+        ]);
     }
 
     public function __construct() {
         $this->gestorService = new GestorService();
         $this->empresaService = new EmpresaService();
+        $this->funcionarioService = new FuncionarioService();
     }
 
     public function listarTodos() {

@@ -15,6 +15,10 @@ class Validador {
             $erros['nome'] = 'O campo nome é obrigatório.';
         }
 
+        if (!empty($data['nome']) && strlen($data['nome']) > 255) {
+            $erros['nome'] = 'O campo nome deve ter no máximo 255 caracteres.';
+        }
+
         if (!empty($data['nome'])) {
             $sql = 'SELECT 1 FROM Modulos WHERE nome = :nome'; //Evita de carregar todos os dados do módulo, apenas verifica se existe
 
@@ -45,8 +49,8 @@ class Validador {
             $erros['descricao'] = 'O campo descrição deve ter pelo menos 30 caracteres.';
         }
 
-        if (!empty($data['descricao']) && strlen($data['descricao']) > 254) {
-            $erros['descricao'] = 'O campo descrição deve ter no máximo 254 caracteres.';
+        if (!empty($data['descricao']) && strlen($data['descricao']) > 255) {
+            $erros['descricao'] = 'O campo descrição deve ter no máximo 255 caracteres.';
         }
 
         if (!isset($data['min_estrelas_liberacao']) || !is_numeric($data['min_estrelas_liberacao'])) {
@@ -82,6 +86,10 @@ class Validador {
             $erros['cnpj'] = 'O campo cnpj é obrigatório.';
         }
 
+        if (!empty($data['cnpj']) && strlen($data['cnpj']) > 14) {
+            $erros['cnpj'] = 'O campo cnpj deve ter no máximo 14 caracteres.';
+        }
+
         if (!empty($data['cnpj'])) {
             $sql = 'SELECT 1 FROM Empresas WHERE cnpj = :cnpj'; //Evita de carregar todos os dados da empresa, apenas verifica se existe
 
@@ -108,8 +116,16 @@ class Validador {
             $erros['nome'] = 'O campo nome é obrigatório.';
         }
 
+        if (!empty($data['nome']) && strlen($data['nome']) > 255) {
+            $erros['nome'] = 'O campo nome deve ter no máximo 255 caracteres.';
+        }
+
         if (empty($data['email'])) {
             $erros['email'] = 'O campo email é obrigatório.';
+        }
+
+        if (!empty($data['email']) && strlen($data['email']) > 255) {
+            $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
         }
 
         if (empty($data['plano'])) {
@@ -129,6 +145,10 @@ class Validador {
 
         if (empty($data['nome'])) {
             $erros['nome'] = 'O campo nome é obrigatório.';
+        }
+
+        if (!empty($data['nome']) && strlen($data['nome']) > 255) {
+            $erros['nome'] = 'O campo nome deve ter no máximo 255 caracteres.';
         }
 
         if (empty($data['tipo'])) {
@@ -178,6 +198,10 @@ class Validador {
             $erros['nome_completo'] = 'O campo nome é obrigatório.';
         }
 
+        if (!empty($data['nome_completo']) && strlen($data['nome_completo']) > 255) {
+            $erros['nome_completo'] = 'O campo nome deve ter no máximo 255 caracteres.';
+        }
+
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
         }
@@ -186,8 +210,16 @@ class Validador {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
+        if (!empty($data['cpf']) && strlen($data['cpf']) > 11) {
+            $erros['cpf'] = 'O campo cpf deve ter no máximo 11 caracteres.';
+        }
+
         if (empty($data['email'])) {
             $erros['email'] = 'O campo email é obrigatório.';
+        }
+
+        if (!empty($data['email']) && strlen($data['email']) > 255) {
+            $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
         }
 
         if (empty($data['senha'])) {
@@ -196,6 +228,10 @@ class Validador {
 
         if (empty($data['numero_telefone'])) {
             $erros['numero_telefone'] = 'O campo número de telefone é obrigatório.';
+        }
+
+        if (!empty($data['numero_telefone']) && strlen($data['numero_telefone']) > 20) {
+            $erros['numero_telefone'] = 'O campo número de telefone deve ter no máximo 20 caracteres.';
         }
 
         return $erros;
@@ -208,6 +244,10 @@ class Validador {
             $erros['nome_completo'] = 'O campo nome é obrigatório.';
         }
 
+        if (!empty($data['nome_completo']) && strlen($data['nome_completo']) > 255) {
+            $erros['nome_completo'] = 'O campo nome deve ter no máximo 255 caracteres.';
+        }
+
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
         }
@@ -216,8 +256,16 @@ class Validador {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
+        if (!empty($data['cpf']) && strlen($data['cpf']) > 11) {
+            $erros['cpf'] = 'O campo cpf deve ter no máximo 11 caracteres.';
+        }
+
         if (empty($data['email'])) {
             $erros['email'] = 'O campo email é obrigatório.';
+        }
+
+        if (!empty($data['email']) && strlen($data['email']) > 255) {
+            $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
         }
 
         if (empty($data['senha'])) {
@@ -226,6 +274,10 @@ class Validador {
 
         if (empty($data['numero_telefone'])) {
             $erros['numero_telefone'] = 'O campo número de telefone é obrigatório.';
+        }
+
+        if (!empty($data['numero_telefone']) && strlen($data['numero_telefone']) > 20) {
+            $erros['numero_telefone'] = 'O campo número de telefone deve ter no máximo 20 caracteres.';
         }
 
         if (empty($data['id_empresa'])) {
@@ -242,6 +294,10 @@ class Validador {
             $erros['nome_completo'] = 'O campo nome é obrigatório.';
         }
 
+        if (!empty($data['nome_completo']) && strlen($data['nome_completo']) > 255) {
+            $erros['nome_completo'] = 'O campo nome deve ter no máximo 255 caracteres.';
+        }
+
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
         }
@@ -250,8 +306,16 @@ class Validador {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
+        if (!empty($data['cpf']) && strlen($data['cpf']) > 11) {
+            $erros['cpf'] = 'O campo cpf deve ter no máximo 11 caracteres.';
+        }
+
         if (empty($data['email'])) {
             $erros['email'] = 'O campo email é obrigatório.';
+        }
+
+        if (!empty($data['email']) && strlen($data['email']) > 255) {
+            $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
         }
 
         if (empty($data['senha_hash'])) {
@@ -260,6 +324,10 @@ class Validador {
 
         if (empty($data['numero_telefone'])) {
             $erros['numero_telefone'] = 'O campo número de telefone é obrigatório.';
+        }
+
+        if (!empty($data['numero_telefone']) && strlen($data['numero_telefone']) > 20) {
+            $erros['numero_telefone'] = 'O campo número de telefone deve ter no máximo 20 caracteres.';
         }
 
         if (empty($data['id_empresa'])) {

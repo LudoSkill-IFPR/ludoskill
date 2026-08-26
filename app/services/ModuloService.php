@@ -31,4 +31,8 @@ class ModuloService {
     public function updateModulo(Modulo $modulo) {
         return $this->moduloRepository->updateModulo($modulo);
     }
+
+    public function countModulos(): int {
+        return $this->moduloRepository->countModulos();
+    }
 }

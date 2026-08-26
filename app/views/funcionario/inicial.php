@@ -45,7 +45,7 @@ foreach ($funcionarios as $func) {
             
             <section class="infobase">
                 <div class="card">
-                    <h3><img src="/public/assets/imagens/bolotona.png" alt="icone de bolotas">Saldo de bolotas:</h3>
+                    <h3><img src="assets/imagens/bolotona.png" alt="icone de bolotas">Saldo de bolotas:</h3>
                     <p>B$<?= $funcionario['bolotas_totais'] ?></p>
                 </div>
 

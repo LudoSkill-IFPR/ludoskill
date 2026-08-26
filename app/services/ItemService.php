@@ -31,4 +31,8 @@ class ItemService {
     public function updateItem(Item $item) {
         return $this->itemRepository->updateItem($item);
     }
+
+    public function countItens(): int {
+        return $this->itemRepository->countItens();
+    }
 }

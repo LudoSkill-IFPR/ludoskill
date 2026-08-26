@@ -33,4 +33,8 @@ class GestorService {
         return $this->repository->updateGestor($gestor);
     }
 
+    public function countGestores(): int {
+        return $this->repository->countGestores();
+    }
+
 }
