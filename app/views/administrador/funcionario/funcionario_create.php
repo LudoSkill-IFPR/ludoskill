@@ -1,84 +1,82 @@
-<?php
-    use app\repositories\EmpresaRepository;
-    use app\models\Empresa;
-
-    $empresaRepository = new EmpresaRepository();
-    
-    $empresas = $empresaRepository->getEmpresas();
-?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Funcionarios</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" >
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
+    
+    <title>Cadastro de Funcionários</title>
 </head>
+
 <body>
+    <header>
+        <?php include_once(__DIR__ . "/../../includes/menuAdministrador.html"); ?>
+    </header>
 
-    <div class="container">
-        <div>
-            <h1 class="mt-5">Cadastro de Funcionarios</h1>
+    <main>
+        <div class="container">
+        
+        <h1 class="">Cadastro de Funcionarios</h1>
+        <p class="mensagem">Provisório</p>
 
-            <form action="<?=  URL_BASE ?>/gestor/funcionarios/salvar" method="post">
-                <div>
+            <form class="card" action="" method="post">
+                <div class="formgroup">
                     <label for="nome_completo">Nome</label>
-                    <input class="form-control" type="text" id="nome_completo" name="nome_completo" value="<?= isset($funcionario['nome_completo']) ? htmlspecialchars($funcionario['nome_completo']) : '' ?>">
+                    <input class="card-secundario" type="text" id="nome_completo" name="nome_completo" value="<?= isset($funcionario['nome_completo']) ? htmlspecialchars($funcionario['nome_completo']) : '' ?>">
                     <?php if (isset($erros['nome_completo'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['nome_completo']) ?></span>
                     <?php endif; ?>
                 </div>
-                <div>
+                <div class="formgroup">
                     <label for="data_nascimento" class="form-label">Data de Nascimento</label>
-                    <input class="form-control" type="date" id="data_nascimento" name="data_nascimento" value="<?= isset($funcionario['data_nascimento']) ? htmlspecialchars($funcionario['data_nascimento']) : '' ?>">
+                    <input class="card-secundario" type="date" id="data_nascimento" name="data_nascimento" value="<?= isset($funcionario['data_nascimento']) ? htmlspecialchars($funcionario['data_nascimento']) : '' ?>">
                     <?php if (isset($erros['data_nascimento'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['data_nascimento']) ?></span>
                     <?php endif; ?>
                 </div>
-                <div>
+                <div class="formgroup">
                     <label for="cpf" class="form-label">CPF</label>
-                    <input class="form-control" type="text" id="cpf" name="cpf" maxlength="18" value="<?= isset($funcionario['cpf']) ? htmlspecialchars($funcionario['cpf']) : '' ?>">
+                    <input class="card-secundario" type="text" id="cpf" name="cpf" maxlength="18" value="<?= isset($funcionario['cpf']) ? htmlspecialchars($funcionario['cpf']) : '' ?>">
                     <?php if (isset($erros['cpf'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['cpf']) ?></span>
                     <?php endif; ?>
                 </div>
-                <div>
+                <div class="formgroup">
                     <label for="email" class="form-label">E-mail</label>
-                    <input class="form-control" type="email" id="email" name="email" value="<?= isset($funcionario['email']) ? htmlspecialchars($funcionario['email']) : '' ?>">
+                    <input class="card-secundario" type="email" id="email" name="email" value="<?= isset($funcionario['email']) ? htmlspecialchars($funcionario['email']) : '' ?>">
                     <?php if (isset($erros['email'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['email']) ?></span>
                     <?php endif; ?>
                 </div>
-                <div>
+                <div class="formgroup">
                     <label for="senha_hash" class="form-label">Senha</label>
-                    <input class="form-control" type="password" id="senha_hash" name="senha_hash" value="<?= isset($funcionario['senha_hash']) ? htmlspecialchars($funcionario['senha_hash']) : '' ?>">
+                    <input class="card-secundario" type="password" id="senha_hash" name="senha_hash" value="<?= isset($funcionario['senha_hash']) ? htmlspecialchars($funcionario['senha_hash']) : '' ?>">
                     <?php if (isset($erros['senha_hash'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['senha_hash']) ?></span>
                     <?php endif; ?>
                 </div>
-                <div>
+                <div class="formgroup">
                     <label for="numero_telefone" class="form-label">Numero de telefone</label>
-                    <input class="form-control" type="number" id="numero_telefone" name="numero_telefone" value="<?= isset($funcionario['numero_telefone']) ? htmlspecialchars($funcionario['numero_telefone']) : '' ?>">
+                    <input class="card-secundario" type="number" id="numero_telefone" name="numero_telefone" value="<?= isset($funcionario['numero_telefone']) ? htmlspecialchars($funcionario['numero_telefone']) : '' ?>">
                     <?php if (isset($erros['numero_telefone'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['numero_telefone']) ?></span>
                     <?php endif; ?>
                 </div>
-                <div>
+                <div class="formgroup">
                     <label for="id_empresa" class="form-label">Empresa</label>
-                    <select class="form-control" id="id_empresa" name="id_empresa">
+                    <select class="card-secundario" id="id_empresa" name="id_empresa">
                         <option value="" hidden disabled <?= !isset($empresa['id_empresa']) ? 'selected' : '' ?>>Selecione</option>
                         <?php foreach($empresas as $empresa):?>
                             <option value="<?= $empresa['id_empresa'] ?>"><?= $empresa['nome'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Salvar</button>
+                <button type="submit" class="botao brilho">Salvar</button>
             </form>
+        
         </div>
-
-    </div>
+    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
