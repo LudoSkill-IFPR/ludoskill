@@ -1,19 +1,73 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../assets/css/inicialAdministrador.css">
+
     <title>LudoSkill - Administrador</title>
 </head>
 <body>
 
-    <h1>Área do Administrador</h1>
+    <header>
+        <?php include_once(__DIR__ . "/../includes/menuAdministrador.html"); ?>
+    </header>
 
-    <p>
-        Bem-vindo, <?= htmlspecialchars($_SESSION['usuario_logado']->getNomeCompleto()) ?>!
-    </p>
+    <main>
+        <div class="container">
 
-    <a href="itens/">Lista</a>
-    <a href="modulos/">Modulos</a>
+            <h1>Área do Administrador</h1>
+            <p class="mensagem">Bem vindo, <?= htmlspecialchars($_SESSION['usuario_logado']->getNomeCompleto()) ?>!</p>
+
+            <section class="infobase">
+                <div class="card">
+                    <h3><i class="bi bi-briefcase-fill"></i> Empresas assinantes</h3>
+                    <p>[numero de empresas no sistema]</p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="bi bi-person-badge-fill"></i> Gestores cadastrados</h3>
+                    <p>[numero de gestores no sistema]</p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="bi bi-file-post"></i> Módulos cadastrados</h3>
+                    <p>[quantidade de módulos no sistema]</p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="bi bi-tags-fill"></i> Itens cadastrados</h3>
+                    <p>[quantidade de itens no sistema]</p>
+                </div>
+            </section>
+
+            <section class="grafico">
+                <div id="grafico" class="card verde">
+                    <h2><i class="bi bi-graph-up"></i> Gestores por empresa</h2>
+                    [gráfico virá aqui]
+                </div>
+
+                <!-- Aqui vai vir uma espécie de legenda para o gráfico -->
+                <div id="legenda" class="card">
+                    <h3><i class="bi bi-clipboard-data-fill"></i> Empresas mais presentes</h3>
+
+                    <ol>
+                        <li class="card-secundario">
+                        </li>
+                        <li class="card-secundario">
+                        </li>
+                        <li class="card-secundario">
+                        </li>
+                        <li class="card-secundario">
+                        </li>
+                        <li class="card-secundario">
+                        </li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+    </main>
 
 </body>
 </html>
