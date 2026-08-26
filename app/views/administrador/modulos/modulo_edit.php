@@ -6,9 +6,15 @@
     <title>Edicao de Modulo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" >
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
 </head>
 <body>
     <div class="container">
+        <a href="<?= URL_BASE ?>/administrador/modulos/" class="btn btn-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+
         <h1 class="mt-5">Edição de Módulo</h1>
         <form action="<?= URL_BASE ?>/administrador/modulos/atualizar" method="post">
             <input type="hidden" name="id" value="<?= htmlspecialchars($modulo['id_modulo'] ?? '') ?>">

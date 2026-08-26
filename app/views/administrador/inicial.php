@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/geralUsuario.css">
-    <link rel="stylesheet" href="../../css/inicialAdministrador.css">
+    <link rel="stylesheet" href="../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../assets/css/inicialAdministrador.css">
 
     <title>LudoSkill - Administrador</title>
 </head>
@@ -27,17 +27,17 @@
                 </div>
 
                 <div class="card">
-                    <h3><i class="bi bi-person-badge-fill"></i> Gestores cadastrados</h3>
+                    <h3><i class="bi bi-person-badge-fill"></i><a href="<?= URL_BASE ?>/administrador/gestores/">Gestores cadastrados</a></h3>
                     <p>[numero de gestores no sistema]</p>
                 </div>
 
                 <div class="card">
-                    <h3><i class="bi bi-file-post"></i> Módulos cadastrados</h3>
+                    <h3><i class="bi bi-file-post"></i><a href="<?= URL_BASE ?>/administrador/modulos/">Módulos cadastrados</a></h3>
                     <p>[quantidade de módulos no sistema]</p>
                 </div>
 
                 <div class="card">
-                    <h3><i class="bi bi-tags-fill"></i> Itens cadastrados</h3>
+                    <h3><i class="bi bi-tags-fill"></i><a href="<?= URL_BASE ?>/administrador/itens/">Itens cadastrados</a></h3>
                     <p>[quantidade de itens no sistema]</p>
                 </div>
             </section>

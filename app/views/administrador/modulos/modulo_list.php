@@ -6,11 +6,17 @@
     <title>Listagem de Módulos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" >
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
 </head>
 <body>
     <div class="container mt-3">
         <a href="<?= URL_BASE ?>/administrador/modulos/cadastrar" class="btn btn-primary mb-3">
             <i class="bi bi-plus"></i> Novo Módulo
+        </a>
+
+        <a href="<?= URL_BASE ?>/administrador/inicial" class="btn btn-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> Voltar
         </a>
     </div>
 

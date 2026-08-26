@@ -17,11 +17,13 @@
 
     <main>
         <div class="container">
-            
-        <h1 class="">Cadastro de Módulos</h1>
-        <p class="mensagem">Adicione uma nova etapa na trilha de aprendizado.</p>
+            <a href="<?= URL_BASE ?>/administrador/modulos/" class="btn btn-secondary mb-3">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+            <h1 class="mt-5">Cadastro de Módulos</h1>
+            <p class="mensagem">Adicione uma nova etapa na trilha de aprendizado.</p>
 
-            <form class="card" action="" method="post">
+            <form class="card" action="<?= URL_BASE ?>/administrador/modulos/salvar" method="post">
                 <div class="formgroup">
                     <label for="nome" class="form-label">Nome:</label>
                     <input class="card-secundario" type="text" class="form-control" id="nome" name="nome" value="<?= isset($modulo['nome']) ? htmlspecialchars($modulo['nome']) : '' ?>">

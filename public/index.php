@@ -14,6 +14,7 @@ $router->post('/logar', 'AutenticacaoController@logar');
 $router->get('/logout', 'AutenticacaoController@logout');
 
 
+
 //modulos
 $router->get('/administrador/modulos', 'ModuloController@listarTodos');
 $router->get('/administrador/modulos/cadastrar', 'ModuloController@criar');
