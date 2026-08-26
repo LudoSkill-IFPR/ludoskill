@@ -1,0 +1,37 @@
+.infobase{
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.infobase .card{
+    width: 300px;
+    height: 100px;
+    margin-top: 20px;
+}
+
+.grafico{
+    display: flex;
+    justify-content: space-between;
+
+    height: 400px;
+}
+
+#grafico{
+    width: 900px;
+}
+
+#legenda{
+    width: 300px;
+}
+
+#legenda ol{
+    list-style-type: none;
+}
+
+.card-secundario{
+    width: stretch;
+    margin-top: 10px;
+}
