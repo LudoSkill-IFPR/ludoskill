@@ -63,7 +63,7 @@ class AutenticacaoController extends Controller
 
     public function cadastroNaoLiberado()
     {
-        $this->view('entrada/cadastro_nao_liberado');
+        $this->view('entrada/cadastroNaoAutorizado');
     }
 
     public function logout()

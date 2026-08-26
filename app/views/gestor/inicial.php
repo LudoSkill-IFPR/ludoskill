@@ -48,15 +48,6 @@
                     <p>Gráfico de desempenho virá aqui</p>
                 </div>
 
-                <div id="legenda" class="card">
-                    <h3><i class="bi bi-list-ul"></i> Atividades Recentes</h3>
-
-                    <ol>
-                        <li class="card-secundario">
-                            <p>Nenhuma atividade recente</p>
-                        </li>
-                    </ol>
-                </div>
             </section>
         </div>
     </main>
