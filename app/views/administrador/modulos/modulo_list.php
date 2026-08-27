@@ -48,7 +48,7 @@
                         <td><?= htmlspecialchars($modulo['min_estrelas_liberacao'] ?? '') ?></td>
                         <td id="acao">
                             <a href="<?= URL_BASE ?>/administrador/modulos/editar?id=<?= $modulo['id_modulo'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                            <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" class="" onsubmit="return confirm('Deseja excluir este módulo?')">
+                            <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" onsubmit="return confirm('Deseja excluir este módulo?')">
                                 <input type="hidden" name="id" value="<?= htmlspecialchars($modulo['id_modulo'] ?? '') ?>">
                                 <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
                             </form>
