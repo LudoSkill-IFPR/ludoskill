@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
     <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
     
-    <title>Edicao de Modulo</title>
+    <title>LudoSkill - Editar de Módulo</title>
 </head>
 <body>
 
