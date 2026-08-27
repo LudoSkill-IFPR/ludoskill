@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
+    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">       
 
     <title>Cadastro de Módulos</title>
 </head>
@@ -17,11 +17,13 @@
 
     <main>
         <div class="container">
-            <a href="<?= URL_BASE ?>/administrador/modulos/" class="btn btn-secondary mb-3">
-                <i class="bi bi-arrow-left"></i> Voltar
-            </a>
-            <h1 class="mt-5">Cadastro de Módulos</h1>
-            <p class="mensagem">Adicione uma nova etapa na trilha de aprendizado.</p>
+            <div id="topo">
+                <a href="<?= URL_BASE ?>/administrador/modulos/" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
+                <div>
+                    <h1>Cadastro de Módulos</h1>
+                    <p class="mensagem">Adicione uma nova etapa na trilha de aprendizado.</p>
+                </div>
+            </div>
 
             <form class="card" action="<?= URL_BASE ?>/administrador/modulos/salvar" method="post">
                 <div class="formgroup">
