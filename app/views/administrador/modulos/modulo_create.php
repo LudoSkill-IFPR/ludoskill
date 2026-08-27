@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
     <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">       
 
-    <title>Cadastro de Módulos</title>
+    <title>LudoSkill - Cadastrar Módulo</title>
 </head>
 <body>
 <!-- implementar aqui uma atenticacao para que apenas administrador possam acessar a pagina de cadastro de modulos -->
