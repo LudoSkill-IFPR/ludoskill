@@ -28,7 +28,7 @@
             <form class="card" action="<?= URL_BASE ?>/administrador/modulos/salvar" method="post">
                 <div class="formgroup">
                     <label for="nome" class="form-label">Nome:</label>
-                    <input class="card-secundario" type="text" class="form-control" id="nome" name="nome" value="<?= isset($modulo['nome']) ? htmlspecialchars($modulo['nome']) : '' ?>">
+                    <input class="card-secundario" type="text" id="nome" name="nome" value="<?= isset($modulo['nome']) ? htmlspecialchars($modulo['nome']) : '' ?>">
                     <?php if (isset($erros['nome'])): ?>
                         <div class="text-danger"><?= $erros['nome'] ?></div>
                     <?php endif; ?>
