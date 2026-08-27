@@ -12,6 +12,8 @@
     --cinza-escuro: #333333;
     --cinza-escurao: #222222;
     --cinza-ultraescuro: #111111;
+
+    --problema: #E32A33;
 }
 
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
