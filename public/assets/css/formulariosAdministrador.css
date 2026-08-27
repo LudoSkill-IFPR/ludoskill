@@ -2,6 +2,18 @@
     width: 80%;
 }
 
+#topo{
+    display: flex;
+    align-items: center;
+}
+
+#topo .botao{
+    display: inline;
+    width: fit-content;
+    height: fit-content;
+    margin-right: 20px;
+}
+
 .card{
     width: 100%;
     margin-top: 20px;
