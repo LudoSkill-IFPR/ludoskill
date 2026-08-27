@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
     <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
     
-    <title>Cadastro de Funcionários</title>
+    <title>LudoSkill - Cadastrar Funcionários</title>
 </head>
 
 <body>
@@ -16,9 +16,13 @@
 
     <main>
         <div class="container">
-        
-        <h1 class="">Cadastro de Funcionarios</h1>
-        <p class="mensagem">Provisório</p>
+            <div id="topo">
+                <a href="/administrador/funcionario/" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
+                <div>
+                    <h1>Cadastro de Funcionários</h1>
+                    <p class="mensagem">Provisório.</p>
+                </div>
+            </div>
 
             <form class="card" action="<?= URL_BASE ?>/administrador/funcionarios/cadastrar" method="post">
                 <div class="formgroup">
