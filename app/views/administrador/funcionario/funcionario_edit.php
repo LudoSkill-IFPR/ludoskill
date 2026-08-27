@@ -39,7 +39,7 @@
     <main>
         <div class="container">
             <div id="topo">
-                <a href="/administrador/modulos/" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
+                <a href="/administrador/funcionario/" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Edição de Funcionários</h1>
                     <p class="mensagem">Provisório.</p>
