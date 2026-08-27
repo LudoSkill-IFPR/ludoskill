@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../../css/geralUsuario.css">
-    <link rel="stylesheet" href="../../../css/formulariosAdministrador.css">
+    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
     
     <title>LudoSkill - Listagem de Módulos</title>
 </head>
