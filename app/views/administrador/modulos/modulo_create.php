@@ -27,7 +27,7 @@
 
             <form class="card" action="<?= URL_BASE ?>/administrador/modulos/salvar" method="post">
                 <div class="formgroup">
-                    <label for="nome" class="form-label">Nome:</label>
+                    <label for="nome">Nome:</label>
                     <input class="card-secundario" type="text" id="nome" name="nome" value="<?= isset($modulo['nome']) ? htmlspecialchars($modulo['nome']) : '' ?>">
                     <?php if (isset($erros['nome'])): ?>
                         <div class="text-danger"><?= $erros['nome'] ?></div>
@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="formgroup">
-                    <label for="descricao" class="form-label">Descrição:</label>
+                    <label for="descricao">Descrição:</label>
                     <textarea class="card-secundario" id="descricao" name="descricao"><?= isset($modulo['descricao']) ? htmlspecialchars($modulo['descricao']) : '' ?></textarea>
                     <?php if (isset($erros['descricao'])): ?>
                         <div class="text-danger"><?= $erros['descricao'] ?></div>
@@ -43,7 +43,7 @@
                 </div>
                 
                 <div class="formgroup">
-                    <label for="min_estrelas_liberacao" class="form-label">Mínimo de Estrelas para Liberação:</label>
+                    <label for="min_estrelas_liberacao">Mínimo de Estrelas para Liberação:</label>
                     <input class="card-secundario" type="number" id="min_estrelas_liberacao" name="min_estrelas_liberacao" value="<?= isset($modulo['min_estrelas_liberacao']) ? htmlspecialchars($modulo['min_estrelas_liberacao']) : '' ?>">
                     <?php if (isset($erros['min_estrelas_liberacao'])): ?>
                         <div class="text-danger"><?= $erros['min_estrelas_liberacao'] ?></div>
