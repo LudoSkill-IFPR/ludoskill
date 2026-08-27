@@ -26,41 +26,41 @@
                 </div>
             </div>
     
-        <section class="card">
-            <h2>Lista de Módulos</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Descrição</th>
-                        <th>Mínimo de Estrelas para Liberação</th>
-                        <th>Acoes</th>
-                    </tr>
-                </thead>
+            <section class="card">
+                <h2>Lista de Módulos</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Mínimo de Estrelas para Liberação</th>
+                            <th>Acoes</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    <?php foreach (($lista ?? []) as $modulo): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($modulo['id_modulo'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($modulo['nome'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($modulo['descricao'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($modulo['min_estrelas_liberacao'] ?? '') ?></td>
-                        <td id="acao">
-                            <a href="<?= URL_BASE ?>/administrador/modulos/editar?id=<?= $modulo['id_modulo'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                            <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" onsubmit="return confirm('Deseja excluir este módulo?')">
-                                <input type="hidden" name="id" value="<?= htmlspecialchars($modulo['id_modulo'] ?? '') ?>">
-                                <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
+                    <tbody>
+                        <?php foreach (($lista ?? []) as $modulo): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($modulo['id_modulo'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($modulo['nome'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($modulo['descricao'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($modulo['min_estrelas_liberacao'] ?? '') ?></td>
+                            <td id="acao">
+                                <a href="<?= URL_BASE ?>/administrador/modulos/editar?id=<?= $modulo['id_modulo'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
+                                <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" onsubmit="return confirm('Deseja excluir este módulo?')">
+                                    <input type="hidden" name="id" value="<?= htmlspecialchars($modulo['id_modulo'] ?? '') ?>">
+                                    <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
 
-            </table>
-        </section>
+                </table>
+            </section>
 
-    </div>
-
+        </div>
+    </main>
 </body>
 </html>
