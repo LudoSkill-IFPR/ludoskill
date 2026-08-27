@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
     <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
     
-    <title>Editar Item</title>
+    <title>LudoSkill - Editar Item</title>
 </head>
 
 <body>
@@ -19,8 +19,8 @@
             <div id="topo">
                 <a href="<?= URL_BASE ?>/administrador/itens/" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
-                    <h1>Edição de Módulos</h1>
-                    <p class="mensagem">Edite uma etapa da trilha de aprendizado.</p>
+                    <h1>Edição de Itens</h1>
+                    <p class="mensagem">Edite uma recompensa.</p>
                 </div>
             </div>
 
