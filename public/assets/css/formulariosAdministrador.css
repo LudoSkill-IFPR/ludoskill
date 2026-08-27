@@ -48,3 +48,58 @@ textarea{
 
     resize: none;
 }
+
+.erro{
+    color: var(--problema)
+}
+
+table{
+    background-color: var(--cinza-ultraescuro);
+}
+
+table, td, th{
+    border: 1px solid var(--cinza-escurao);
+    border-radius: 20px;
+    border-spacing: 0;
+    border-collapse: separate;
+}
+
+table tr:last-child td:first-child{
+    border-bottom-left-radius: 20px;
+}
+
+table tr:last-child td:last-child{
+    border-bottom-right-radius: 20px;
+}
+
+table tr:first-child th:last-child{
+    border-top-right-radius: 20px;
+}
+
+table tr:first-child th:first-child{
+    border-top-left-radius: 20px;
+}
+
+th, td{
+    width: 20%;
+    padding: 5px;
+    border-radius: 0px;
+    
+    text-align: center;
+}
+
+th{
+    background: linear-gradient(to top, var(--verde-escuro), var(--verde-escurao));
+    border-color: var(--verde-escuro);
+}
+
+#acao{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#acao a{
+    width: fit-content;
+}
