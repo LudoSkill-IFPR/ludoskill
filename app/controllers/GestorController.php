@@ -18,7 +18,7 @@ class GestorController extends Controller {
 
     public function inicial()
     {
-        $this->autenticacaoRequired();
+        $this->gestorRequired();
 
         // Obter dados do gestor logado
         $usuarioLogado = $_SESSION['usuario_logado'];
@@ -61,25 +61,25 @@ class GestorController extends Controller {
     public function listarTodos() {
         $this->adminRequired();
         $data['lista'] = $this->gestorService->getGestores();
-        $this->view('gestores/gestores_list', $data);
+        $this->view('administrador/gestores/gestor_list', $data);
     }
 
     public function listarGestor() {
         $this->adminRequired();
 
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/gestores');
+            $this->redirect(URL_BASE . '/administrador/gestores');
         }
 
         $id = $_GET['id'];
         $data['gestor'] = $this->gestorService->getGestorById($id);
-        $this->view('gestores/gestor_show', $data);
+        $this->redirect(URL_BASE . '/administrador/gestores');
     }
 
     public function criar() {
         $this->adminRequired();
         $data['empresas'] = $this->empresaService->getEmpresas();
-        $this->view('gestores/gestor_create', $data);
+        $this->view('administrador/gestores/gestor_create', $data);
     }
 
     public function salvar() {
@@ -89,73 +89,76 @@ class GestorController extends Controller {
             $data['erros'] = $erros;
             $data['gestor'] = $_POST;
             $data['empresas'] = $this->empresaService->getEmpresas();
-            $this->view('gestores/gestor_create', $data);
+            $this->view('administrador/gestores/gestor_create', $data);
             return;
         }
 
-        $empresa = new Empresa($_POST['id_empresa'], '', '', '', '', '', '');
+        $empresa = (new Empresa())->setId((int) $_POST['id_empresa']);
         $gestor = new Gestor(
             0,
             $_POST['nome_completo'],
             new \DateTimeImmutable($_POST['data_nascimento']),
             $_POST['cpf'],
             $_POST['email'],
-            $_POST['senha'],
+            $_POST['senha'] ?? '',
             $_POST['numero_telefone'],
             $empresa
         );
 
         $this->gestorService->saveGestor($gestor);
-        $this->redirect(URL_BASE . '/gestores');
+        $this->redirect(URL_BASE . '/administrador/gestores');
     }
 
     public function editar() {
         $this->adminRequired();
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/gestores');
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
+            $this->redirect(URL_BASE . '/administrador/gestores');
         }
-
-        $id = $_GET['id'];
         $data['gestor'] = $this->gestorService->getGestorById($id);
+        if (!$data['gestor']) $this->redirect(URL_BASE . '/administrador/gestores');
         $data['empresas'] = $this->empresaService->getEmpresas();
-        $this->view('gestores/gestor_edit', $data);
+        $this->view('administrador/gestores/gestor_edit', $data);
     }
 
     public function excluir() {
         $this->adminRequired();
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/gestores');
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
+            $this->redirect(URL_BASE . '/administrador/gestores');
         }
-
-        $id = $_GET['id'];
         $this->gestorService->deleteGestor($id);
-        $this->redirect(URL_BASE . '/gestores');
+        $this->redirect(URL_BASE . '/administrador/gestores');
     }
 
     public function atualizar() {
         $this->adminRequired();
-        $erros = Validador::validarGestor($_POST);
+        $idGestor = filter_input(INPUT_POST, 'id_gestor', FILTER_VALIDATE_INT);
+        if (!$idGestor || !$this->gestorService->getGestorById($idGestor)) {
+            $this->redirect(URL_BASE . '/administrador/gestores');
+        }
+        $erros = Validador::validarGestor($_POST, false);
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['gestor'] = $_POST;
             $data['empresas'] = $this->empresaService->getEmpresas();
-            $this->view('gestores/gestor_edit', $data);
+            $this->view('administrador/gestores/gestor_edit', $data);
             return;
         }
 
-        $empresa = new Empresa($_POST['id_empresa'], '', '', '', '', '', '');
+        $empresa = (new Empresa())->setId((int) $_POST['id_empresa']);
         $gestor = new Gestor(
-            $_POST['id_usuario'],
+            0,
             $_POST['nome_completo'],
             new \DateTimeImmutable($_POST['data_nascimento']),
             $_POST['cpf'],
             $_POST['email'],
-            $_POST['senha'],
+            $_POST['senha'] ?? '',
             $_POST['numero_telefone'],
             $empresa
         );
 
-        $this->gestorService->updateGestor($gestor);
-        $this->redirect(URL_BASE . '/gestores');
+        $this->gestorService->updateGestor($gestor, $idGestor, $_POST['senha'] ?? null);
+        $this->redirect(URL_BASE . '/administrador/gestores');
     }
 }

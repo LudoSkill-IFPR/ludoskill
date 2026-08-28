@@ -35,6 +35,22 @@ class EmpresaRepository {
         return $empresa;
     }
 
+    public function cnpjExiste(string $cnpj, ?int $idIgnorado = null): bool {
+        $sql = "SELECT 1 FROM Empresas WHERE cnpj = :cnpj";
+        if ($idIgnorado !== null) {
+            $sql .= " AND id_empresa <> :id";
+        }
+        $sql .= " LIMIT 1";
+
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('cnpj', $cnpj);
+        if ($idIgnorado !== null) {
+            $stm->bindValue('id', $idIgnorado, PDO::PARAM_INT);
+        }
+        $stm->execute();
+        return $stm->fetchColumn() !== false;
+    }
+
     public function saveEmpresa(Empresa $empresa){
         $sql = "INSERT INTO Empresas (cnpj, nome, email, plano) VALUES (:cnpj, :nome, :email, :plano)";
         $stm = $this->connection->prepare($sql);
@@ -49,6 +65,14 @@ class EmpresaRepository {
         $stm = $this->connection->prepare("DELETE FROM Empresas WHERE id_empresa = :id");
         $stm->bindValue('id', $id);
         return $stm->execute();
+    }
+
+    public function possuiUsuariosVinculados(int $id): bool {
+        $sql = "SELECT EXISTS(SELECT 1 FROM Gestores WHERE id_empresa = :id UNION ALL SELECT 1 FROM Funcionarios WHERE id_empresa = :id)";
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
+        $stm->execute();
+        return (bool) $stm->fetchColumn();
     }
 
     public function updateEmpresa(Empresa $empresa){

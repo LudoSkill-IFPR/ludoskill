@@ -13,24 +13,28 @@ class FuncionarioService
         $this->funcionarioRepository = new FuncionarioRepository();
     }
 
-    public function getFuncionarios(): array {
-        return $this->funcionarioRepository->getFuncionarios();
+    public function getFuncionariosByEmpresa(int $idEmpresa): array {
+        return $this->funcionarioRepository->getFuncionariosByEmpresa($idEmpresa);
     }
 
-    public function getFuncionarioById(int $id) {
-        return $this->funcionarioRepository->getFuncionarioById($id);
+    public function getFuncionarioByIdAndEmpresa(int $id, int $idEmpresa) {
+        return $this->funcionarioRepository->getFuncionarioByIdAndEmpresa($id, $idEmpresa);
+    }
+
+    public function getEmpresaIdByGestorUsuario(int $idUsuario): ?int {
+        return $this->funcionarioRepository->getEmpresaIdByGestorUsuario($idUsuario);
     }
 
     public function saveFuncionario(Funcionario $funcionario) {
         return $this->funcionarioRepository->saveFuncionario($funcionario);
     }
 
-    public function deleteFuncionario(int $id) {
-        return $this->funcionarioRepository->deleteFuncionario($id);
+    public function deleteFuncionario(int $id, int $idEmpresa) {
+        return $this->funcionarioRepository->deleteFuncionario($id, $idEmpresa);
     }
 
-    public function updateFuncionario(Funcionario $funcionario) {
-        return $this->funcionarioRepository->updateFuncionario($funcionario);
+    public function updateFuncionario(Funcionario $funcionario, int $idEmpresa, ?string $novaSenha = null) {
+        return $this->funcionarioRepository->updateFuncionario($funcionario, $idEmpresa, $novaSenha);
     }
 
     public function countFuncionarios(): int {

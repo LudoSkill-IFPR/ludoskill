@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="../assets/css/inicialAdministrador.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/inicialAdministrador.css">
 
     <title>LudoSkill - Administrador</title>
 </head>
@@ -22,7 +22,7 @@
 
             <section class="infobase">
                 <div class="card">
-                    <h3><i class="bi bi-briefcase-fill"></i> Empresas assinantes</h3>
+                    <h3><i class="bi bi-briefcase-fill"></i><a href="<?= URL_BASE ?>/administrador/empresas"> Empresas assinantes</a></h3>
                     <p><?= $quantidadeEmpresas ?></p>
                 </div>
 

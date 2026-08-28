@@ -72,12 +72,15 @@ class ItemController extends Controller
     public function listarItem() {
         $this->adminRequired();
 
-        if (!isset($_GET['id'])) {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
             $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
 
-        $id = $_GET['id'];
         $data['item'] = $this->itemService->getItemById($id);
+        if (!$data['item']) {
+            $this->redirect(URL_BASE . '/administrador/itens');
+        }
         $this->view('/administrador/itens/itens_show', $data);
     }
 
@@ -176,7 +179,7 @@ class ItemController extends Controller
 
     public function excluir(){
         $this->adminRequired();
-        $id = $_POST['id'] ?? $_GET['id'] ?? null;
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
         if (!$id) {
             $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
@@ -187,7 +190,8 @@ class ItemController extends Controller
 
     public function atualizar() {
         $this->adminRequired();
-        if (!isset($_POST['id'])) {
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id || !$this->itemService->getItemById($id)) {
             $this->redirect(URL_BASE . '/administrador/itens/item_list');
         }
 
@@ -200,7 +204,7 @@ class ItemController extends Controller
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['item'] = $_POST;
-            $this->view('/administrador/itens', $data);
+            $this->view('/administrador/itens/item_edit', $data);
             return;
         }
 
@@ -214,13 +218,13 @@ class ItemController extends Controller
             if (!empty($erros)) {
                 $data['erros'] = $erros;
                 $data['item'] = $_POST;
-                $this->view('/administrador/itens', $data);
+                $this->view('/administrador/itens/item_edit', $data);
                 return;
             }
         }
 
         $item = new Item();
-        $item->setId($_POST['id']);
+        $item->setId($id);
         $item->setEstado($this->converterEstadoParaBit($_POST['estado']));
         $item->setNome($_POST['nome']);
         $item->setTipo($_POST['tipo']);

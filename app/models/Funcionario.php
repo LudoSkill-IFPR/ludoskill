@@ -7,7 +7,6 @@ use app\models\Empresa;
 use DateTimeImmutable;
 
 class Funcionario extends Usuario{
-    private int $id;
     private Empresa $empresa;
 
     private int $bolotas_totais;
@@ -32,26 +31,6 @@ class Funcionario extends Usuario{
         $this->bolotas_totais = $bolotas_totais;
         $this->pontuacao_total = $pontuacao_total;
         $this->nivel = $nivel;
-    }
-
-    
-
-    /**
-     * Get the value of id
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set the value of id
-     */
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     /**

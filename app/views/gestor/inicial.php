@@ -11,7 +11,7 @@
 <body>
 
     <header>
-        <?php include_once(__DIR__ . "/../includes/menuFuncionario.php"); ?>
+        <?php include_once(__DIR__ . "/../includes/menuGestor.php"); ?>
     </header>
 
     <main>
@@ -22,7 +22,7 @@
 
             <section class="infobase">
                 <div class="card">
-                    <h3><i class="bi bi-people-fill"></i> Funcionários cadastrados</h3>
+                    <h3><i class="bi bi-people-fill"></i><a href="<?= URL_BASE ?>/gestor/funcionarios/">Funcionários cadastrados</a></h3>
                     <p><?= $quantidadeFuncionarios ?></p>
                 </div>
 

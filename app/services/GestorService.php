@@ -29,8 +29,8 @@ class GestorService {
         return $this->repository->deleteGestor($id);
     }
 
-    public function updateGestor(Gestor $gestor) {
-        return $this->repository->updateGestor($gestor);
+    public function updateGestor(Gestor $gestor, int $idGestor, ?string $novaSenha = null) {
+        return $this->repository->updateGestor($gestor, $idGestor, $novaSenha);
     }
 
     public function countGestores(): int {

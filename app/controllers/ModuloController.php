@@ -30,12 +30,15 @@ class ModuloController extends Controller
     public function listarModulo(){
         $this->adminRequired();
 
-        if (!isset($_GET['id'])) {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
             $this->redirect(URL_BASE . '/administrador/modulos');
         }
 
-        $id = $_GET['id']; 
         $data['modulo'] = $this->moduloService->getModuloById($id);
+        if (!$data['modulo']) {
+            $this->redirect(URL_BASE . '/administrador/modulos');
+        }
         $this->view('/administrador/modulos/modulo_show', $data);
     }
 
@@ -76,8 +79,8 @@ class ModuloController extends Controller
 
     public function excluir(){
         $this->adminRequired();
-        $id = $_POST['id'] ?? $_GET['id'] ?? null;
-        if (empty($id)) {
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
             $this->redirect(URL_BASE . '/administrador/modulos');
         }
 
@@ -88,9 +91,10 @@ class ModuloController extends Controller
     public function atualizar(){
         $this->adminRequired();
         $id = $_POST['id'] ?? $_POST['id_modulo'] ?? null;
-        if ($id !== null) {
-            $_POST['id'] = $id;
+        if (!filter_var($id, FILTER_VALIDATE_INT) || !$this->moduloService->getModuloById((int) $id)) {
+            $this->redirect(URL_BASE . '/administrador/modulos');
         }
+        $_POST['id'] = $id;
 
         $erros = Validador::validarModulo($_POST);
         if (!empty($erros)) {

@@ -57,8 +57,8 @@ class Validador {
             $erros['min_estrelas_liberacao'] = 'O campo mínimo de estrelas para liberação deve ser um número.';
         }
         
-        if (isset($data['min_estrelas_liberacao']) && is_numeric($data['min_estrelas_liberacao']) && $data['min_estrelas_liberacao'] <= 0) {
-            $erros['min_estrelas_liberacao'] = 'O numero de estrelas deve ser positivo.';
+        if (isset($data['min_estrelas_liberacao']) && is_numeric($data['min_estrelas_liberacao']) && $data['min_estrelas_liberacao'] < 0) {
+            $erros['min_estrelas_liberacao'] = 'O número de estrelas não pode ser negativo.';
         }
 
 
@@ -74,6 +74,12 @@ class Validador {
 
         if (empty($data['conteudo'])) {
             $erros['conteudo'] = 'O campo conteúdo é obrigatório.';
+        } elseif (json_decode($data['conteudo'], true) === null && json_last_error() !== JSON_ERROR_NONE) {
+            $erros['conteudo'] = 'O conteúdo deve ser um JSON válido.';
+        }
+
+        if (empty($data['atividade_id']) || !filter_var($data['atividade_id'], FILTER_VALIDATE_INT)) {
+            $erros['atividade_id'] = 'Selecione uma atividade válida.';
         }
 
         return $erros;
@@ -86,30 +92,8 @@ class Validador {
             $erros['cnpj'] = 'O campo cnpj é obrigatório.';
         }
 
-        if (!empty($data['cnpj']) && strlen($data['cnpj']) > 14) {
-            $erros['cnpj'] = 'O campo cnpj deve ter no máximo 14 caracteres.';
-        }
-
-        if (!empty($data['cnpj'])) {
-            $sql = 'SELECT 1 FROM Empresas WHERE cnpj = :cnpj'; //Evita de carregar todos os dados da empresa, apenas verifica se existe
-
-            if (!empty($data['id'])) {
-                $sql .= ' AND id_empresa <> :id';
-            }
-
-            $sql .= ' LIMIT 1'; //Interrompe a busca após encontrar o primeiro registro
-            $stm = ConnectionFactory::getConnection()->prepare($sql); //TODO: verificar com o prof se pode ficar aqui
-            $stm->bindValue('cnpj', $data['cnpj']);
-
-            if (!empty($data['id'])) {
-                $stm->bindValue('id', $data['id'], \PDO::PARAM_INT);
-            }
-
-            $stm->execute();
-
-            if ($stm->fetchColumn() !== false) {
-                $erros['cnpj'] = 'Já existe uma empresa com este CNPJ.';
-            }
+        if (!empty($data['cnpj']) && !preg_match('/^\d{14}$/', $data['cnpj'])) {
+            $erros['cnpj'] = 'O CNPJ deve possuir 14 dígitos.';
         }
 
         if (empty($data['nome'])) {
@@ -128,8 +112,14 @@ class Validador {
             $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
         }
 
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $erros['email'] = 'Informe um e-mail válido.';
+        }
+
         if (empty($data['plano'])) {
             $erros['plano'] = 'O campo plano é obrigatório.';
+        } elseif (!in_array($data['plano'], ['BASICO', 'INTERMEDIARIO', 'AVANCADO', 'CORPORATIVO'], true)) {
+            $erros['plano'] = 'Selecione um plano válido.';
         }
 
         return $erros;
@@ -237,7 +227,7 @@ class Validador {
         return $erros;
     }
 
-    public static function validarGestor(array $data): array {
+    public static function validarGestor(array $data, bool $senhaObrigatoria = true): array {
         $erros = [];
 
         if (empty($data['nome_completo'])) {
@@ -268,7 +258,7 @@ class Validador {
             $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
         }
 
-        if (empty($data['senha'])) {
+        if ($senhaObrigatoria && empty($data['senha'])) {
             $erros['senha'] = 'O campo senha é obrigatório.';
         }
 
@@ -287,7 +277,7 @@ class Validador {
         return $erros;
     }
 
-    public static function validarFuncionario(array $data): array {
+    public static function validarFuncionario(array $data, bool $senhaObrigatoria = true): array {
         $erros = [];
 
         if (empty($data['nome_completo'])) {
@@ -318,7 +308,7 @@ class Validador {
             $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
         }
 
-        if (empty($data['senha_hash'])) {
+        if ($senhaObrigatoria && empty($data['senha_hash'])) {
             $erros['senha_hash'] = 'O campo senha é obrigatório.';
         }
 
@@ -354,10 +344,14 @@ class Validador {
 
         if (!isset($data['pontuacao']) || !is_numeric($data['pontuacao'])) {
             $erros['pontuacao'] = 'O campo pontuação deve ser um número.';
+        } elseif ($data['pontuacao'] < 0) {
+            $erros['pontuacao'] = 'A pontuação não pode ser negativa.';
         }
 
         if (!isset($data['estrelas']) || !is_numeric($data['estrelas'])) {
             $erros['estrelas'] = 'O campo estrelas deve ser um número.';
+        } elseif ($data['estrelas'] < 0) {
+            $erros['estrelas'] = 'As estrelas não podem ser negativas.';
         }
 
         if (empty($data['modulo_id'])) {

@@ -9,7 +9,6 @@ use app\repositories\FuncionarioRepository;
 
 class Gestor extends Usuario
 {
-    private int $id;
     private Empresa $empresa;
     private FuncionarioRepository $funcionarioRepository;
 
@@ -35,7 +34,11 @@ class Gestor extends Usuario
 
     public function editarFuncionario($funcionario)
     {
-        $this->funcionarioRepository->updateFuncionario($funcionario);
+        $this->funcionarioRepository->updateFuncionario(
+            $funcionario,
+            $funcionario->getEmpresa()->getId(),
+            $funcionario->getSenha()
+        );
     }
 
     public function desativarFuncionario()
@@ -46,24 +49,6 @@ class Gestor extends Usuario
     public function emitirRelatorio()
     {
         //conversar sobre depois
-    }
-
-    /**
-     * Get the value of id
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set the value of id
-     */
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     /**

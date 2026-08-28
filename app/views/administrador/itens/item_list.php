@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
     
     <title>LudoSkill - Listar Itens</title>
 </head>
@@ -17,8 +17,8 @@
     <main>
         <div class="container">
             <div id="topo">
-                <a href="/administrador/inicial" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
-                <a href="/administrador/itens/cadastrar" class="botao brilho"><i class="bi bi-plus"></i> Novo Item</a>
+                <a href="<?= URL_BASE ?>/administrador/inicial" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
+                <a href="<?= URL_BASE ?>/administrador/itens/cadastrar" class="botao brilho"><i class="bi bi-plus"></i> Novo Item</a>
 
                 <div>
                     <h1>Listagem de Itens</h1>

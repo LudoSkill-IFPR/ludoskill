@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
     
     <title>LudoSkill - Editar Item</title>
 </head>
@@ -80,7 +80,7 @@
 
                     <div>
                         <img src="<?= htmlspecialchars($imagemUrl) ?>"
-                            alt="alt="<?= htmlspecialchars($item['nome'] ?? '') ?>"
+                            alt="<?= htmlspecialchars($item['nome'] ?? '') ?>"
                             style="max-width: 120px; max-height: 120px; display: block; margin-bottom: 0.5rem;">
                         <small>
                             Deixe em branco para manter a imagem atual.

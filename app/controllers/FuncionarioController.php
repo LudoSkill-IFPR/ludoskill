@@ -28,40 +28,34 @@ class FuncionarioController extends Controller
     public function listarTodos()
     {
         $this->gestorRequired();
-        $data['lista'] = $this->funcionarioService->getFuncionarios();
-        $this->view('administrador/funcionario/funcionario_list', $data);
-    }
-
-    public function listarFuncionario()
-    {
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/funcionarios');
-        }
-
-        $id = $_GET['id'];
-        $data['funcionario'] = $this->funcionarioService->getFuncionarioById($id);
-        $this->view('sistema/cadastros/funcionarios/funcionario_list', $data);
+        $idEmpresa = $this->getEmpresaIdDoGestor();
+        $data['lista'] = $this->funcionarioService->getFuncionariosByEmpresa($idEmpresa);
+        $this->view('gestor/funcionarios/funcionario_list', $data);
     }
 
     public function criar()
     {
         $this->gestorRequired();
-        $this->view('administrador/funcionario/funcionario_create', []);
+        $this->getEmpresaIdDoGestor();
+        $this->view('gestor/funcionarios/funcionario_create', []);
     }
 
     public function salvar()
     {
         $this->gestorRequired();
-        $erros = Validador::validarFuncionario($_POST);
+        $idEmpresa = $this->getEmpresaIdDoGestor();
+        $dados = $_POST;
+        $dados['id_empresa'] = $idEmpresa;
+        $erros = Validador::validarFuncionario($dados);
         if (!empty($erros)) {
             $data['erros'] = $erros;
-            $data['funcionario'] = $_POST;
-            $this->view('administrador/funcionario/funcionario_create', $data);
+            $data['funcionario'] = $dados;
+            $this->view('gestor/funcionarios/funcionario_create', $data);
             return;
         }
 
         $empresa = new Empresa();
-        $empresa->setId($_POST['id_empresa']);
+        $empresa->setId($idEmpresa);
 
         $funcionario = new Funcionario(
             0,
@@ -78,56 +72,64 @@ class FuncionarioController extends Controller
         );
 
         $this->funcionarioService->saveFuncionario($funcionario);
-        $this->listarTodos();
+        $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
 
     public function editar()
     {
         $this->gestorRequired();
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/funcionarios');
+        $idEmpresa = $this->getEmpresaIdDoGestor();
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
+            $this->redirect(URL_BASE . '/gestor/funcionarios');
         }
 
-        $id = $_GET['id'];
-        $data['funcionario'] = $this->funcionarioService->getFuncionarioById($id);
-        $this->view('administrador/funcionario/funcionario_edit', $data);
+        $data['funcionario'] = $this->funcionarioService->getFuncionarioByIdAndEmpresa($id, $idEmpresa);
+        if (!$data['funcionario']) {
+            $this->redirect(URL_BASE . '/gestor/funcionarios');
+        }
+        $this->view('gestor/funcionarios/funcionario_edit', $data);
     }
 
     public function excluir()
     {
         $this->gestorRequired();
-        if (!isset($_POST['id'])) {
+        $idEmpresa = $this->getEmpresaIdDoGestor();
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
             $this->redirect(URL_BASE . '/gestor/funcionarios');
         }
-        $id = $_POST['id'];
-        $this->funcionarioService->deleteFuncionario($id);
+        $this->funcionarioService->deleteFuncionario($id, $idEmpresa);
         $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
 
     public function atualizar()
     {
         $this->gestorRequired();
-        $erros = Validador::validarFuncionario($_POST);
+        $idEmpresa = $this->getEmpresaIdDoGestor();
+        $idFuncionario = filter_input(INPUT_POST, 'id_funcionario', FILTER_VALIDATE_INT);
+        if (!$idFuncionario || !$this->funcionarioService->getFuncionarioByIdAndEmpresa($idFuncionario, $idEmpresa)) {
+            $this->redirect(URL_BASE . '/gestor/funcionarios');
+        }
+        $dados = $_POST;
+        $dados['id_empresa'] = $idEmpresa;
+        $erros = Validador::validarFuncionario($dados, false);
         if (!empty($erros)) {
             $data['erros'] = $erros;
-            $data['funcionario'] = $_POST;
-            $this->view('administrador/funcionario/funcionario_edit', $data); // corrige o typo "admnistrador"
+            $data['funcionario'] = $dados;
+            $this->view('gestor/funcionarios/funcionario_edit', $data);
             return;
         }
 
-        // Busca a senha atual para não sobrescrever quando o campo vier em branco
-        $funcionarioAtual = $this->funcionarioService->getFuncionarioById($_POST['id_funcionario']);
-        $senha = !empty($_POST['senha_hash']) ? $_POST['senha_hash'] : $funcionarioAtual->getSenha();
-
-        $empresa = (new Empresa())->setId((int) $_POST['id_empresa']); // usa setId() em vez de passar no construtor
+        $empresa = (new Empresa())->setId($idEmpresa);
 
         $funcionario = new Funcionario(
-            (int) $_POST['id_funcionario'],
+            $idFuncionario,
             $_POST['nome_completo'],
             new \DateTimeImmutable($_POST['data_nascimento']),
             $_POST['cpf'],
             $_POST['email'],
-            $senha,
+            $_POST['senha_hash'] ?? '',
             $_POST['numero_telefone'],
             $empresa,
             (int) $_POST['bolotas_totais'],
@@ -135,7 +137,20 @@ class FuncionarioController extends Controller
             (int) $_POST['nivel']
         );
 
-        $this->funcionarioService->updateFuncionario($funcionario);
+        $this->funcionarioService->updateFuncionario($funcionario, $idEmpresa, $_POST['senha_hash'] ?? null);
         $this->redirect(URL_BASE . '/gestor/funcionarios');
+    }
+
+    private function getEmpresaIdDoGestor(): int
+    {
+        $idEmpresa = $this->funcionarioService->getEmpresaIdByGestorUsuario(
+            $_SESSION['usuario_logado']->getId()
+        );
+
+        if ($idEmpresa === null) {
+            $this->redirect(URL_BASE . '/gestor/inicial');
+        }
+
+        return $idEmpresa;
     }
 }

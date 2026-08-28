@@ -65,6 +65,11 @@ nav{
     justify-content: space-between;
 }
 
+.menu-administrador #navegacao{
+    width: auto;
+    gap: 18px;
+}
+
 #navegacao li:not(.dropdown){
     display: flex;
     align-items: center;

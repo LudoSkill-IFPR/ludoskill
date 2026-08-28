@@ -10,7 +10,7 @@ class Usuario
 {
     private int $id;
     private string $nomeCompleto;
-    private DateTimeImmutable $dataNascimento; //talvez tenha que mudar o tipo.
+    private ?DateTimeImmutable $dataNascimento;
     private string $cpf;
     private string $email;
     private string $senha;
@@ -39,10 +39,15 @@ class Usuario
 
     public static function arrayParaObjeto(array $usuario): self
     {
+        $dataNascimento = $usuario['data_nascimento'] ?? null;
+        if (is_string($dataNascimento) && $dataNascimento !== '') {
+            $dataNascimento = new DateTimeImmutable($dataNascimento);
+        }
+
         return new self(
             (int) ($usuario['id_usuario'] ?? 0),
             $usuario['nome_completo'] ?? '',
-            $usuario['data_nascimento'] ?? '',
+            $dataNascimento,
             $usuario['CPF'] ?? $usuario['cpf'] ?? '',
             $usuario['email'] ?? '',
             $usuario['senha_hash'] ?? $usuario['senha'] ?? '',
@@ -135,7 +140,7 @@ class Usuario
         return $this;
     }
 
-    public function getDataNascimento(): DateTimeImmutable
+    public function getDataNascimento(): ?DateTimeImmutable
     {
         return $this->dataNascimento;
     }

@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\core\Controller;
 use app\models\Exercicio;
+use app\models\Atividade;
 use app\services\ExercicioService;
 use app\services\AtividadeService;
 use app\helpers\Validador;
@@ -21,18 +22,16 @@ class ExercicioController extends Controller{
     public function listarTodos() {
         $this->adminRequired();
         $data['lista'] = $this->exercicioService->getExercicios();
-        $this->view('exercicios/exercicios_list', $data);
+        $this->view('administrador/exercicios/exercicio_list', $data);
     }
 
     public function listarExercicio(){
-
-    
 
 
         $this->adminRequired();
 
         if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/exercicios');
+            $this->redirect(URL_BASE . '/administrador/exercicios');
         }
 
         $id = $_GET['id']; 
@@ -42,7 +41,7 @@ class ExercicioController extends Controller{
 
     public function criar(){
         $this->adminRequired();
-        $this->view('exercicios/exercicio_create', []);
+        $this->view('administrador/exercicios/exercicio_create', ['atividades' => $this->atividadeService->getAtividades()]);
     }
 
     public function salvar(){
@@ -51,7 +50,8 @@ class ExercicioController extends Controller{
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['exercicio'] = $_POST;
-            $this->view('exercicios/exercicio_create', $data);
+            $data['atividades'] = $this->atividadeService->getAtividades();
+            $this->view('administrador/exercicios/exercicio_create', $data);
             return;
         }
 
@@ -59,56 +59,60 @@ class ExercicioController extends Controller{
         $exercicio->setDescricao($_POST['descricao']);
         $exercicio->setConteudo($_POST['conteudo']);
 
-        $atividade = $this->atividadeService->getAtividadeById($_POST['atividade_id']);
+        $atividade = (new Atividade())->setId((int) $_POST['atividade_id']);
         $exercicio->setAtividade($atividade);
 
         $this->exercicioService->saveExercicio($exercicio);
-        $this->redirect(URL_BASE . '/exercicios');
+        $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
     public function editar(){
         $this->adminRequired();
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/exercicios');
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
+            $this->redirect(URL_BASE . '/administrador/exercicios');
         }
 
-        $id = $_GET['id'];
-
         $data['exercicio'] = $this->exercicioService->getExercicioById($id);
-        $this->view('exercicios/exercicio_edit', $data);
+        if (!$data['exercicio']) $this->redirect(URL_BASE . '/administrador/exercicios');
+        $data['atividades'] = $this->atividadeService->getAtividades();
+        $this->view('administrador/exercicios/exercicio_edit', $data);
     }
 
     public function excluir(){
         $this->adminRequired();
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/exercicios');
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
+            $this->redirect(URL_BASE . '/administrador/exercicios');
         }
 
-        $id = $_GET['id'];
         $this->exercicioService->deleteExercicio($id);
-        $this->redirect(URL_BASE . '/exercicios');
+        $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
     public function atualizar(){
         $this->adminRequired();
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id || !$this->exercicioService->getExercicioById($id)) $this->redirect(URL_BASE . '/administrador/exercicios');
         $erros = Validador::validarExercicio($_POST);
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['exercicio'] = $_POST;
-            $this->view('exercicios/exercicio_edit', $data);
+            $data['atividades'] = $this->atividadeService->getAtividades();
+            $this->view('administrador/exercicios/exercicio_edit', $data);
             return;
         }
 
         $exercicio = new Exercicio();
-        $exercicio->setId($_POST['id']);
+        $exercicio->setId($id);
         $exercicio->setDescricao($_POST['descricao']);
         $exercicio->setConteudo($_POST['conteudo']);
 
-        $atividade = $this->atividadeService->getAtividadeById($_POST['atividade_id']);
+        $atividade = (new Atividade())->setId((int) $_POST['atividade_id']);
         $exercicio->setAtividade($atividade);
 
         $this->exercicioService->updateExercicio($exercicio);
-        $this->redirect(URL_BASE . '/exercicios');
+        $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
 }

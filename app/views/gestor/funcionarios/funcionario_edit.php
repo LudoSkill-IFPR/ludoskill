@@ -1,78 +1,86 @@
+<?php
+    use app\repositories\EmpresaRepository;
+    use app\repositories\UsuarioRepository;
+    use app\models\Usuario;
+
+    $empresaRepository = new EmpresaRepository();
+    $usuarioRepository = new UsuarioRepository();
+    $funcionarios = $data['lista'];
+?>
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edicao de Empresa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" >
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-</head>
-<body>
-    <div class="container">
-        <h1 class="mt-5">Edição de Empresa</h1>
-
-        <form action="<?= URL_BASE ?>/administrador/empresas/atualizar" method="post">
-            <input type="hidden" name="id" value="<?= htmlspecialchars($empresa['id_empresa'] ?? '') ?>">
-            <div>
-                <label for="nome">Nome</label>
-                <input class="form-control" type="text" id="nome" name="nome" value="<?= htmlspecialchars($empresa['nome'] ?? '') ?>">
-                <?php if (isset($erros['nome'])): ?>
-                    <span class="text-danger"><?= htmlspecialchars($erros['nome']) ?></span>
-                <?php endif; ?>
-            </div>
-            <div>
-                <label for="cnpj" class="form-label">CNPJ</label>
-                <input class="form-control" type="text" id="cnpj" name="cnpj" maxlength="18" value="<?= htmlspecialchars($empresa['cnpj'] ?? '') ?>">
-                <?php if (isset($erros['cnpj'])): ?>
-                    <span class="text-danger"><?= htmlspecialchars($erros['cnpj']) ?></span>
-                <?php endif; ?>
-            </div>
-            <div>
-                <label for="email" class="form-label">Email</label>
-                <input class="form-control" type="email" id="email" name="email" value="<?= htmlspecialchars($empresa['email'] ?? '') ?>">
-                <?php if (isset($erros['email'])): ?>
-                    <span class="text-danger"><?= htmlspecialchars($erros['email']) ?></span>
-                <?php endif; ?>
-            </div>
-            <div>
-                <label for="plano" class="form-label">Plano</label>
-                <select class="form-control" id="plano" name="plano">
-                    <option value="" hidden disabled <?= !isset($empresa['plano']) ? 'selected' : '' ?>>Selecione</option>
-                    <option value="BASICO" <?= isset($empresa['plano']) && $empresa['plano'] === 'BASICO' ? 'selected' : '' ?>>Básico</option>
-                    <option value="INTERMEDIARIO" <?= isset($empresa['plano']) && $empresa['plano'] === 'INTERMEDIARIO' ? 'selected' : '' ?>>Intermediário</option>
-                    <option value="AVANCADO" <?= isset($empresa['plano']) && $empresa['plano'] === 'AVANCADO' ? 'selected' : '' ?>>Avançado</option>
-                    <option value="CORPORATIVO" <?= isset($empresa['plano']) && $empresa['plano'] === 'CORPORATIVO' ? 'selected' : '' ?>>Corporativo</option>
-                </select>
-                <?php if (isset($erros['plano'])): ?>
-                    <span class="text-danger"><?= htmlspecialchars($erros['plano']) ?></span>
-                <?php endif; ?>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Atualizar</button>
-        </form>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const cnpjInput = document.getElementById('cnpj');
-            if (!cnpjInput) return;
-
-            const formatCnpj = (value) => {
-                const digits = (value || '').replace(/\D/g, '').slice(0, 14);
-                if (!digits) return '';
-                return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
-            };
-
-            cnpjInput.value = formatCnpj(cnpjInput.value);
-
-            cnpjInput.addEventListener('input', function () {
-                cnpjInput.value = formatCnpj(cnpjInput.value);
-            });
-
-            cnpjInput.closest('form').addEventListener('submit', function () {
-                cnpjInput.value = cnpjInput.value.replace(/\D/g, '');
-            });
-        });
-    </script>
+    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
     
+    <title>LudoSkill - Listar Funcionários</title>
+</head>
+
+<body>
+    <header>
+        <?php include_once(__DIR__ . "/../../includes/menuAdministrador.html"); ?>
+    </header>
+
+    <main>
+        <div class="container">
+            <div id="topo">
+                <a href="/gestor/inicial" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
+                <a href="<?= URL_BASE ?>/gestor/funcionarios/cadastrar" class="botao brilho"><i class="bi bi-plus"></i> Novo Funcionário</a>
+
+                <div>
+                    <h1>Listagem de Funcionários</h1>
+                    <p class="mensagem">Visualize os aprendizes cadastrados.</p>
+                </div>
+            </div>
+    
+            <section class="card">
+                <h2>Lista de Itens</h2>
+                <table id="funcionario">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Data de Nascimento</th>
+                            <th>CPF</th>
+                            <th>E-mail</th>
+                            <th>Numero de Telefone</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php foreach ($funcionarios as $funcionario): ?>
+                            <?php
+                            $nome_empresa = $empresaRepository->getEmpresaById($funcionario['id_empresa']);
+                            $nome_empresa = $nome_empresa['nome'];
+                            $usuario = $usuarioRepository->getUsuario($funcionario['id_usuario']);
+                        ?>
+                        <tr>
+                            <td><?= htmlspecialchars($usuario['nome_completo']) ?></td>
+                            <td><?= htmlspecialchars($usuario['data_nascimento']) ?></td>
+                            <td><?= htmlspecialchars($usuario['CPF']) ?></td>
+                            <td><?= htmlspecialchars($usuario['email']) ?></td>
+                            <td><?= htmlspecialchars($usuario['numero_telefone']) ?></td>
+                    
+                            <td id="acao">
+                                <a href="<?= URL_BASE ?>/gestor/funcionarios/editar?id=<?= $funcionario['id_funcionario'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
+                                
+                                <form action="<?= URL_BASE ?>/gestor/funcionarios/excluir" method="post" onsubmit="return confirm('Deseja excluir o(a) funcionario(a) <?= $usuario['nome_completo']?>?')">
+                                    <input type="hidden" name="id" value="<?= htmlspecialchars($funcionario['id_funcionario'] ?? '') ?>">
+                                    <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
+                                </form>
+
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+
+                </table>
+            </section>
+
+        </div>
+    </main>
 </body>
 </html>

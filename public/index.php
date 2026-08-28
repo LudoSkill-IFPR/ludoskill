@@ -39,6 +39,30 @@ $router->post('/administrador/itens/salvar', 'ItemController@salvar');
 $router->post('/administrador/itens/atualizar', 'ItemController@atualizar');
 $router->post('/administrador/itens/excluir', 'ItemController@excluir');
 
+//gestores
+$router->get('/administrador/gestores', 'GestorController@listarTodos');
+$router->get('/administrador/gestores/cadastrar', 'GestorController@criar');
+$router->get('/administrador/gestores/editar', 'GestorController@editar');
+$router->post('/administrador/gestores/salvar', 'GestorController@salvar');
+$router->post('/administrador/gestores/atualizar', 'GestorController@atualizar');
+$router->post('/administrador/gestores/excluir', 'GestorController@excluir');
+
+//atividades
+$router->get('/administrador/atividades', 'AtividadeController@listarTodos');
+$router->get('/administrador/atividades/cadastrar', 'AtividadeController@criar');
+$router->get('/administrador/atividades/editar', 'AtividadeController@editar');
+$router->post('/administrador/atividades/salvar', 'AtividadeController@salvar');
+$router->post('/administrador/atividades/atualizar', 'AtividadeController@atualizar');
+$router->post('/administrador/atividades/excluir', 'AtividadeController@excluir');
+
+//exercícios
+$router->get('/administrador/exercicios', 'ExercicioController@listarTodos');
+$router->get('/administrador/exercicios/cadastrar', 'ExercicioController@criar');
+$router->get('/administrador/exercicios/editar', 'ExercicioController@editar');
+$router->post('/administrador/exercicios/salvar', 'ExercicioController@salvar');
+$router->post('/administrador/exercicios/atualizar', 'ExercicioController@atualizar');
+$router->post('/administrador/exercicios/excluir', 'ExercicioController@excluir');
+
 //funcionarios
 $router->get('/gestor/funcionarios', 'FuncionarioController@listarTodos');
 $router->get('/gestor/funcionarios/cadastrar', 'FuncionarioController@criar');
