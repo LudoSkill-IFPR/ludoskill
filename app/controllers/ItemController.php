@@ -81,7 +81,7 @@ class ItemController extends Controller
         if (!$data['item']) {
             $this->redirect(URL_BASE . '/administrador/itens');
         }
-        $this->view('/administrador/itens/itens_show', $data);
+        $this->view('/administrador/itens/itens_list', $data);
     }
 
     public function criar() {

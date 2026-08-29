@@ -34,7 +34,7 @@ class EmpresaController extends Controller{
 
         $id = $_GET['id']; 
         $data['empresa'] = $this->empresaService->getEmpresaById($id);
-        $this->view('/administrador/empresas/empresa_show', $data);
+        $this->view('/administrador/empresas/empresa_list', $data);
     }
 
     public function criar(){

@@ -39,7 +39,7 @@ class ModuloController extends Controller
         if (!$data['modulo']) {
             $this->redirect(URL_BASE . '/administrador/modulos');
         }
-        $this->view('/administrador/modulos/modulo_show', $data);
+        $this->view('/administrador/modulos/modulo_list', $data);
     }
 
     public function criar(){

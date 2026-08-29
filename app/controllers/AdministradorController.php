@@ -29,6 +29,7 @@ class AdministradorController extends UsuarioController
         $quantidadeItens = $itemService->countItens();
 
         $this->view('administrador/inicial', [
+            'quantidadeGestorPorEmpresa' => $gestorService->countGestoresByEmpresa(2), // Exemplo para empresa 
             'quantidadeGestores' => $quantidadeGestores,
             'quantidadeModulos' => $quantidadeModulos,
             'quantidadeEmpresas' => $quantidadeEmpresas,

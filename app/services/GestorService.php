@@ -37,4 +37,8 @@ class GestorService {
         return $this->repository->countGestores();
     }
 
+    public function countGestoresByEmpresa(int $idEmpresa): int {
+        return $this->repository->countGestoresByEmpresa($idEmpresa);
+    }
+
 }

@@ -61,4 +61,10 @@ class AtividadeRepository{
         $stm->bindValue('id', $atividade->getId());
         return $stm->execute();
     }
+
+    public function countAtividades(): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Atividades");
+        $stm->execute();
+        return (int) $stm->fetchColumn();
+    }
 }

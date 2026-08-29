@@ -36,7 +36,7 @@ class ExercicioController extends Controller{
 
         $id = $_GET['id']; 
         $data['exercicio'] = $this->exercicioService->getExercicioById($id);
-        $this->view('exercicios/exercicio_show', $data);
+        $this->view('exercicios/exercicio_list', $data);
     }
 
     public function criar(){

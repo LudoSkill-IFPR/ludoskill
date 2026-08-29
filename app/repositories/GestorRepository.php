@@ -79,7 +79,7 @@ class GestorRepository
         $stm->bindValue('cpf', $gestor->getCpf());
         $stm->bindValue('email', $gestor->getEmail());
         $stm->bindValue('numeroTelefone', $gestor->getNumeroTelefone());
-        $stm->bindValue('idUsuario', $atual['id_usuario'], PDO::PARAM_INT);
+        $stm->bindValue('idUsuario', $atual['id_usuario']);
         if ($novaSenha !== null && $novaSenha !== '') $stm->bindValue('senha', password_hash($novaSenha, PASSWORD_DEFAULT));
         $stm->execute();
         $stm = $this->connection->prepare("UPDATE Gestores SET id_empresa = :empresa WHERE id_gestor = :id");
@@ -88,6 +88,13 @@ class GestorRepository
 
     public function countGestores(): int {
         $stm = $this->connection->prepare("SELECT COUNT(*) FROM Gestores");
+        $stm->execute();
+        return (int) $stm->fetchColumn();
+    }
+
+    public function countGestoresByEmpresa(int $idEmpresa): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Gestores WHERE id_empresa = :idEmpresa");
+        $stm->bindValue('idEmpresa', $idEmpresa);
         $stm->execute();
         return (int) $stm->fetchColumn();
     }

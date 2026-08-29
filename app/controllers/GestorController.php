@@ -161,4 +161,8 @@ class GestorController extends Controller {
         $this->gestorService->updateGestor($gestor, $idGestor, $_POST['senha'] ?? null);
         $this->redirect(URL_BASE . '/administrador/gestores');
     }
+
+    public function countGestoresByEmpresa(int $idEmpresa): int {
+        return $this->gestorService->countGestoresByEmpresa($idEmpresa);
+    }
 }

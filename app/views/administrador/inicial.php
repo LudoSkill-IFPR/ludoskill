@@ -39,6 +39,9 @@
                     <a href="<?= URL_BASE ?>/administrador/modulos/">
                         Módulos cadastrados (<?= $quantidadeModulos ?>)
                     </a>
+                    <a href="<?= URL_BASE ?>/administrador/atividades/">
+                        Atividades cadastradas <!--quanidadaeAtividades-->
+                    </a>
                 </h3>
 
                 </div>
@@ -52,7 +55,7 @@
             <section class="grafico">
                 <div id="grafico" class="card verde">
                     <h2><i class="bi bi-graph-up"></i> Gestores por empresa</h2>
-                    [gráfico virá aqui]
+                    <p><?= $quantidadeGestorPorEmpresa ?></p>
                 </div>
 
                 <!-- Aqui vai vir uma espécie de legenda para o gráfico -->

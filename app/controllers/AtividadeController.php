@@ -30,13 +30,14 @@ class AtividadeController extends Controller
     public function listarAtividade() {
         $this->adminRequired();
 
-        if (!isset($_GET['id'])) {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
             $this->redirect(URL_BASE . '/administrador/atividades');
         }
 
         $id = $_GET['id'];
         $data['atividade'] = $this->atividadeService->getAtividadeById($id);
-        $this->view('atividades/atividade_show', $data);
+        $this->view('atividades/atividade_list', $data);
     }
 
     public function criar() {
@@ -59,12 +60,12 @@ class AtividadeController extends Controller
         $atividade->setNome($_POST['nome']);
         $atividade->setTipoAtividade($_POST['tipo_atividade']);
         $atividade->setEstado($_POST['estado']);
-        $atividade->setPontuacao($_POST['pontuacao']);
-        $atividade->setEstrelas($_POST['estrelas']);
+        $atividade->setPontuacao((int) $_POST['pontuacao']);
+        $atividade->setEstrelas((int) $_POST['estrelas']);
 
         // Aqui você precisaria criar um objeto Modulo com base no ID do módulo enviado no formulário
         // Supondo que você tenha um método para buscar o módulo pelo ID
-        $modulo = (new Modulo())->setId((int) $_POST['modulo_id']);
+        $modulo = (new Modulo())->setId((int) $_POST['id_modulo']);
         $atividade->setModulo($modulo);
 
         $this->atividadeService->saveAtividade($atividade);
@@ -111,12 +112,12 @@ class AtividadeController extends Controller
         $atividade->setNome($_POST['nome']);
         $atividade->setTipoAtividade($_POST['tipo_atividade']);
         $atividade->setEstado($_POST['estado']);
-        $atividade->setPontuacao($_POST['pontuacao']);
-        $atividade->setEstrelas($_POST['estrelas']);
+        $atividade->setPontuacao((int) $_POST['pontuacao']);
+        $atividade->setEstrelas((int) $_POST['estrelas']);
 
         // Aqui você precisaria criar um objeto Modulo com base no ID do módulo enviado no formulário
         // Supondo que você tenha um método para buscar o módulo pelo ID
-        $modulo = (new Modulo())->setId((int) $_POST['modulo_id']);
+        $modulo = (new Modulo())->setId((int) $_POST['id_modulo']);
         $atividade->setModulo($modulo);
 
         $this->atividadeService->updateAtividade($atividade);

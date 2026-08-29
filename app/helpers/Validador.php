@@ -332,30 +332,45 @@ class Validador {
 
         if (empty($data['nome'])) {
             $erros['nome'] = 'O campo nome é obrigatório.';
+        } elseif (strlen($data['nome']) > 255) {
+            $erros['nome'] = 'O campo nome deve ter no máximo 255 caracteres.';
         }
 
         if (empty($data['tipo_atividade'])) {
             $erros['tipo_atividade'] = 'O campo tipo de atividade é obrigatório.';
+        } elseif (!in_array($data['tipo_atividade'], ['INTRODUCAO', 'REVISAO', 'SIMULACAO'], true)) {
+            $erros['tipo_atividade'] = 'Selecione um tipo de atividade válido.';
         }
 
         if (empty($data['estado'])) {
             $erros['estado'] = 'O campo estado é obrigatório.';
+        } elseif (!in_array($data['estado'], ['PENDENTE', 'INICIADO', 'CONCLUIDO'], true)) {
+            $erros['estado'] = 'Selecione um estado válido.';
         }
 
-        if (!isset($data['pontuacao']) || !is_numeric($data['pontuacao'])) {
-            $erros['pontuacao'] = 'O campo pontuação deve ser um número.';
-        } elseif ($data['pontuacao'] < 0) {
+        if (!isset($data['pontuacao']) || filter_var($data['pontuacao'], FILTER_VALIDATE_INT) === false) {
+            $erros['pontuacao'] = 'O campo pontuação deve ser um número inteiro.';
+        } elseif ((int) $data['pontuacao'] < 0) {
             $erros['pontuacao'] = 'A pontuação não pode ser negativa.';
         }
 
-        if (!isset($data['estrelas']) || !is_numeric($data['estrelas'])) {
-            $erros['estrelas'] = 'O campo estrelas deve ser um número.';
-        } elseif ($data['estrelas'] < 0) {
+        if (!isset($data['estrelas']) || filter_var($data['estrelas'], FILTER_VALIDATE_INT) === false) {
+            $erros['estrelas'] = 'O campo estrelas deve ser um número inteiro.';
+        } elseif ((int) $data['estrelas'] < 0) {
             $erros['estrelas'] = 'As estrelas não podem ser negativas.';
         }
 
-        if (empty($data['modulo_id'])) {
-            $erros['modulo_id'] = 'O campo módulo é obrigatório.';
+        if (empty($data['id_modulo']) || filter_var($data['id_modulo'], FILTER_VALIDATE_INT) === false) {
+            $erros['id_modulo'] = 'Selecione um módulo válido.';
+        } else {
+            $sql = 'SELECT 1 FROM Modulos WHERE id_modulo = :id LIMIT 1';
+            $stm = ConnectionFactory::getConnection()->prepare($sql);
+            $stm->bindValue('id', $data['id_modulo'], \PDO::PARAM_INT);
+            $stm->execute();
+
+            if ($stm->fetchColumn() === false) {
+                $erros['id_modulo'] = 'O módulo selecionado não existe.';
+            }
         }
 
         return $erros;
