@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
     
     <title>LudoSkill - Cadastrar Funcionários</title>
 </head>
 
 <body>
     <header>
-        <?php include_once(__DIR__ . "/../../includes/menuAdministrador.html"); ?>
+        <?php include_once(__DIR__ . "/../../includes/menuGestor.php"); ?>
     </header>
 
     <main>
         <div class="container">
             <div id="topo">
-                <a href="/gestor/funcionario/" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
+                <a href="<?= URL_BASE ?>/gestor/funcionarios" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Cadastro de Funcionários</h1>
-                    <p class="mensagem">Provisório.</p>
+                    <!-- <p class="mensagem">Provisório.</p> -->
                 </div>
             </div>
 
-            <form class="card" action="<?= URL_BASE ?>/gestor/funcionarios/cadastrar" method="post">
+            <form class="card" action="<?= URL_BASE ?>/gestor/funcionarios/salvar" method="post">
                 <div class="formgroup">
                     <label for="nome_completo">Nome</label>
                     <input class="card-secundario" type="text" id="nome_completo" name="nome_completo" value="<?= isset($funcionario['nome_completo']) ? htmlspecialchars($funcionario['nome_completo']) : '' ?>">
@@ -41,7 +41,7 @@
                 </div>
                 <div class="formgroup">
                     <label for="cpf" class="form-label">CPF</label>
-                    <input class="card-secundario" type="text" id="cpf" name="cpf" maxlength="18" value="<?= isset($funcionario['cpf']) ? htmlspecialchars($funcionario['cpf']) : '' ?>">
+                    <input class="card-secundario" type="text" id="cpf" name="cpf" maxlength="14" value="<?= isset($funcionario['cpf']) ? htmlspecialchars($funcionario['cpf']) : '' ?>">
                     <?php if (isset($erros['cpf'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['cpf']) ?></span>
                     <?php endif; ?>
@@ -67,15 +67,6 @@
                         <span class="text-danger"><?= htmlspecialchars($erros['numero_telefone']) ?></span>
                     <?php endif; ?>
                 </div>
-                <div class="formgroup">
-                    <label for="id_empresa" class="form-label">Empresa</label>
-                    <select class="card-secundario" id="id_empresa" name="id_empresa">
-                        <option value="" hidden disabled <?= !isset($empresa['id_empresa']) ? 'selected' : '' ?>>Selecione</option>
-                        <?php foreach($empresas as $empresa):?>
-                            <option value="<?= $empresa['id_empresa'] ?>"><?= $empresa['nome'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
                 <button type="submit" class="botao brilho">Salvar</button>
             </form>
         
@@ -84,23 +75,26 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const cnpjInput = document.getElementById('cnpj');
-            if (!cnpjInput) return;
+            const cpfInput = document.getElementById('cpf');
+            if (!cpfInput) return;
 
-            const formatCnpj = (value) => {
-                const digits = (value || '').replace(/\D/g, '').slice(0, 14);
+            const formatCpf = (value) => {
+                const digits = (value || '').replace(/\D/g, '').slice(0, 11);
                 if (!digits) return '';
-                return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+                return digits
+                    .replace(/^(\d{3})(\d)/, '$1.$2')
+                    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+                    .replace(/\.(\d{3})(\d)/, '.$1-$2');
             };
 
-            cnpjInput.value = formatCnpj(cnpjInput.value);
+            cpfInput.value = formatCpf(cpfInput.value);
 
-            cnpjInput.addEventListener('input', function () {
-                cnpjInput.value = formatCnpj(cnpjInput.value);
+            cpfInput.addEventListener('input', function () {
+                cpfInput.value = formatCpf(cpfInput.value);
             });
 
-            cnpjInput.closest('form').addEventListener('submit', function () {
-                cnpjInput.value = cnpjInput.value.replace(/\D/g, '');
+            cpfInput.closest('form').addEventListener('submit', function () {
+                cpfInput.value = cpfInput.value.replace(/\D/g, '');
             });
         });
     </script>

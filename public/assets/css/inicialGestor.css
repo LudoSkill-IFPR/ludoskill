@@ -33,10 +33,10 @@
 }
 
 .infobase .card p {
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
-    color: var(--verde);
-    margin: 0;
+    /* color: var(--verde); */
+    padding-left: 12px;
 }
 
 .infobase .card a {

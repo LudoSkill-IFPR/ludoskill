@@ -57,6 +57,48 @@ class FuncionarioRepository{
         return $idEmpresa === false ? null : (int) $idEmpresa;
     }
 
+    public function cpfExiste(string $cpf, ?int $idFuncionarioIgnorado = null): bool {
+        $sql = "SELECT 1 FROM Usuarios u
+                LEFT JOIN Funcionarios f ON f.id_usuario = u.id_usuario
+                WHERE u.CPF = :cpf";
+
+        if ($idFuncionarioIgnorado !== null) {
+            $sql .= " AND (f.id_funcionario IS NULL OR f.id_funcionario <> :idFuncionario)";
+        }
+
+        $sql .= " LIMIT 1";
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('cpf', $cpf);
+
+        if ($idFuncionarioIgnorado !== null) {
+            $stm->bindValue('idFuncionario', $idFuncionarioIgnorado, PDO::PARAM_INT);
+        }
+
+        $stm->execute();
+        return $stm->fetchColumn() !== false;
+    }
+
+    public function emailExiste(string $email, ?int $idFuncionarioIgnorado = null): bool {
+        $sql = "SELECT 1 FROM Usuarios u
+                LEFT JOIN Funcionarios f ON f.id_usuario = u.id_usuario
+                WHERE u.email = :email";
+
+        if ($idFuncionarioIgnorado !== null) {
+            $sql .= " AND (f.id_funcionario IS NULL OR f.id_funcionario <> :idFuncionario)";
+        }
+
+        $sql .= " LIMIT 1";
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('email', $email);
+
+        if ($idFuncionarioIgnorado !== null) {
+            $stm->bindValue('idFuncionario', $idFuncionarioIgnorado, PDO::PARAM_INT);
+        }
+
+        $stm->execute();
+        return $stm->fetchColumn() !== false;
+    }
+
     public function saveFuncionario(Funcionario $funcionario): bool {
         try {
             $this->connection->beginTransaction();

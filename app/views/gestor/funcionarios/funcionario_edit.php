@@ -1,86 +1,73 @@
-<?php
-    use app\repositories\EmpresaRepository;
-    use app\repositories\UsuarioRepository;
-    use app\models\Usuario;
-
-    $empresaRepository = new EmpresaRepository();
-    $usuarioRepository = new UsuarioRepository();
-    $funcionarios = $data['lista'];
-?>
-
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
-    
-    <title>LudoSkill - Listar Funcionários</title>
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
+    <title>LudoSkill - Editar Funcionário</title>
 </head>
 
 <body>
-    <header>
-        <?php include_once(__DIR__ . "/../../includes/menuAdministrador.html"); ?>
-    </header>
+    <header><?php include_once __DIR__ . '/../../includes/menuGestor.php'; ?></header>
 
     <main>
         <div class="container">
             <div id="topo">
-                <a href="/gestor/inicial" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
-                <a href="<?= URL_BASE ?>/gestor/funcionarios/cadastrar" class="botao brilho"><i class="bi bi-plus"></i> Novo Funcionário</a>
-
+                <a href="<?= URL_BASE ?>/gestor/funcionarios" class="botao brilho">Voltar</a>
                 <div>
-                    <h1>Listagem de Funcionários</h1>
-                    <p class="mensagem">Visualize os aprendizes cadastrados.</p>
+                    <h1>Editar Funcionário</h1>
+                    <p class="mensagem">Atualize os dados do funcionário.</p>
                 </div>
             </div>
-    
-            <section class="card">
-                <h2>Lista de Itens</h2>
-                <table id="funcionario">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Data de Nascimento</th>
-                            <th>CPF</th>
-                            <th>E-mail</th>
-                            <th>Numero de Telefone</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
 
-                    <tbody>
-                        <?php foreach ($funcionarios as $funcionario): ?>
-                            <?php
-                            $nome_empresa = $empresaRepository->getEmpresaById($funcionario['id_empresa']);
-                            $nome_empresa = $nome_empresa['nome'];
-                            $usuario = $usuarioRepository->getUsuario($funcionario['id_usuario']);
-                        ?>
-                        <tr>
-                            <td><?= htmlspecialchars($usuario['nome_completo']) ?></td>
-                            <td><?= htmlspecialchars($usuario['data_nascimento']) ?></td>
-                            <td><?= htmlspecialchars($usuario['CPF']) ?></td>
-                            <td><?= htmlspecialchars($usuario['email']) ?></td>
-                            <td><?= htmlspecialchars($usuario['numero_telefone']) ?></td>
-                    
-                            <td id="acao">
-                                <a href="<?= URL_BASE ?>/gestor/funcionarios/editar?id=<?= $funcionario['id_funcionario'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                                
-                                <form action="<?= URL_BASE ?>/gestor/funcionarios/excluir" method="post" onsubmit="return confirm('Deseja excluir o(a) funcionario(a) <?= $usuario['nome_completo']?>?')">
-                                    <input type="hidden" name="id" value="<?= htmlspecialchars($funcionario['id_funcionario'] ?? '') ?>">
-                                    <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
-                                </form>
+            <form class="card" action="<?= URL_BASE ?>/gestor/funcionarios/atualizar" method="post">
+                <input type="hidden" name="id_funcionario" value="<?= (int) ($funcionario['id_funcionario'] ?? 0) ?>">
 
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
+                <?php foreach ([
+                    'nome_completo' => ['Nome completo', 'text'],
+                    'data_nascimento' => ['Data de nascimento', 'date'],
+                    'cpf' => ['CPF', 'text'],
+                    'email' => ['E-mail', 'email'],
+                    'numero_telefone' => ['Número de telefone', 'text']
+                ] as $campo => [$rotulo, $tipo]): ?>
+                    <div class="formgroup">
+                        <label for="<?= $campo ?>"><?= $rotulo ?>:</label>
+                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" value="<?= htmlspecialchars($funcionario[$campo] ?? '') ?>">
+                        <?php if (isset($erros[$campo])): ?>
+                            <div class="erro"><?= htmlspecialchars($erros[$campo]) ?></div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
 
-                </table>
-            </section>
+                <div class="formgroup">
+                    <label for="senha_hash">Nova senha:</label>
+                    <input class="card-secundario" type="password" id="senha_hash" name="senha_hash">
+                    <small>Deixe em branco para manter a senha atual.</small>
+                    <?php if (isset($erros['senha_hash'])): ?>
+                        <div class="erro"><?= htmlspecialchars($erros['senha_hash']) ?></div>
+                    <?php endif; ?>
+                </div>
 
+                <?php foreach ([
+                    'bolotas_totais' => 'Bolotas totais',
+                    'pontuacao_total' => 'Pontuação total',
+                    'nivel' => 'Nível'
+                ] as $campo => $rotulo): ?>
+                    <div class="formgroup">
+                        <label for="<?= $campo ?>"><?= $rotulo ?>:</label>
+                        <input class="card-secundario" type="number" min="0" id="<?= $campo ?>" name="<?= $campo ?>" value="<?= htmlspecialchars($funcionario[$campo] ?? '0') ?>">
+                        <?php if (isset($erros[$campo])): ?>
+                            <div class="erro"><?= htmlspecialchars($erros[$campo]) ?></div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+
+                <button type="submit" class="botao brilho">Atualizar</button>
+            </form>
         </div>
     </main>
 </body>
+
 </html>

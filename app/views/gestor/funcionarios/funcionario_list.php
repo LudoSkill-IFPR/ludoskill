@@ -13,21 +13,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../assets/css/geralUsuario.css">
-    <link rel="stylesheet" href="../../assets/css/formulariosAdministrador.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
     
     <title>LudoSkill - Listar Funcionários</title>
 </head>
 
 <body>
     <header>
-        <?php include_once(__DIR__ . "/../../includes/menuAdministrador.html"); ?>
+        <?php include_once(__DIR__ . "/../../includes/menuGestor.php"); ?>
     </header>
 
     <main>
         <div class="container">
             <div id="topo">
-                <a href="/gestor/inicial" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
+                <a href="<?= URL_BASE ?>/gestor/inicial" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <a href="<?= URL_BASE ?>/gestor/funcionarios/cadastrar" class="botao brilho"><i class="bi bi-plus"></i> Novo Funcionário</a>
 
                 <div>

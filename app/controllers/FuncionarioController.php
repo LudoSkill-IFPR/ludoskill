@@ -45,8 +45,15 @@ class FuncionarioController extends Controller
         $this->gestorRequired();
         $idEmpresa = $this->getEmpresaIdDoGestor();
         $dados = $_POST;
+        $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf'] ?? '');
         $dados['id_empresa'] = $idEmpresa;
         $erros = Validador::validarFuncionario($dados);
+        if (empty($erros['cpf']) && $this->funcionarioService->cpfExiste($dados['cpf'])) {
+            $erros['cpf'] = 'Já existe um usuário com este CPF.';
+        }
+        if (empty($erros['email']) && $this->funcionarioService->emailExiste($dados['email'])) {
+            $erros['email'] = 'Já existe um usuário com este e-mail.';
+        }
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['funcionario'] = $dados;
@@ -59,12 +66,12 @@ class FuncionarioController extends Controller
 
         $funcionario = new Funcionario(
             0,
-            $_POST['nome_completo'],
-            new DateTimeImmutable($_POST['data_nascimento']),
-            $_POST['cpf'],
-            $_POST['email'],
-            $_POST['senha_hash'],
-            $_POST['numero_telefone'],
+            $dados['nome_completo'],
+            new DateTimeImmutable($dados['data_nascimento']),
+            $dados['cpf'],
+            $dados['email'],
+            $dados['senha_hash'],
+            $dados['numero_telefone'],
             $empresa,
             0,
             0,
@@ -112,8 +119,15 @@ class FuncionarioController extends Controller
             $this->redirect(URL_BASE . '/gestor/funcionarios');
         }
         $dados = $_POST;
+        $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf'] ?? '');
         $dados['id_empresa'] = $idEmpresa;
         $erros = Validador::validarFuncionario($dados, false);
+        if (empty($erros['cpf']) && $this->funcionarioService->cpfExiste($dados['cpf'], $idFuncionario)) {
+            $erros['cpf'] = 'Já existe um usuário com este CPF.';
+        }
+        if (empty($erros['email']) && $this->funcionarioService->emailExiste($dados['email'], $idFuncionario)) {
+            $erros['email'] = 'Já existe um usuário com este e-mail.';
+        }
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['funcionario'] = $dados;
@@ -125,19 +139,19 @@ class FuncionarioController extends Controller
 
         $funcionario = new Funcionario(
             $idFuncionario,
-            $_POST['nome_completo'],
-            new \DateTimeImmutable($_POST['data_nascimento']),
-            $_POST['cpf'],
-            $_POST['email'],
-            $_POST['senha_hash'] ?? '',
-            $_POST['numero_telefone'],
+            $dados['nome_completo'],
+            new \DateTimeImmutable($dados['data_nascimento']),
+            $dados['cpf'],
+            $dados['email'],
+            $dados['senha_hash'] ?? '',
+            $dados['numero_telefone'],
             $empresa,
-            (int) $_POST['bolotas_totais'],
-            (int) $_POST['pontuacao_total'],
-            (int) $_POST['nivel']
+            (int) $dados['bolotas_totais'],
+            (int) $dados['pontuacao_total'],
+            (int) $dados['nivel']
         );
 
-        $this->funcionarioService->updateFuncionario($funcionario, $idEmpresa, $_POST['senha_hash'] ?? null);
+        $this->funcionarioService->updateFuncionario($funcionario, $idEmpresa, $dados['senha_hash'] ?? null);
         $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
 

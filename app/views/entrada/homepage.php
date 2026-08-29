@@ -20,11 +20,16 @@
 
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora, incidunt explicabo consequatur neque eveniet provident fugiat delectus eum eligendi nemo rem ab dolores necessitatibus omnis magnam adipisci minima voluptatem accusantium eaque numquam, corporis dolorem. Expedita ab quam ipsa natus? Veniam cupiditate sequi possimus incidunt. Ut eum odio minima mollitia reprehenderit.</p>
 
-                <a class="botao brilho" href="">Orçamentos</a>
+                <!-- <a class="botao brilho" href="">Orçamentos</a> -->
             </div>
 
-            <div class="container">
-                <img src="assets/imagens/esquilo-grande.png" alt="">
+            <div class="container mascote-cena">
+                <span class="objeto-flutuante bolota bolota-um" aria-hidden="true"></span>
+                <span class="objeto-flutuante bolota bolota-dois" aria-hidden="true"></span>
+                <span class="objeto-flutuante estrela" aria-hidden="true"></span>
+                <span class="objeto-flutuante losango" aria-hidden="true"></span>
+                <div class="sombra-esquilo" aria-hidden="true"></div>
+                <img class="esquilo-animado" src="assets/imagens/esquilo-grande.png" alt="Mascote esquilo do LudoSkill">
             </div>
         </div>
     </main>

@@ -31,15 +31,6 @@
                     <p><?= htmlspecialchars($empresa['nome_empresa'] ?? 'N/A') ?></p>
                 </div>
 
-                <div class="card">
-                    <h3><i class="bi bi-bar-chart-fill"></i> Dashboard</h3>
-                    <p>Seus funcionários em ação</p>
-                </div>
-
-                <div class="card">
-                    <h3><i class="bi bi-gear-fill"></i> Configurações</h3>
-                    <a href="<?= URL_BASE ?>/gestor/configuracoes">Gerenciar</a>
-                </div>
             </section>
 
             <section class="grafico">

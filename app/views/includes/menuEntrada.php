@@ -18,7 +18,7 @@
     <!--botões para outras páginas-->
     <ul id="navegacao">                
         <li><a href="">Colaboradores</a></li> 
-        <li><a href="">Sobre nós</a></li> 
+        <li><a href="<?= URL_BASE ?>/sobreNos">Sobre nós</a></li> 
         <li><a href="">Contato</a></li> 
         <li><a class="botao brilho" href="<?= URL_BASE ?>/login">Login</a></li>
     </ul>

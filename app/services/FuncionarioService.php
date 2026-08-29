@@ -25,6 +25,14 @@ class FuncionarioService
         return $this->funcionarioRepository->getEmpresaIdByGestorUsuario($idUsuario);
     }
 
+    public function cpfExiste(string $cpf, ?int $idFuncionarioIgnorado = null): bool {
+        return $this->funcionarioRepository->cpfExiste($cpf, $idFuncionarioIgnorado);
+    }
+
+    public function emailExiste(string $email, ?int $idFuncionarioIgnorado = null): bool {
+        return $this->funcionarioRepository->emailExiste($email, $idFuncionarioIgnorado);
+    }
+
     public function saveFuncionario(Funcionario $funcionario) {
         return $this->funcionarioRepository->saveFuncionario($funcionario);
     }

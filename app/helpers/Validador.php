@@ -200,7 +200,7 @@ class Validador {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
-        if (!empty($data['cpf']) && strlen($data['cpf']) > 11) {
+        if (!empty($data['cpf']) && strlen($data['cpf']) > 12) {
             $erros['cpf'] = 'O campo cpf deve ter no máximo 11 caracteres.';
         }
 
@@ -290,14 +290,23 @@ class Validador {
 
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
+        } else {
+            $dataNascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', $data['data_nascimento']);
+            $dataValida = $dataNascimento && $dataNascimento->format('Y-m-d') === $data['data_nascimento'];
+
+            if (!$dataValida) {
+                $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
+            } elseif ($dataNascimento > new \DateTimeImmutable('today')) {
+                $erros['data_nascimento'] = 'A data de nascimento não pode estar no futuro.';
+            }
         }
 
         if (empty($data['cpf'])) {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
-        if (!empty($data['cpf']) && strlen($data['cpf']) > 11) {
-            $erros['cpf'] = 'O campo cpf deve ter no máximo 11 caracteres.';
+        if (!empty($data['cpf']) && !preg_match('/^\d{11}$/', $data['cpf'])) {
+            $erros['cpf'] = 'O CPF deve possuir exatamente 11 dígitos.';
         }
 
         if (empty($data['email'])) {
@@ -306,6 +315,10 @@ class Validador {
 
         if (!empty($data['email']) && strlen($data['email']) > 255) {
             $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
+        }
+
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $erros['email'] = 'Informe um e-mail válido.';
         }
 
         if ($senhaObrigatoria && empty($data['senha_hash'])) {
