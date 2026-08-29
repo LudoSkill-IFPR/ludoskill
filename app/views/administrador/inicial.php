@@ -37,8 +37,9 @@
                     <i class="bi bi-file-post"></i>
 
                     <a href="<?= URL_BASE ?>/administrador/modulos/">
-                        Módulos cadastrados (<?= $quantidadeModulos ?>)
+                        Módulos cadastrados
                     </a>
+                    <p><?= $quantidadeModulos ?></p>
                     <a href="<?= URL_BASE ?>/administrador/atividades/">
                         Atividades cadastradas <!--quanidadaeAtividades-->
                     </a>
@@ -54,25 +55,32 @@
 
             <section class="grafico">
                 <div id="grafico" class="card verde">
-                    <h2><i class="bi bi-graph-up"></i> Gestores por empresa</h2>
-                    <p><?= $quantidadeGestorPorEmpresa ?></p>
+                    <h2><i class="bi bi-graph-up"></i> Usuários por empresa</h2>
+                    <?php if (empty($empresasComQuantidadeUsuarios)): ?>
+                        <p>Nenhuma empresa cadastrada.</p>
+                    <?php else: ?>
+                        <?php foreach ($empresasComQuantidadeUsuarios as $empresa): ?>
+                            <p class="card-secundario">
+                                <strong><?= htmlspecialchars($empresa['nome']) ?></strong>:
+                                <?= (int) $empresa['quantidade_usuarios'] ?> usuários
+                                (<?= (int) $empresa['quantidade_gestores'] ?> gestores e
+                                <?= (int) $empresa['quantidade_funcionarios'] ?> funcionários)
+                            </p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Aqui vai vir uma espécie de legenda para o gráfico -->
                 <div id="legenda" class="card">
-                    <h3><i class="bi bi-clipboard-data-fill"></i> Empresas mais presentes</h3>
+                    <h3><i class="bi bi-clipboard-data-fill"></i> Empresas com mais usuários</h3>
 
                     <ol>
-                        <li class="card-secundario">
-                        </li>
-                        <li class="card-secundario">
-                        </li>
-                        <li class="card-secundario">
-                        </li>
-                        <li class="card-secundario">
-                        </li>
-                        <li class="card-secundario">
-                        </li>
+                        <?php foreach (array_slice($empresasComQuantidadeUsuarios ?? [], 0, 5) as $empresa): ?>
+                            <li class="card-secundario">
+                                <?= htmlspecialchars($empresa['nome']) ?>
+                                (<?= (int) $empresa['quantidade_usuarios'] ?>)
+                            </li>
+                        <?php endforeach; ?>
                     </ol>
                 </div>
             </section>

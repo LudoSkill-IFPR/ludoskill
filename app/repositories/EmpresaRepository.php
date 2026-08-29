@@ -24,6 +24,22 @@ class EmpresaRepository {
         return $empresas;
     }
 
+    public function getEmpresasComQuantidadeUsuarios(): array {
+        $sql = "SELECT e.id_empresa, e.nome, e.cnpj, e.email, e.plano,
+                       COUNT(DISTINCT g.id_gestor) AS quantidade_gestores,
+                       COUNT(DISTINCT f.id_funcionario) AS quantidade_funcionarios,
+                       COUNT(DISTINCT g.id_gestor) + COUNT(DISTINCT f.id_funcionario) AS quantidade_usuarios
+                FROM Empresas e
+                LEFT JOIN Gestores g ON g.id_empresa = e.id_empresa
+                LEFT JOIN Funcionarios f ON f.id_empresa = e.id_empresa
+                GROUP BY e.id_empresa, e.nome, e.cnpj, e.email, e.plano
+                ORDER BY quantidade_usuarios DESC, e.nome";
+
+        $stm = $this->connection->prepare($sql);
+        $stm->execute();
+        return $stm->fetchAll();
+    }
+
     public function getEmpresaById(int $id){
         $stm = $this->connection->prepare("SELECT * FROM Empresas WHERE id_empresa = :id");
         $stm->bindValue('id', $id);

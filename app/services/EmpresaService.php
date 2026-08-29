@@ -21,6 +21,10 @@ class EmpresaService {
         return $this->empresaRepository->getEmpresas();
     }
 
+    public function getEmpresasComQuantidadeUsuarios(): array {
+        return $this->empresaRepository->getEmpresasComQuantidadeUsuarios();
+    }
+
     public function getEmpresaById(int $id) {
         return $this->empresaRepository->getEmpresaById($id);
     }
