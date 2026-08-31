@@ -19,18 +19,30 @@
     <main>
 
         <section>
-            <h2>Quem somos?</h2>
+            <div class="box-maior">
+                
+                <div>
+                    <h2>Quem somos?</h2>
+                </div>
+    
+                <div>
+                    <p>
+                        Somos estudantes do Instituto Federal do Paraná (IFPR) Campus de Foz do Iguaçu, atualmente cursando o 4º ano do curso Técnico em Desenvolvimento de Sistemas.
+                    </p>
+        
+                    <p>
+                        O LudoSkill é um projeto desenvolvido com o objetivo de
+                        tornar o processo de capacitação profissional mais
+                        interativo, dinâmico e motivador por meio da gamificação.
+                    </p>
+                </div>
+            </div>
+            <div class="box-menor">
+                <a href="https://www.ifpr.edu.br/" target="_blank" rel="noopener noreferrer">
+                    <img src="assets/imagens/IFPR.png" alt="Logo do IFPR" id="logo-ifpr">
+                </a>
+            </div>
 
-            <p>
-                Somos estudantes do Instituto Federal do Paraná (IFPR),
-                do curso Técnico em Desenvolvimento de Sistemas.
-            </p>
-
-            <p>
-                O LudoSkill é um projeto desenvolvido com o objetivo de
-                tornar o processo de capacitação profissional mais
-                interativo, dinâmico e motivador por meio da gamificação.
-            </p>
         </section>
 
 

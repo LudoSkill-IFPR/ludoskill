@@ -1,0 +1,53 @@
+main section {
+    display: flex;
+    gap: 20px;
+    font-size: 18px;
+}
+
+main section p {
+    font-size: 25px;
+}
+
+main section .box-maior{
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
+    margin: 30px;
+}
+
+
+main section .box-menor{
+    /* background-color: aliceblue; */
+    align-items: flex-end;
+    position:relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    isolation: isolate;
+}
+
+#logo-ifpr {
+    position: relative;
+    z-index: 2;
+    max-width: 450px;
+    transform-origin: 50% 90%;
+    height: auto;
+    /* margin-top: 20px; */
+    animation: logo-ifpr 5.5s ease-in-out infinite;
+}
+
+@keyframes logo-ifpr{
+    0%, 100% {
+        transform: translate(-20px, 5px) rotate(-5deg);
+    }
+
+    25%, 75% {
+        transform: translate(0, -15px) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(20px, 5px) rotate(5deg);
+    }
+}
