@@ -70,6 +70,11 @@ nav{
     gap: 18px;
 }
 
+.menu-funcionario #navegacao{
+    width: auto;
+    gap: 18px;
+}
+
 #navegacao li:not(.dropdown){
     display: flex;
     align-items: center;
@@ -142,6 +147,7 @@ section{
 
 a{
     text-decoration: none;
+    font-size: 16px;
 }
 
 a:hover:not(.botao){

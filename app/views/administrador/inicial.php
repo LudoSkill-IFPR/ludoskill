@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/inicialAdministrador.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     <title>LudoSkill - Administrador</title>
 </head>
@@ -33,17 +34,13 @@
 
                 <div class="card">
 
-                    <h3>
-                    <i class="bi bi-file-post"></i>
+                    
 
-                    <a href="<?= URL_BASE ?>/administrador/modulos/">
-                        Módulos cadastrados
-                    </a>
+                    <h3><i class="bi bi-file-post"></i><a href="<?= URL_BASE ?>/administrador/modulos/">Módulos cadastrados</a></h3>
                     <p><?= $quantidadeModulos ?></p>
-                    <a href="<?= URL_BASE ?>/administrador/atividades/">
-                        Atividades cadastradas <!--quanidadaeAtividades-->
-                    </a>
-                </h3>
+
+                    <h3><a href="<?= URL_BASE ?>/administrador/atividades/">Atividades cadastradas</a></h3>
+                    <h3><a href="<?= URL_BASE ?>/administrador/exercicios/">Exercícios cadastrados</a></h3>
 
                 </div>
 

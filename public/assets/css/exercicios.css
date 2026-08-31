@@ -1,0 +1,162 @@
+.formulario-exercicio {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.erro-conteudo {
+    padding: 10px;
+    border: 1px solid var(--problema);
+    border-radius: 8px;
+}
+
+#lista-questoes {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.bloco-questao {
+    margin: 0;
+    border: 1px solid var(--cinza-escuro);
+}
+
+.cabecalho-questao,
+.acoes-formulario,
+.linha-alternativa {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cabecalho-questao {
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.cabecalho-questao legend {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.linha-alternativa {
+    margin-bottom: 10px;
+}
+
+.linha-alternativa .campo-alternativa {
+    flex: 1;
+    width: auto;
+    margin: 0;
+}
+
+.linha-alternativa label {
+    width: auto;
+}
+
+.remover-questao,
+.remover-alternativa {
+    width: auto;
+    background: var(--problema);
+}
+
+.remover-questao:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.adicionar-alternativa {
+    width: auto;
+    margin-bottom: 20px;
+}
+
+.acoes-formulario {
+    justify-content: space-between;
+}
+
+.acoes-formulario .botao {
+    width: auto;
+}
+
+@media (max-width: 700px) {
+    .linha-alternativa {
+        flex-wrap: wrap;
+    }
+
+    .linha-alternativa .campo-alternativa {
+        order: 3;
+        flex-basis: 100%;
+    }
+}
+
+.pagina-exercicios {
+    width: min(900px, 90%);
+}
+
+.pagina-exercicios #topo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.conjunto-exercicios {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.questao-funcionario {
+    margin-top: 16px;
+}
+
+.opcoes-questao {
+    display: grid;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.opcao-exercicio {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background: var(--cinza-ultraescuro);
+    cursor: pointer;
+}
+
+.opcao-exercicio input {
+    width: auto;
+}
+
+.resultado-questao {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.resultado-questao[hidden] {
+    display: none;
+}
+
+.resposta-correta {
+    border: 1px solid var(--verde-escuro);
+}
+
+.resposta-incorreta {
+    border: 1px solid var(--problema);
+}
+
+.lista-atividades-funcionario {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.lista-atividades-funcionario .card {
+    width: 100%;
+}
+
+.lista-atividades-funcionario .botao {
+    display: inline-block;
+    margin-top: 14px;
+}

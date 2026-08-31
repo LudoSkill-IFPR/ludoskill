@@ -70,16 +70,64 @@ class Validador {
 
         if (empty($data['descricao'])) {
             $erros['descricao'] = 'O campo descrição é obrigatório.';
+        } elseif (strlen($data['descricao']) > 255) {
+            $erros['descricao'] = 'O campo descrição deve ter no máximo 255 caracteres.';
         }
 
         if (empty($data['conteudo'])) {
             $erros['conteudo'] = 'O campo conteúdo é obrigatório.';
-        } elseif (json_decode($data['conteudo'], true) === null && json_last_error() !== JSON_ERROR_NONE) {
-            $erros['conteudo'] = 'O conteúdo deve ser um JSON válido.';
+        } else {
+            $questoes = json_decode($data['conteudo'], true);
+
+            if (!is_array($questoes) || json_last_error() !== JSON_ERROR_NONE) {
+                $erros['conteudo'] = 'O conteúdo deve ser um JSON válido.';
+            } elseif ($questoes === []) {
+                $erros['conteudo'] = 'Cadastre pelo menos uma questão.';
+            } else {
+                foreach ($questoes as $indice => $questao) {
+                    $numero = $indice + 1;
+                    $alternativas = $questao['alternativas'] ?? [];
+                    $correta = $questao['alternativa_correta'] ?? null;
+
+                    if (trim((string) ($questao['questao'] ?? '')) === '') {
+                        $erros['conteudo'] = "Informe a questão {$numero}.";
+                        break;
+                    }
+                    if (trim((string) ($questao['enunciado'] ?? '')) === '') {
+                        $erros['conteudo'] = "Informe o enunciado da questão {$numero}.";
+                        break;
+                    }
+                    if (!is_array($alternativas) || count($alternativas) < 2) {
+                        $erros['conteudo'] = "A questão {$numero} deve possuir pelo menos duas alternativas.";
+                        break;
+                    }
+                    foreach ($alternativas as $alternativa) {
+                        if (trim((string) $alternativa) === '') {
+                            $erros['conteudo'] = "Preencha todas as alternativas da questão {$numero}.";
+                            break 2;
+                        }
+                    }
+                    if (!is_int($correta) || !array_key_exists($correta, $alternativas)) {
+                        $erros['conteudo'] = "Selecione a alternativa correta da questão {$numero}.";
+                        break;
+                    }
+                    if (trim((string) ($questao['justificativa'] ?? '')) === '') {
+                        $erros['conteudo'] = "Informe a justificativa da questão {$numero}.";
+                        break;
+                    }
+                }
+            }
         }
 
         if (empty($data['atividade_id']) || !filter_var($data['atividade_id'], FILTER_VALIDATE_INT)) {
             $erros['atividade_id'] = 'Selecione uma atividade válida.';
+        } else {
+            $stm = ConnectionFactory::getConnection()->prepare('SELECT 1 FROM Atividades WHERE id_atividade = :id LIMIT 1');
+            $stm->bindValue('id', (int) $data['atividade_id'], \PDO::PARAM_INT);
+            $stm->execute();
+            if ($stm->fetchColumn() === false) {
+                $erros['atividade_id'] = 'A atividade selecionada não existe.';
+            }
         }
 
         return $erros;

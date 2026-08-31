@@ -14,7 +14,12 @@ class ExercicioRepository {
     }
 
     public function getExercicios(): array {
-        $stm = $this->connection->prepare("SELECT * FROM Exercicios");
+        $stm = $this->connection->prepare(
+            "SELECT e.*, a.nome AS nome_atividade
+             FROM Exercicios e
+             INNER JOIN Atividades a ON a.id_atividade = e.id_atividade
+             ORDER BY e.id_exercicio DESC"
+        );
         $stm->execute();
         $exercicios = $stm->fetchAll();
         return $exercicios;
@@ -29,6 +34,19 @@ class ExercicioRepository {
         $exercicio = $stm->fetch();
 
         return $exercicio;
+    }
+
+    public function getExerciciosByAtividade(int $idAtividade): array {
+        $stm = $this->connection->prepare(
+            "SELECT e.*, a.nome AS nome_atividade
+             FROM Exercicios e
+             INNER JOIN Atividades a ON a.id_atividade = e.id_atividade
+             WHERE e.id_atividade = :id_atividade
+             ORDER BY e.id_exercicio"
+        );
+        $stm->bindValue('id_atividade', $idAtividade, PDO::PARAM_INT);
+        $stm->execute();
+        return $stm->fetchAll();
     }
 
     public function saveExercicio(Exercicio $exercicio){

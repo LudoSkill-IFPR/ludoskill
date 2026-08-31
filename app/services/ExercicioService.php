@@ -21,6 +21,10 @@ class ExercicioService {
         return $this->exercicioRepository->getExercicioById($id);
     }
 
+    public function getExerciciosByAtividade(int $idAtividade): array {
+        return $this->exercicioRepository->getExerciciosByAtividade($idAtividade);
+    }
+
     public function saveExercicio(Exercicio $exercicio) {
         return $this->exercicioRepository->saveExercicio($exercicio);
     }

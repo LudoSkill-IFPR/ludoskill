@@ -65,9 +65,9 @@ foreach ($funcionarios as $func) {
                     <h2>Continue de onde parou!</h2>
                     
                     <div class="card-secundario">
-                        <h3>[Fase x]</h3>
-                        <p>[Nome da fase]</p>
-                        <p>[descrição da fase]</p>
+                        <h3>[Atividade x]</h3>
+                        <p>[Nome da atividade]</p>
+                        <p>[descrição da atividade]</p>
             
                         <a href="#" class="botao brilho">iniciar</a>
                     </div>
@@ -76,7 +76,7 @@ foreach ($funcionarios as $func) {
                 <div id="progresso" class="card">
                     <h2>Seu progresso</h2>
                     <!-- BARRA DE PROGRESSO -->
-                    <p>[Módulo + fase x de y]</p>
+                    <p>[Módulo + atividade x de y]</p>
                 </div>
             </section>
 
