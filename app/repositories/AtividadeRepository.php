@@ -31,6 +31,15 @@ class AtividadeRepository{
         return $atividade;
     }
 
+    public function getAtividadesByModulo(int $idModulo): array {
+        $stm = $this->connection->prepare(
+            "SELECT * FROM Atividades WHERE id_modulo = :id_modulo ORDER BY id_atividade"
+        );
+        $stm->bindValue('id_modulo', $idModulo, PDO::PARAM_INT);
+        $stm->execute();
+        return $stm->fetchAll();
+    }
+
     public function saveAtividade(Atividade $atividade){
         $sql = "INSERT INTO Atividades (id_modulo, tipo_atividade, nome, estado, pontuacao, estrelas) VALUES (:idModulo, :tipoAtividade, :nome, :estado, :pontuacao, :estrelas)";
         $stm = $this->connection->prepare($sql);

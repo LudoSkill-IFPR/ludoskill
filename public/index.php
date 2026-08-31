@@ -64,6 +64,7 @@ $router->post('/administrador/exercicios/salvar', 'ExercicioController@salvar');
 $router->post('/administrador/exercicios/atualizar', 'ExercicioController@atualizar');
 $router->post('/administrador/exercicios/excluir', 'ExercicioController@excluir');
 $router->get('/funcionario/atividades/exercicios', 'ExercicioController@acessarAtividade');
+$router->post('/funcionario/atividades/exercicios/responder', 'ExercicioController@responderAtividade');
 
 //funcionarios
 $router->get('/gestor/funcionarios', 'FuncionarioController@listarTodos');
@@ -81,6 +82,5 @@ $router->get('/funcionario/inicial', 'FuncionarioController@inicial');
 
 $router->get('/funcionario/loja', 'ItemController@listarTodosFuncionario');
 $router->get('/funcionario/modulos', 'ModuloController@listarTodosFuncionario');
-$router->get('/funcionario/atividades', 'AtividadeController@listarFuncionario');
 
 $router->run();

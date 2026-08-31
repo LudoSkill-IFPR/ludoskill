@@ -26,13 +26,6 @@ class AtividadeController extends Controller
         $this->view('administrador/atividades/atividade_list', $data);
     }
 
-    public function listarFuncionario() {
-        $this->funcionarioRequired();
-        $this->view('funcionario/atividades', [
-            'lista' => $this->atividadeService->getAtividades()
-        ]);
-    }
-
     //
     public function listarAtividade() {
         $this->adminRequired();

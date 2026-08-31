@@ -5,14 +5,20 @@ namespace app\controllers;
 use app\core\Controller;
 use app\models\Modulo;
 use app\services\ModuloService;
+use app\services\AtividadeService;
+use app\services\FuncionarioAtividadeService;
 use app\helpers\Validador;
 
 class ModuloController extends Controller
 {
     private ModuloService $moduloService;
+    private AtividadeService $atividadeService;
+    private FuncionarioAtividadeService $funcionarioAtividadeService;
 
     public function __construct() {
         $this->moduloService = new ModuloService();
+        $this->atividadeService = new AtividadeService();
+        $this->funcionarioAtividadeService = new FuncionarioAtividadeService();
     }
 
     public function listarTodos() {
@@ -22,8 +28,15 @@ class ModuloController extends Controller
     }
 
     public function listarTodosFuncionario() {
-        $this->autenticacaoRequired();
+        $this->funcionarioRequired();
         $data['lista'] = $this->moduloService->getModulos();
+        foreach ($data['lista'] as &$modulo) {
+            $modulo['atividades'] = $this->atividadeService->getAtividadesByModulo((int) $modulo['id_modulo']);
+        }
+        unset($modulo);
+        $data['resultados'] = $this->funcionarioAtividadeService->getResultadosByUsuario(
+            $_SESSION['usuario_logado']->getId()
+        );
         $this->view('/funcionario/modulos', $data);
     }
 

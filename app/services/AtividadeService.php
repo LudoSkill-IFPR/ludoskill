@@ -20,6 +20,10 @@ class AtividadeService {
         return $this->atividadeRepository->getAtividadeById($id);
     }
 
+    public function getAtividadesByModulo(int $idModulo): array {
+        return $this->atividadeRepository->getAtividadesByModulo($idModulo);
+    }
+
     public function saveAtividade(Atividade $atividade) {
         return $this->atividadeRepository->saveAtividade($atividade);
     }

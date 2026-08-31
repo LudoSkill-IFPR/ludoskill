@@ -1,6 +1,5 @@
 <?php
 $questoesIniciais = $questoes ?? [[
-    'questao' => '',
     'enunciado' => '',
     'alternativas' => ['', ''],
     'alternativa_correta' => null,
@@ -47,11 +46,6 @@ $questoesIniciais = $questoes ?? [[
         <div class="cabecalho-questao">
             <legend>Questão <span class="numero-questao"></span></legend>
             <button type="button" class="botao remover-questao">Remover questão</button>
-        </div>
-
-        <div class="formgroup">
-            <label>Questão:</label>
-            <input class="card-secundario campo-questao" type="text" maxlength="255" required>
         </div>
 
         <div class="formgroup">

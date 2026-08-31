@@ -107,6 +107,8 @@
     margin-top: 16px;
 }
 
+.questao-funcionario legend { font-size: 19px; font-weight: bold; margin-bottom: 10px; }
+
 .opcoes-questao {
     display: grid;
     gap: 10px;
@@ -145,6 +147,11 @@
     border: 1px solid var(--problema);
 }
 
+.alternativa-correta-resultado { border: 1px solid var(--verde-escuro); }
+.alternativa-incorreta-resultado { border: 1px solid var(--problema); }
+.resumo-resultado { width: 100%; margin-top: 20px; }
+.finalizar-atividade { width: auto; margin: 20px 0 40px; }
+
 .lista-atividades-funcionario {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -159,4 +166,21 @@
 .lista-atividades-funcionario .botao {
     display: inline-block;
     margin-top: 14px;
+}
+
+.pagina-modulos { width: min(1000px, 90%); }
+.lista-modulos { display: grid; gap: 18px; margin-top: 24px; }
+.modulo-funcionario { width: 100%; }
+.modulo-funcionario summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; cursor: pointer; list-style: none; }
+.modulo-funcionario summary::-webkit-details-marker { display: none; }
+.modulo-funcionario summary strong, .modulo-funcionario summary small { display: block; }
+.modulo-funcionario summary strong { font-size: 21px; }
+.modulo-funcionario summary small { margin-top: 5px; color: #cfcfcf; }
+.abrir-modulo, .atividade-concluida { color: var(--verde-claro); }
+.atividades-modulo { display: grid; gap: 12px; margin-top: 20px; }
+.atividade-modulo { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin: 0; }
+.atividade-concluida { margin-top: 8px; }
+
+@media (max-width: 650px) {
+    .atividade-modulo { align-items: flex-start; flex-direction: column; }
 }

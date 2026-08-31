@@ -89,10 +89,6 @@ class Validador {
                     $alternativas = $questao['alternativas'] ?? [];
                     $correta = $questao['alternativa_correta'] ?? null;
 
-                    if (trim((string) ($questao['questao'] ?? '')) === '') {
-                        $erros['conteudo'] = "Informe a questão {$numero}.";
-                        break;
-                    }
                     if (trim((string) ($questao['enunciado'] ?? '')) === '') {
                         $erros['conteudo'] = "Informe o enunciado da questão {$numero}.";
                         break;

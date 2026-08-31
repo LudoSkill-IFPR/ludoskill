@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const questoes = [...lista.querySelectorAll('.bloco-questao')];
         questoes.forEach((bloco, indiceQuestao) => {
             bloco.querySelector('.numero-questao').textContent = indiceQuestao + 1;
-            bloco.querySelector('.campo-questao').name = `questoes[${indiceQuestao}][questao]`;
             bloco.querySelector('.campo-enunciado').name = `questoes[${indiceQuestao}][enunciado]`;
             bloco.querySelector('.campo-justificativa').name = `questoes[${indiceQuestao}][justificativa]`;
             bloco.querySelectorAll('.linha-alternativa').forEach((linha, indiceAlternativa) => {
@@ -63,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const adicionarQuestao = (dados = {}) => {
         const bloco = modelo.content.firstElementChild.cloneNode(true);
-        bloco.querySelector('.campo-questao').value = dados.questao ?? '';
         bloco.querySelector('.campo-enunciado').value = dados.enunciado ?? '';
         bloco.querySelector('.campo-justificativa').value = dados.justificativa ?? '';
         bloco.querySelector('.adicionar-alternativa').addEventListener('click', () => adicionarAlternativa(bloco));

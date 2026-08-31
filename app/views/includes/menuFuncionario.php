@@ -6,7 +6,6 @@
 
     <ul id="navegacao">
         <li><a href="<?= URL_BASE ?>/funcionario/modulos">Módulos</a></li>
-        <li><a href="<?= URL_BASE ?>/funcionario/atividades">Atividades</a></li>
         <li class="dropdown">
             <a class="botao brilho" href="#"><i class="bi bi-person-circle"></i> Perfil</a>
 
