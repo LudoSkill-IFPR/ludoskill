@@ -12,7 +12,7 @@
     <header>
         <nav>
             <!--volta para a pagina inicial-->
-            <a id="homepage" href="homepage.php">
+            <a id="homepage" href="<?= URL_BASE ?>" aria-label="Ir para a página inicial">
                 <img id="icone" src="assets/imagens/icone-ludoskill-transparente.png" alt="icone do ludoskill">
                 <img id="logo" src="assets/imagens/logo-ludoskill.png" alt="logo do ludoskill">
             </a>

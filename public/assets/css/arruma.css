@@ -12,22 +12,28 @@
 
 #apresentacao{
     display: flex;
-
+    min-height: calc(100vh - 82px);
+    padding: 32px clamp(24px, 7vw, 132px) 20px;
     justify-content: center;
     align-items: center;
+    gap: clamp(30px, 5vw, 90px);
 }
 
 .container{
-    width: 45%;
+    width: min(46%, 720px);
 }
 
 .container h1{
-    font-size: 45pt;
-    line-height: 1;
+    font-size: clamp(44px, 4.4vw, 68px);
+    line-height: 0.98;
+    text-wrap: balance;
 }
 
 .container p{
-    margin: 30px 0px;
+    max-width: 760px;
+    margin: 30px 0;
+    font-size: clamp(16px, 1.2vw, 19px);
+    line-height: 1.45;
 }
 
 .container > img{
@@ -38,15 +44,17 @@
     position: relative;
     min-height: 520px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
+    padding-top: 70px;
+    padding-bottom: 8px;
     isolation: isolate;
 }
 
 .esquilo-animado{
     position: relative;
     z-index: 2;
-    max-width: 540px;
+    width: min(100%, 540px);
     transform-origin: 50% 90%;
     filter: drop-shadow(0 22px 22px rgba(35, 17, 68, 0.25));
     animation: passeio-esquilo 5.5s ease-in-out infinite;
@@ -56,7 +64,7 @@
     position: absolute;
     z-index: 1;
     left: 50%;
-    bottom: 7%;
+    bottom: 1%;
     width: 58%;
     height: 34px;
     border-radius: 50%;
@@ -99,13 +107,13 @@
 
 .bolota-dois{
     right: 7%;
-    bottom: 22%;
+    bottom: 52%;
     width: 24px;
     animation: flutuar-dois 3.6s ease-in-out infinite 0.5s;
 }
 
 .estrela{
-    top: 15%;
+    top: 65%;
     right: 10%;
     width: 48px;
     aspect-ratio: 1;
@@ -163,7 +171,7 @@
 @media (max-width: 850px){
     #apresentacao{
         flex-direction: column;
-        padding: 28px 20px;
+        padding: 28px 20px 40px;
     }
 
     #apresentacao .container{
@@ -177,6 +185,7 @@
     .mascote-cena{
         min-height: 320px;
         max-width: 480px;
+        padding-top: 25px;
     }
 
     .esquilo-animado{

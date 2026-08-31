@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/geralEntrada.css">
-    <link rel="stylesheet" href="assets/css/arruma.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/arruma.css">
     
     <title>LudoSkill</title>
 </head>
@@ -29,7 +29,7 @@
                 <span class="objeto-flutuante estrela" aria-hidden="true"></span>
                 <span class="objeto-flutuante losango" aria-hidden="true"></span>
                 <div class="sombra-esquilo" aria-hidden="true"></div>
-                <img class="esquilo-animado" src="assets/imagens/esquilo-grande.png" alt="Mascote esquilo do LudoSkill">
+                <img class="esquilo-animado" src="<?= URL_BASE ?>/assets/imagens/esquilo-grande.png" alt="Mascote esquilo do LudoSkill">
             </div>
         </div>
     </main>
