@@ -65,8 +65,10 @@ class Router
             }
         }
 
+        $path = __DIR__ . "/../views/outros/404.php";
+        require_once($path);
         http_response_code(404);
-        exit('Rota não encontrada');
+        die();
     }
 
     public function dispatch($route){
