@@ -35,33 +35,33 @@
                     <?php foreach ($exercicios as $exercicio): ?>
                         <section class="card conjunto-exercicios">
                             <h2><?= htmlspecialchars($exercicio['descricao']) ?></h2>
-                            <?php foreach ($exercicio['questoes'] as $indiceQuestao => $questao): ?>
+                            <?php foreach ($exercicio['questoes'] as $indiceExercicio => $exercicio): ?>
                                 <?php
                                 $numeroGlobal++;
                                 $idExercicio = (string) $exercicio['id_exercicio'];
-                                $selecionada = $respostas[$idExercicio][$indiceQuestao] ?? null;
-                                $correta = (int) ($questao['alternativa_correta'] ?? -1);
+                                $selecionada = $respostas[$idExercicio][$indiceExercicio] ?? null;
+                                $correta = (int) ($exercicio['alternativa_correta'] ?? -1);
                                 ?>
-                                <fieldset class="card-secundario questao-funcionario">
+                                <fieldset class="card-secundario exercicio-funcionario">
                                     <legend>Questão <?= $numeroGlobal ?></legend>
-                                    <p><?= nl2br(htmlspecialchars($questao['enunciado'] ?? '')) ?></p>
-                                    <div class="opcoes-questao">
-                                        <?php foreach (($questao['alternativas'] ?? []) as $indice => $alternativa): ?>
+                                    <p><?= nl2br(htmlspecialchars($exercicio['enunciado'] ?? '')) ?></p>
+                                    <div class="opcoes-exercicio">
+                                        <?php foreach (($exercicio['alternativas'] ?? []) as $indice => $alternativa): ?>
                                             <?php
                                             $classes = 'opcao-exercicio';
                                             if (isset($resultado) && $indice === $correta) $classes .= ' alternativa-correta-resultado';
                                             if (isset($resultado) && (int) $selecionada === $indice && $indice !== $correta) $classes .= ' alternativa-incorreta-resultado';
                                             ?>
                                             <label class="<?= $classes ?>">
-                                                <input type="radio" name="respostas[<?= (int) $exercicio['id_exercicio'] ?>][<?= (int) $indiceQuestao ?>]" value="<?= (int) $indice ?>" <?= (string) $selecionada === (string) $indice ? 'checked' : '' ?> <?= isset($resultado) ? 'disabled' : 'required' ?>>
+                                                <input type="radio" name="respostas[<?= (int) $exercicio['id_exercicio'] ?>][<?= (int) $indiceExercicio ?>]" value="<?= (int) $indice ?>" <?= (string) $selecionada === (string) $indice ? 'checked' : '' ?> <?= isset($resultado) ? 'disabled' : 'required' ?>>
                                                 <span><?= htmlspecialchars($alternativa) ?></span>
                                             </label>
                                         <?php endforeach; ?>
                                     </div>
                                     <?php if (isset($resultado)): ?>
-                                        <div class="resultado-questao <?= (int) $selecionada === $correta ? 'resposta-correta' : 'resposta-incorreta' ?>">
+                                        <div class="resultado-exercicio <?= (int) $selecionada === $correta ? 'resposta-correta' : 'resposta-incorreta' ?>">
                                             <strong><?= (int) $selecionada === $correta ? 'Resposta correta!' : 'Resposta incorreta.' ?></strong>
-                                            <p><?= nl2br(htmlspecialchars($questao['justificativa'] ?? '')) ?></p>
+                                            <p><?= nl2br(htmlspecialchars($exercicio['justificativa'] ?? '')) ?></p>
                                         </div>
                                     <?php endif; ?>
                                 </fieldset>

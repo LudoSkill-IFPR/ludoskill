@@ -84,12 +84,12 @@ class Validador {
             } elseif ($questoes === []) {
                 $erros['conteudo'] = 'Cadastre pelo menos uma questão.';
             } else {
-                foreach ($questoes as $indice => $questao) {
+                foreach ($questoes as $indice => $exercicio) {
                     $numero = $indice + 1;
-                    $alternativas = $questao['alternativas'] ?? [];
-                    $correta = $questao['alternativa_correta'] ?? null;
+                    $alternativas = $exercicio['alternativas'] ?? [];
+                    $correta = $exercicio['alternativa_correta'] ?? null;
 
-                    if (trim((string) ($questao['enunciado'] ?? '')) === '') {
+                    if (trim((string) ($exercicio['enunciado'] ?? '')) === '') {
                         $erros['conteudo'] = "Informe o enunciado da questão {$numero}.";
                         break;
                     }
@@ -107,7 +107,7 @@ class Validador {
                         $erros['conteudo'] = "Selecione a alternativa correta da questão {$numero}.";
                         break;
                     }
-                    if (trim((string) ($questao['justificativa'] ?? '')) === '') {
+                    if (trim((string) ($exercicio['justificativa'] ?? '')) === '') {
                         $erros['conteudo'] = "Informe a justificativa da questão {$numero}.";
                         break;
                     }

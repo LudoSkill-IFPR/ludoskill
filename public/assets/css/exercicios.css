@@ -16,12 +16,12 @@
     gap: 20px;
 }
 
-.bloco-questao {
+.bloco-exercicio {
     margin: 0;
     border: 1px solid var(--cinza-escuro);
 }
 
-.cabecalho-questao,
+.cabecalho-exercicio,
 .acoes-formulario,
 .linha-alternativa {
     display: flex;
@@ -29,12 +29,12 @@
     gap: 12px;
 }
 
-.cabecalho-questao {
+.cabecalho-exercicio {
     justify-content: space-between;
     margin-bottom: 12px;
 }
 
-.cabecalho-questao legend {
+.cabecalho-exercicio legend {
     font-size: 20px;
     font-weight: bold;
 }
@@ -53,13 +53,13 @@
     width: auto;
 }
 
-.remover-questao,
+.remover-exercicio,
 .remover-alternativa {
     width: auto;
     background: var(--problema);
 }
 
-.remover-questao:disabled {
+.remover-exercicio:disabled {
     cursor: not-allowed;
     opacity: 0.5;
 }
@@ -103,13 +103,13 @@
     margin-top: 20px;
 }
 
-.questao-funcionario {
+.exercicio-funcionario {
     margin-top: 16px;
 }
 
-.questao-funcionario legend { font-size: 19px; font-weight: bold; margin-bottom: 10px; }
+.exercicio-funcionario legend { font-size: 19px; font-weight: bold; margin-bottom: 10px; }
 
-.opcoes-questao {
+.opcoes-exercicio {
     display: grid;
     gap: 10px;
     margin: 18px 0;
@@ -129,13 +129,13 @@
     width: auto;
 }
 
-.resultado-questao {
+.resultado-exercicio {
     margin-top: 15px;
     padding: 12px;
     border-radius: 8px;
 }
 
-.resultado-questao[hidden] {
+.resultado-exercicio[hidden] {
     display: none;
 }
 

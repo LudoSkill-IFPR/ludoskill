@@ -36,16 +36,16 @@ $questoesIniciais = $questoes ?? [[
     <div id="lista-questoes" aria-live="polite"></div>
 
     <div class="acoes-formulario">
-        <button type="button" class="botao brilho" id="adicionar-questao">Adicionar questão</button>
+        <button type="button" class="botao brilho" id="adicionar-exercicio">Adicionar questão</button>
         <button type="submit" class="botao brilho">Salvar</button>
     </div>
 </form>
 
-<template id="modelo-questao">
-    <fieldset class="card-secundario bloco-questao">
-        <div class="cabecalho-questao">
-            <legend>Questão <span class="numero-questao"></span></legend>
-            <button type="button" class="botao remover-questao">Remover questão</button>
+<template id="modelo-exercicio">
+    <fieldset class="card-secundario bloco-exercicio">
+        <div class="cabecalho-exercicio">
+            <legend>Questão <span class="numero-exercicio"></span></legend>
+            <button type="button" class="botao remover-exercicio">Remover questão</button>
         </div>
 
         <div class="formgroup">

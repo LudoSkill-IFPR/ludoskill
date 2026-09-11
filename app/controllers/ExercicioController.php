@@ -167,7 +167,7 @@ class ExercicioController extends Controller{
         $acertos = 0;
 
         foreach ($exercicios as $exercicio) {
-            foreach ($exercicio['questoes'] as $indice => $questao) {
+            foreach ($exercicio['questoes'] as $indice => $exercicio) {
                 $total++;
                 $idExercicio = (string) $exercicio['id_exercicio'];
                 $resposta = filter_var(
@@ -175,7 +175,7 @@ class ExercicioController extends Controller{
                     FILTER_VALIDATE_INT,
                     ['options' => ['min_range' => 0]]
                 );
-                if ($resposta === false || !array_key_exists($resposta, $questao['alternativas'] ?? [])) {
+                if ($resposta === false || !array_key_exists($resposta, $exercicio['alternativas'] ?? [])) {
                     $this->view('funcionario/exercicios', [
                         'atividade' => $atividade,
                         'exercicios' => $exercicios,
@@ -184,7 +184,7 @@ class ExercicioController extends Controller{
                     ]);
                     return;
                 }
-                if ((int) $resposta === (int) ($questao['alternativa_correta'] ?? -1)) {
+                if ((int) $resposta === (int) ($exercicio['alternativa_correta'] ?? -1)) {
                     $acertos++;
                 }
             }
@@ -241,25 +241,25 @@ class ExercicioController extends Controller{
     private function normalizarQuestoes(array $questoes): array {
         $normalizadas = [];
 
-        foreach ($questoes as $questao) {
-            if (!is_array($questao)) continue;
+        foreach ($questoes as $exercicio) {
+            if (!is_array($exercicio)) continue;
 
             $alternativas = array_values(array_map(
                 fn($alternativa) => trim((string) $alternativa),
-                is_array($questao['alternativas'] ?? null) ? $questao['alternativas'] : []
+                is_array($exercicio['alternativas'] ?? null) ? $exercicio['alternativas'] : []
             ));
 
             $correta = filter_var(
-                $questao['alternativa_correta'] ?? null,
+                $exercicio['alternativa_correta'] ?? null,
                 FILTER_VALIDATE_INT,
                 ['options' => ['min_range' => 0]]
             );
 
             $normalizadas[] = [
-                'enunciado' => trim((string) ($questao['enunciado'] ?? '')),
+                'enunciado' => trim((string) ($exercicio['enunciado'] ?? '')),
                 'alternativas' => $alternativas,
                 'alternativa_correta' => $correta === false ? null : $correta,
-                'justificativa' => trim((string) ($questao['justificativa'] ?? ''))
+                'justificativa' => trim((string) ($exercicio['justificativa'] ?? ''))
             ];
         }
 

@@ -1,3 +1,13 @@
+.caixa-branca {
+    background-color: #ffffff9c;
+    margin: 20px 80px;
+    color:black;
+    border-radius: 10px;
+    border-style: dashed;
+    border-width: 2px;
+    border-color: #c5aed0;
+}
+
 main section {
     display: flex;
     gap: 20px;
@@ -38,16 +48,65 @@ main section .box-menor{
     animation: logo-ifpr 5.5s ease-in-out infinite;
 }
 
+#mascote-ludo {
+    position: relative;
+    z-index: 2;
+    max-width: 450px;
+    transform-origin: 50% 50%;
+    height: auto;
+    will-change: transform;
+    animation: mascote-ludo 8.2s ease-in-out infinite alternate;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #c5aed039;
+    color: white;
+    padding: 10px 0;
+    font-size: 18px;
+}
+
 @keyframes logo-ifpr{
     0%, 100% {
-        transform: translate(-20px, 5px) rotate(-5deg);
+        transform: translate(-2px, 40px) rotate(-5deg);
     }
 
     25%, 75% {
-        transform: translate(0, -15px) rotate(0deg);
+        transform: translate(0, 30px) rotate(0deg);
     }
 
     50% {
-        transform: translate(20px, 5px) rotate(5deg);
+        transform: translate(2px, 40px) rotate(5deg);
+    }
+}
+
+@keyframes mascote-ludo{
+    0% {
+        transform: translate(-34px, -28px) rotate(-9deg);
+    }
+
+    22% {
+        transform: translate(24px, -14px) rotate(7deg);
+    }
+
+    46% {
+        transform: translate(-18px, 3px) rotate(-6deg);
+    }
+
+    72% {
+        transform: translate(30px, 20px) rotate(8deg);
+    }
+
+    100% {
+        transform: translate(-25px, 38px) rotate(-7deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #logo-ifpr,
+    #mascote-ludo {
+        animation: none;
     }
 }

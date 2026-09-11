@@ -1,27 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
     const lista = document.getElementById('lista-questoes');
-    const modelo = document.getElementById('modelo-questao');
-    const botaoAdicionar = document.getElementById('adicionar-questao');
+    const modelo = document.getElementById('modelo-exercicio');
+    const botaoAdicionar = document.getElementById('adicionar-exercicio');
     if (!lista || !modelo || !botaoAdicionar) return;
 
     const reindexar = () => {
-        const questoes = [...lista.querySelectorAll('.bloco-questao')];
-        questoes.forEach((bloco, indiceQuestao) => {
-            bloco.querySelector('.numero-questao').textContent = indiceQuestao + 1;
-            bloco.querySelector('.campo-enunciado').name = `questoes[${indiceQuestao}][enunciado]`;
-            bloco.querySelector('.campo-justificativa').name = `questoes[${indiceQuestao}][justificativa]`;
+        const questoes = [...lista.querySelectorAll('.bloco-exercicio')];
+        questoes.forEach((bloco, indiceExercicio) => {
+            bloco.querySelector('.numero-exercicio').textContent = indiceExercicio + 1;
+            bloco.querySelector('.campo-enunciado').name = `questoes[${indiceExercicio}][enunciado]`;
+            bloco.querySelector('.campo-justificativa').name = `questoes[${indiceExercicio}][justificativa]`;
             bloco.querySelectorAll('.linha-alternativa').forEach((linha, indiceAlternativa) => {
                 const radio = linha.querySelector('.alternativa-correta');
                 const input = linha.querySelector('.campo-alternativa');
-                const idRadio = `correta-${indiceQuestao}-${indiceAlternativa}`;
+                const idRadio = `correta-${indiceExercicio}-${indiceAlternativa}`;
                 radio.id = idRadio;
-                radio.name = `questoes[${indiceQuestao}][alternativa_correta]`;
+                radio.name = `questoes[${indiceExercicio}][alternativa_correta]`;
                 radio.value = indiceAlternativa;
-                input.name = `questoes[${indiceQuestao}][alternativas][${indiceAlternativa}]`;
+                input.name = `questoes[${indiceExercicio}][alternativas][${indiceAlternativa}]`;
                 linha.querySelector('label').htmlFor = idRadio;
             });
         });
-        lista.querySelectorAll('.remover-questao').forEach((botao) => {
+        lista.querySelectorAll('.remover-exercicio').forEach((botao) => {
             botao.disabled = questoes.length === 1;
         });
     };
@@ -60,12 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
         reindexar();
     };
 
-    const adicionarQuestao = (dados = {}) => {
+    const adicionarExercicio = (dados = {}) => {
         const bloco = modelo.content.firstElementChild.cloneNode(true);
         bloco.querySelector('.campo-enunciado').value = dados.enunciado ?? '';
         bloco.querySelector('.campo-justificativa').value = dados.justificativa ?? '';
         bloco.querySelector('.adicionar-alternativa').addEventListener('click', () => adicionarAlternativa(bloco));
-        bloco.querySelector('.remover-questao').addEventListener('click', () => {
+        bloco.querySelector('.remover-exercicio').addEventListener('click', () => {
             bloco.remove();
             reindexar();
         });
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reindexar();
     };
 
-    botaoAdicionar.addEventListener('click', () => adicionarQuestao());
+    botaoAdicionar.addEventListener('click', () => adicionarExercicio());
     const iniciais = Array.isArray(window.questoesIniciais) && window.questoesIniciais.length ? window.questoesIniciais : [{}];
-    iniciais.forEach(adicionarQuestao);
+    iniciais.forEach(adicionarExercicio);
 });
