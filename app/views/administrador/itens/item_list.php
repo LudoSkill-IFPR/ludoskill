@@ -68,10 +68,7 @@
                             <td id="acao">
                                 <a href="<?= URL_BASE ?>/administrador/itens/editar?id=<?= $item['id_item'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
                                 
-                                <form action="<?= URL_BASE ?>/administrador/itens/excluir" method="post" onsubmit="return confirm('Deseja excluir este item?')">
-                                    <input type="hidden" name="id" value="<?= htmlspecialchars($item['id_item'] ?? '') ?>">
-                                    <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
-                                </form>
+                        
                                 <?php if (($item['estado'] ?? '1') === '1'): ?>
                                     <form action="<?= URL_BASE ?>/administrador/itens/desativar" method="post" onsubmit="return confirm('Deseja desativar este item?')">
                                         <input type="hidden" name="id" value="<?= htmlspecialchars($item['id_item'] ?? '') ?>">
