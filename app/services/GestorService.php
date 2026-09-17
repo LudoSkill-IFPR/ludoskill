@@ -5,7 +5,8 @@ namespace app\services;
 use app\models\Gestor;
 use app\repositories\GestorRepository;
 
-class GestorService {
+class GestorService
+{
     private GestorRepository $repository;
 
     public function __construct()
@@ -13,32 +14,47 @@ class GestorService {
         $this->repository = new GestorRepository;
     }
 
-    public function getGestores(): array {
+    public function getGestores(): array
+    {
         return $this->repository->getGestores();
     }
 
-    public function getGestorById(int $id) {
+    public function getGestorById(int $id)
+    {
         return $this->repository->getGestorById($id);
     }
 
-    public function saveGestor(Gestor $gestor) {
+    public function saveGestor(Gestor $gestor)
+    {
         return $this->repository->saveGestor($gestor);
     }
 
-    public function deleteGestor(int $id) {
-        return $this->repository->deleteGestor($id);
+    // public function deleteGestor(int $id) {
+    //     return $this->repository->deleteGestor($id);
+    // }
+
+    public function desativarGestor(int $id)
+    {
+        return $this->repository->desativarGestor($id);
     }
 
-    public function updateGestor(Gestor $gestor, int $idGestor, ?string $novaSenha = null) {
+    public function ativarGestor(int $id)
+    {
+        return $this->repository->ativarGestor($id);
+    }
+
+    public function updateGestor(Gestor $gestor, int $idGestor, ?string $novaSenha = null)
+    {
         return $this->repository->updateGestor($gestor, $idGestor, $novaSenha);
     }
 
-    public function countGestores(): int {
+    public function countGestores(): int
+    {
         return $this->repository->countGestores();
     }
 
-    public function countGestoresByEmpresa(int $idEmpresa): int {
+    public function countGestoresByEmpresa(int $idEmpresa): int
+    {
         return $this->repository->countGestoresByEmpresa($idEmpresa);
     }
-
 }

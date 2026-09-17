@@ -12,7 +12,6 @@ class Atividade {
     private int $estrelas;
 
     
-
     /**
      * Get the value of id
      */

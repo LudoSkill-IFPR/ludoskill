@@ -65,7 +65,7 @@ class ItemController extends Controller
 
     public function listarTodosFuncionario() {
         $this->autenticacaoRequired();
-        $data['lista'] = $this->itemService->getItems();
+        $data['lista'] = $this->itemService->getItemsAtivos();
         $this->view('/funcionario/loja', $data);
     }
 
@@ -177,15 +177,26 @@ class ItemController extends Controller
         $this->view('/administrador/itens/item_edit', $data);
     }
 
-    public function excluir(){
+    public function desativar(){
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-        if (!$id) {
-            $this->redirect(URL_BASE . '/administrador/itens/item_list');
+        if ($id) {
+            $this->itemService->desativarItem($id);
         }
-
-        $this->itemService->deleteItem($id);
         $this->redirect(URL_BASE . '/administrador/itens');
+    }
+
+    public function ativar(){
+        $this->adminRequired();
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if ($id) {
+            $this->itemService->ativarItem($id);
+        }
+        $this->redirect(URL_BASE . '/administrador/itens');
+    }
+
+    public function excluir(){
+        $this->desativar();
     }
 
     public function atualizar() {

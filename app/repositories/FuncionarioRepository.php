@@ -6,22 +6,27 @@ use app\database\ConnectionFactory;
 use app\models\Funcionario;
 use PDO;
 
-class FuncionarioRepository{
+class FuncionarioRepository
+{
     private PDO $connection;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->connection = ConnectionFactory::getConnection();
     }
 
-    public function getFuncionarios(): array {
+    public function getFuncionarios(): array
+    {
         $stm = $this->connection->prepare("SELECT * FROM Funcionarios");
         $stm->execute();
         return $stm->fetchAll();
     }
 
-    public function getFuncionariosByEmpresa(int $idEmpresa): array {
+    public function getFuncionariosByEmpresa(int $idEmpresa): array
+    {
         $sql = "SELECT f.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
                        u.email, u.numero_telefone
+                       u.email, u.numero_telefone, u.estado
                 FROM Funcionarios f
                 INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario
                 WHERE f.id_empresa = :idEmpresa
@@ -32,9 +37,11 @@ class FuncionarioRepository{
         return $stm->fetchAll();
     }
 
-    public function getFuncionarioByIdAndEmpresa(int $id, int $idEmpresa){
+    public function getFuncionarioByIdAndEmpresa(int $id, int $idEmpresa)
+    {
         $sql = "SELECT f.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
                        u.email, u.senha_hash, u.numero_telefone
+                       u.email, u.senha_hash, u.numero_telefone, u.estado
                 FROM Funcionarios f
                 INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario
                 WHERE f.id_funcionario = :id AND f.id_empresa = :idEmpresa";
@@ -47,7 +54,8 @@ class FuncionarioRepository{
         return $stm->fetch() ?: null;
     }
 
-    public function getEmpresaIdByGestorUsuario(int $idUsuario): ?int {
+    public function getEmpresaIdByGestorUsuario(int $idUsuario): ?int
+    {
         $stm = $this->connection->prepare(
             "SELECT id_empresa FROM Gestores WHERE id_usuario = :idUsuario"
         );
@@ -57,7 +65,8 @@ class FuncionarioRepository{
         return $idEmpresa === false ? null : (int) $idEmpresa;
     }
 
-    public function cpfExiste(string $cpf, ?int $idFuncionarioIgnorado = null): bool {
+    public function cpfExiste(string $cpf, ?int $idFuncionarioIgnorado = null): bool
+    {
         $sql = "SELECT 1 FROM Usuarios u
                 LEFT JOIN Funcionarios f ON f.id_usuario = u.id_usuario
                 WHERE u.CPF = :cpf";
@@ -78,7 +87,8 @@ class FuncionarioRepository{
         return $stm->fetchColumn() !== false;
     }
 
-    public function emailExiste(string $email, ?int $idFuncionarioIgnorado = null): bool {
+    public function emailExiste(string $email, ?int $idFuncionarioIgnorado = null): bool
+    {
         $sql = "SELECT 1 FROM Usuarios u
                 LEFT JOIN Funcionarios f ON f.id_usuario = u.id_usuario
                 WHERE u.email = :email";
@@ -99,7 +109,8 @@ class FuncionarioRepository{
         return $stm->fetchColumn() !== false;
     }
 
-    public function saveFuncionario(Funcionario $funcionario): bool {
+    public function saveFuncionario(Funcionario $funcionario): bool
+    {
         try {
             $this->connection->beginTransaction();
             $sql = "INSERT INTO Usuarios (nome_completo, data_nascimento, CPF, email, senha_hash, numero_telefone) VALUES (:nomeCompleto, :dataNascimento, :cpf, :email, :senha_hash, :numeroTelefone)";
@@ -131,16 +142,49 @@ class FuncionarioRepository{
         }
     }
 
-    public function deleteFuncionario(int $id, int $idEmpresa): bool {
+    // public function deleteFuncionario(int $id, int $idEmpresa): bool {
+    //     $stm = $this->connection->prepare(
+    //         "DELETE u FROM Usuarios u INNER JOIN Funcionarios f ON f.id_usuario = u.id_usuario WHERE f.id_funcionario = :id AND f.id_empresa = :idEmpresa"
+    //     );
+    //     $stm->bindValue('id', $id, PDO::PARAM_INT);
+    //     $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
+    //     return $stm->execute();
+    // }
+
+    public function desativarFuncionario(int $id, int $idEmpresa): bool
+    {
         $stm = $this->connection->prepare(
-            "DELETE u FROM Usuarios u INNER JOIN Funcionarios f ON f.id_usuario = u.id_usuario WHERE f.id_funcionario = :id AND f.id_empresa = :idEmpresa"
+            "UPDATE Usuarios u
+         INNER JOIN Funcionarios f ON f.id_usuario = u.id_usuario
+         SET u.estado = 'INATIVO'
+         WHERE f.id_funcionario = :id
+         AND f.id_empresa = :idEmpresa"
         );
+
         $stm->bindValue('id', $id, PDO::PARAM_INT);
         $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
+
         return $stm->execute();
     }
 
-    public function updateFuncionario(Funcionario $funcionario, int $idEmpresa, ?string $novaSenha = null): bool {
+    public function ativarFuncionario(int $id, int $idEmpresa): bool
+    {
+        $stm = $this->connection->prepare(
+            "UPDATE Usuarios u
+         INNER JOIN Funcionarios f ON f.id_usuario = u.id_usuario
+         SET u.estado = 'ATIVO'
+         WHERE f.id_funcionario = :id
+         AND f.id_empresa = :idEmpresa"
+        );
+
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
+        $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
+
+        return $stm->execute();
+    }
+
+    public function updateFuncionario(Funcionario $funcionario, int $idEmpresa, ?string $novaSenha = null): bool
+    {
         $atual = $this->getFuncionarioByIdAndEmpresa($funcionario->getId(), $idEmpresa);
         if (!$atual) {
             return false;
@@ -170,17 +214,18 @@ class FuncionarioRepository{
         return $stm->execute();
     }
 
-    public function countFuncionarios(): int {
-        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Funcionarios");
+    public function countFuncionarios(): int
+    {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Funcionarios f INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario WHERE u.estado = 'ATIVO'");
         $stm->execute();
         return (int) $stm->fetchColumn();
     }
 
-    public function countFuncionariosByEmpresa(int $idEmpresa): int {
-        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Funcionarios WHERE id_empresa = :idEmpresa");
+    public function countFuncionariosByEmpresa(int $idEmpresa): int
+    {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Funcionarios f INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario WHERE f.id_empresa = :idEmpresa AND u.estado = 'ATIVO'");
         $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
         $stm->execute();
         return (int) $stm->fetchColumn();
     }
-
 }

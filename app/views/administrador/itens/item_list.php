@@ -35,6 +35,7 @@
                             <th>Nome</th>
                             <th>Preço</th>
                             <th>Imagem</th>
+                            <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -56,6 +57,13 @@
                                     <img src="<?= htmlspecialchars($imagemUrl) ?>" alt="<?= htmlspecialchars($item['nome'] ?? '') ?>" style="max-width: 100px; max-height: 100px;">
                                 <?php endif; ?>
                             </td>
+                            <td>
+                                <?php if (($item['estado'] ?? '1') === '1'): ?>
+                                    <span class="badge badge-ativo">Ativo</span>
+                                <?php else: ?>
+                                    <span class="badge badge-inativo">Inativo</span>
+                                <?php endif; ?>
+                            </td>
 
                             <td id="acao">
                                 <a href="<?= URL_BASE ?>/administrador/itens/editar?id=<?= $item['id_item'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
@@ -64,6 +72,17 @@
                                     <input type="hidden" name="id" value="<?= htmlspecialchars($item['id_item'] ?? '') ?>">
                                     <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
                                 </form>
+                                <?php if (($item['estado'] ?? '1') === '1'): ?>
+                                    <form action="<?= URL_BASE ?>/administrador/itens/desativar" method="post" onsubmit="return confirm('Deseja desativar este item?')">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars($item['id_item'] ?? '') ?>">
+                                        <button type="submit" class="botao brilhinho botao-desativar"><i class="bi bi-eye-slash"></i> Desativar</button>
+                                    </form>
+                                <?php else: ?>
+                                    <form action="<?= URL_BASE ?>/administrador/itens/ativar" method="post" onsubmit="return confirm('Deseja reativar este item?')">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars($item['id_item'] ?? '') ?>">
+                                        <button type="submit" class="botao brilho botao-ativar"><i class="bi bi-eye"></i> Ativar</button>
+                                    </form>
+                                <?php endif; ?>
 
                             </td>
                         </tr>

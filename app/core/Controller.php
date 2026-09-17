@@ -29,7 +29,8 @@ class Controller
 
     public function autenticacaoRequired()
     {
-        if (!isset($_SESSION['usuario_logado'])) {
+        if (!isset($_SESSION['usuario_logado']) || (method_exists($_SESSION['usuario_logado'], 'isAtivo') && !$_SESSION['usuario_logado']->isAtivo())) {
+            unset($_SESSION['usuario_logado']);
             $this->redirect(URL_BASE . '/login');
         }
 
@@ -40,7 +41,9 @@ class Controller
 
     public function adminRequired()
     {
-        if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado']->getPerfil() !== 'admin') {
+        $this->autenticacaoRequired();
+
+        if ($_SESSION['usuario_logado']->getPerfil() !== 'admin') {
             $this->redirect(URL_BASE . '/login');
         }
 
@@ -49,10 +52,9 @@ class Controller
 
     protected function gestorRequired()
     {
-        if (
-            !isset($_SESSION['usuario_logado']) ||
-            $_SESSION['usuario_logado']->getPerfil() !== 'gestor'
-        ) {
+        $this->autenticacaoRequired();
+
+        if ($_SESSION['usuario_logado']->getPerfil() !== 'gestor') {
             $this->redirect(URL_BASE . '/login');
         }
 
@@ -61,12 +63,12 @@ class Controller
 
     protected function funcionarioRequired()
     {
-        if (
-            !isset($_SESSION['usuario_logado']) ||
-            $_SESSION['usuario_logado']->getPerfil() !== 'funcionario'
-        ) {
+        $this->autenticacaoRequired();
+
+        if ($_SESSION['usuario_logado']->getPerfil() !== 'funcionario') {
             $this->redirect(URL_BASE . '/login');
         }
+
         return true;
     }
 }

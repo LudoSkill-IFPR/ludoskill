@@ -103,3 +103,37 @@ th{
 #acao a{
     width: fit-content;
 }
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-ativo {
+    background-color: rgba(31, 173, 84, 0.25);
+    color: var(--verde-claro, #9bff95);
+    border: 1px solid var(--verde-escuro, #1fad54);
+}
+
+.badge-inativo {
+    background-color: rgba(227, 42, 51, 0.25);
+    color: #ff8087;
+    border: 1px solid var(--problema, #E32A33);
+}
+
+.botao-desativar:hover {
+    background: radial-gradient(at left bottom, #8a1f26, var(--problema, #E32A33));
+    border-color: var(--problema, #E32A33);
+    box-shadow: 0px 0px 10px var(--problema, #E32A33);
+}
+
+.botao-ativar:hover {
+    background: radial-gradient(at left bottom, var(--verde-escurao), var(--verde-escuro));
+    border-color: var(--verde-escuro);
+    box-shadow: 0px 0px 10px var(--verde-escuro);
+}

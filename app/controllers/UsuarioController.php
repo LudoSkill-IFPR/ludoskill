@@ -67,10 +67,25 @@ class UsuarioController extends Controller
         $this->redirect(URL_BASE . '/usuarios');
     }
 
-    public function excluir() {
+    public function desativar() {
         $this->adminRequired();
-        $id = $_GET['id'];
-        $this->service->deleteUsuario($id);
-        $this->redirect(URL_BASE . '/gestor/funcionarios');
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT) ?? filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if ($id) {
+            $this->service->desativarUsuario($id);
+        }
+        $this->redirect(URL_BASE . '/administrador/inicial');
+    }
+
+    public function ativar() {
+        $this->adminRequired();
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT) ?? filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if ($id) {
+            $this->service->ativarUsuario($id);
+        }
+        $this->redirect(URL_BASE . '/administrador/inicial');
+    }
+
+    public function excluir() {
+        $this->desativar();
     }
 }

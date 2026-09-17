@@ -16,6 +16,7 @@ class Usuario
     private string $senha;
     private ?string $numeroTelefone;
     private ?string $perfil;
+    private string $estado;
 
     public function __construct(
         int $id = 0,
@@ -25,7 +26,8 @@ class Usuario
         string $email = '',
         string $senha = '',
         ?string $numeroTelefone = null,
-        ?string $perfil = null
+        ?string $perfil = null,
+        string $estado = 'ATIVO' // Valor padrão para o estado
     ) {
         $this->id = $id;
         $this->nomeCompleto = $nomeCompleto;
@@ -35,6 +37,7 @@ class Usuario
         $this->senha = $senha;
         $this->numeroTelefone = $numeroTelefone;
         $this->perfil = $perfil;
+        $this->estado = $estado; // Valor padrão para o estado
     }
 
     public static function arrayParaObjeto(array $usuario): self
@@ -44,15 +47,20 @@ class Usuario
             $dataNascimento = new DateTimeImmutable($dataNascimento);
         }
 
+        // Um hash bcrypt possui 60 caracteres. Remove quebras de linha
+        // acidentais vindas de importações ou inserções manuais no banco.
+        $senha = rtrim((string) ($usuario['senha_hash'] ?? $usuario['senha'] ?? ''));
+
         return new self(
             (int) ($usuario['id_usuario'] ?? 0),
             $usuario['nome_completo'] ?? '',
             $dataNascimento,
             $usuario['CPF'] ?? $usuario['cpf'] ?? '',
             $usuario['email'] ?? '',
-            $usuario['senha_hash'] ?? $usuario['senha'] ?? '',
+            $senha,
             $usuario['numero_telefone'] ?? null,
-            $usuario['perfil'] ?? null
+            $usuario['perfil'] ?? null,
+            $usuario['estado'] ?? 'ATIVO'
         );
     }
 
@@ -150,5 +158,28 @@ class Usuario
         $this->dataNascimento = $dataNascimento;
 
         return $this;
+    }
+
+    /**
+     * Get the value of estado
+     */
+    public function getEstado(): string
+    {
+        return $this->estado;
+    }
+
+    /**
+     * Set the value of estado
+     */
+    public function setEstado(string $estado): self
+    {
+        $this->estado = $estado;
+
+        return $this;
+    }
+
+    public function isAtivo(): bool
+    {
+        return $this->estado === 'ATIVO';
     }
 }

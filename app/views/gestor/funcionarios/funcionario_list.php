@@ -38,6 +38,7 @@
     
             <section class="card">
                 <h2>Lista de Itens</h2>
+                <h2>Lista de Funcionários</h2>
                 <table id="funcionario">
                     <thead>
                         <tr>
@@ -46,6 +47,7 @@
                             <th>CPF</th>
                             <th>E-mail</th>
                             <th>Numero de Telefone</th>
+                            <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -63,6 +65,13 @@
                             <td><?= htmlspecialchars($usuario['CPF']) ?></td>
                             <td><?= htmlspecialchars($usuario['email']) ?></td>
                             <td><?= htmlspecialchars($usuario['numero_telefone']) ?></td>
+                            <td>
+                                <?php if (($usuario['estado'] ?? 'ATIVO') === 'ATIVO'): ?>
+                                    <span class="badge badge-ativo">Ativo</span>
+                                <?php else: ?>
+                                    <span class="badge badge-inativo">Inativo</span>
+                                <?php endif; ?>
+                            </td>
                     
                             <td id="acao">
                                 <a href="<?= URL_BASE ?>/gestor/funcionarios/editar?id=<?= $funcionario['id_funcionario'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
@@ -71,6 +80,17 @@
                                     <input type="hidden" name="id" value="<?= htmlspecialchars($funcionario['id_funcionario'] ?? '') ?>">
                                     <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
                                 </form>
+                                <?php if (($usuario['estado'] ?? 'ATIVO') === 'ATIVO'): ?>
+                                    <form action="<?= URL_BASE ?>/gestor/funcionarios/desativar" method="post" onsubmit="return confirm('Deseja desativar o(a) funcionario(a) <?= htmlspecialchars($usuario['nome_completo']) ?>?')">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars($funcionario['id_funcionario'] ?? '') ?>">
+                                        <button type="submit" class="botao brilhinho botao-desativar"><i class="bi bi-person-x"></i> Desativar</button>
+                                    </form>
+                                <?php else: ?>
+                                    <form action="<?= URL_BASE ?>/gestor/funcionarios/ativar" method="post" onsubmit="return confirm('Deseja reativar o(a) funcionario(a) <?= htmlspecialchars($usuario['nome_completo']) ?>?')">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars($funcionario['id_funcionario'] ?? '') ?>">
+                                        <button type="submit" class="botao brilho botao-ativar"><i class="bi bi-person-check"></i> Ativar</button>
+                                    </form>
+                                <?php endif; ?>
 
                             </td>
                         </tr>

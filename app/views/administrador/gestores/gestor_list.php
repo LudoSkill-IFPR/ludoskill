@@ -21,6 +21,7 @@
                             <th>Nome</th>
                             <th>E-mail</th>
                             <th>Empresa</th>
+                            <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -29,8 +30,27 @@
                                 <td><?= htmlspecialchars($gestor['email']) ?></td>
                                 <td><?= htmlspecialchars($gestor['nome_empresa']) ?></td>
                                 <td>
-                                    <div id="acao"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/gestores/editar?id=<?= (int) $gestor['id_gestor'] ?>">Editar</a>
-                                        <form method="post" action="<?= URL_BASE ?>/administrador/gestores/excluir" onsubmit="return confirm('Deseja excluir este gestor?')"><input type="hidden" name="id" value="<?= (int) $gestor['id_gestor'] ?>"><button class="botao brilho" type="submit">Excluir</button></form>
+                                    
+                                    <?php if (($gestor['estado'] ?? 'ATIVO') === 'ATIVO'): ?>
+                                        <span class="badge badge-ativo">Ativo</span>
+                                    <?php else: ?>
+                                        <span class="badge badge-inativo">Inativo</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <div id="acao">
+                                        <a class="botao brilho" href="<?= URL_BASE ?>/administrador/gestores/editar?id=<?= (int) $gestor['id_gestor'] ?>">Editar</a>
+                                        <?php if (($gestor['estado'] ?? 'ATIVO') === 'ATIVO'): ?>
+                                            <form method="post" action="<?= URL_BASE ?>/administrador/gestores/desativar" onsubmit="return confirm('Deseja desativar este gestor?')">
+                                                <input type="hidden" name="id" value="<?= (int) $gestor['id_gestor'] ?>">
+                                                <button class="botao brilhinho botao-desativar" type="submit">Desativar</button>
+                                            </form>
+                                        <?php else: ?>
+                                            <form method="post" action="<?= URL_BASE ?>/administrador/gestores/ativar" onsubmit="return confirm('Deseja reativar este gestor?')">
+                                                <input type="hidden" name="id" value="<?= (int) $gestor['id_gestor'] ?>">
+                                                <button class="botao brilho botao-ativar" type="submit">Ativar</button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr><?php endforeach; ?></tbody>

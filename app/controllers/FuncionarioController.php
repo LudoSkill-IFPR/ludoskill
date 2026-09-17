@@ -98,16 +98,41 @@ class FuncionarioController extends Controller
         $this->view('gestor/funcionarios/funcionario_edit', $data);
     }
 
-    public function excluir()
+    public function desativar()
     {
         $this->gestorRequired();
+
         $idEmpresa = $this->getEmpresaIdDoGestor();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+
         if (!$id) {
             $this->redirect(URL_BASE . '/gestor/funcionarios');
         }
-        $this->funcionarioService->deleteFuncionario($id, $idEmpresa);
+
+        $this->funcionarioService->desativarFuncionario($id, $idEmpresa);
+
         $this->redirect(URL_BASE . '/gestor/funcionarios');
+    }
+
+    public function ativar()
+    {
+        $this->gestorRequired();
+
+        $idEmpresa = $this->getEmpresaIdDoGestor();
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+
+        if (!$id) {
+            $this->redirect(URL_BASE . '/gestor/funcionarios');
+        }
+
+        $this->funcionarioService->ativarFuncionario($id, $idEmpresa);
+
+        $this->redirect(URL_BASE . '/gestor/funcionarios');
+    }
+
+    public function excluir()
+    {
+        $this->desativar();
     }
 
     public function atualizar()

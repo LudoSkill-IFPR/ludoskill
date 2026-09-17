@@ -23,13 +23,14 @@ class AutenticacaoController extends Controller
 
     public function logar()
     {
-        $email = $_POST['email'] ?? '';
+        $email = trim($_POST['email'] ?? '');
         $senha = $_POST['senha'] ?? '';
 
         $usuario = $this->autenticacaoService->logar($email, $senha);
 
         if (!$usuario) {
-            $data['erro'] = 'E-mail ou senha incorretos.';
+            $data['erro'] = $this->autenticacaoService->getUltimoErro() ?? 'E-mail ou senha incorretos.';
+            $data['email'] = $email;
             $this->view('entrada/login', $data);
             return;
         }

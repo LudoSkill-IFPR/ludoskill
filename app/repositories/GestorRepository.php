@@ -10,14 +10,16 @@ class GestorRepository
 {
     private PDO $connection;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->connection = ConnectionFactory::getConnection();
     }
 
-    public function getGestores(): array{
+    public function getGestores(): array
+    {
         $stm = $this->connection->prepare(
             "SELECT g.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
-                    u.email, u.numero_telefone, e.nome AS nome_empresa
+                    u.email, u.numero_telefone, u.estado, e.nome AS nome_empresa
              FROM Gestores g
              INNER JOIN Usuarios u ON u.id_usuario = g.id_usuario
              INNER JOIN Empresas e ON e.id_empresa = g.id_empresa
@@ -28,10 +30,11 @@ class GestorRepository
         return $gestores;
     }
 
-    public function getGestorById(int $id){
+    public function getGestorById(int $id)
+    {
         $stm = $this->connection->prepare(
             "SELECT g.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
-                    u.email, u.senha_hash, u.numero_telefone
+                    u.email, u.senha_hash, u.numero_telefone, u.estado
              FROM Gestores g INNER JOIN Usuarios u ON u.id_usuario = g.id_usuario
              WHERE g.id_gestor = :id"
         );
@@ -44,14 +47,18 @@ class GestorRepository
         return $gestor;
     }
 
-    public function saveGestor(Gestor $gestor): bool {
+    public function saveGestor(Gestor $gestor): bool
+    {
         try {
             $this->connection->beginTransaction();
             $stm = $this->connection->prepare("INSERT INTO Usuarios (nome_completo, data_nascimento, CPF, email, senha_hash, numero_telefone) VALUES (:nome, :data, :cpf, :email, :senha, :telefone)");
             $stm->execute([
-                'nome' => $gestor->getNomeCompleto(), 'data' => $gestor->getDataNascimento()->format('Y-m-d'),
-                'cpf' => $gestor->getCpf(), 'email' => $gestor->getEmail(),
-                'senha' => password_hash($gestor->getSenha(), PASSWORD_DEFAULT), 'telefone' => $gestor->getNumeroTelefone()
+                'nome' => $gestor->getNomeCompleto(),
+                'data' => $gestor->getDataNascimento()->format('Y-m-d'),
+                'cpf' => $gestor->getCpf(),
+                'email' => $gestor->getEmail(),
+                'senha' => password_hash($gestor->getSenha(), PASSWORD_DEFAULT),
+                'telefone' => $gestor->getNumeroTelefone()
             ]);
             $stm = $this->connection->prepare("INSERT INTO Gestores (id_usuario, id_empresa) VALUES (:usuario, :empresa)");
             $stm->execute(['usuario' => (int) $this->connection->lastInsertId(), 'empresa' => $gestor->getEmpresa()->getId()]);
@@ -62,13 +69,40 @@ class GestorRepository
         }
     }
 
-    public function deleteGestor(int $id){
-        $stm = $this->connection->prepare("DELETE u FROM Usuarios u INNER JOIN Gestores g ON g.id_usuario = u.id_usuario WHERE g.id_gestor = :id");
-        $stm->bindValue('id', $id);
+    // public function deleteGestor(int $id){
+    //     $stm = $this->connection->prepare("DELETE u FROM Usuarios u INNER JOIN Gestores g ON g.id_usuario = u.id_usuario WHERE g.id_gestor = :id");
+    //     $stm->bindValue('id', $id);
+    //     return $stm->execute();
+    // }
+
+    public function desativarGestor(int $id): bool
+    {
+        $stm = $this->connection->prepare(
+            "UPDATE Usuarios u
+         INNER JOIN Gestores g ON g.id_usuario = u.id_usuario
+         SET u.estado = 'INATIVO'
+         WHERE g.id_gestor = :id"
+        );
+
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
         return $stm->execute();
     }
 
-    public function updateGestor(Gestor $gestor, int $idGestor, ?string $novaSenha = null){
+    public function ativarGestor(int $id): bool
+    {
+        $stm = $this->connection->prepare(
+            "UPDATE Usuarios u
+         INNER JOIN Gestores g ON g.id_usuario = u.id_usuario
+         SET u.estado = 'ATIVO'
+         WHERE g.id_gestor = :id"
+        );
+
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
+        return $stm->execute();
+    }
+
+    public function updateGestor(Gestor $gestor, int $idGestor, ?string $novaSenha = null)
+    {
         $atual = $this->getGestorById($idGestor);
         if (!$atual) return false;
         $senhaSql = $novaSenha !== null && $novaSenha !== '' ? ', senha_hash = :senha' : '';
@@ -86,17 +120,18 @@ class GestorRepository
         return $stm->execute(['empresa' => $gestor->getEmpresa()->getId(), 'id' => $idGestor]);
     }
 
-    public function countGestores(): int {
-        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Gestores");
+    public function countGestores(): int
+    {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Gestores g INNER JOIN Usuarios u ON u.id_usuario = g.id_usuario WHERE u.estado = 'ATIVO'");
         $stm->execute();
         return (int) $stm->fetchColumn();
     }
 
-    public function countGestoresByEmpresa(int $idEmpresa): int {
-        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Gestores WHERE id_empresa = :idEmpresa");
-        $stm->bindValue('idEmpresa', $idEmpresa);
+    public function countGestoresByEmpresa(int $idEmpresa): int
+    {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Gestores g INNER JOIN Usuarios u ON u.id_usuario = g.id_usuario WHERE g.id_empresa = :idEmpresa AND u.estado = 'ATIVO'");
+        $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
         $stm->execute();
         return (int) $stm->fetchColumn();
     }
-    
 }

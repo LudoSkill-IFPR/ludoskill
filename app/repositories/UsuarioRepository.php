@@ -76,7 +76,7 @@ class UsuarioRepository{
 
         $usuario['data_nascimento'] = new DateTimeImmutable($usuario['data_nascimento']);
 
-        var_dump($usuario);
+        // var_dump($usuario);
 
         return Usuario::arrayParaObjeto($usuario);
     }
@@ -124,10 +124,22 @@ class UsuarioRepository{
         return $stmt->execute();
     }
 
-    public function deleteUsuario(int $id): bool {
-        $sql = "DELETE FROM usuarios WHERE id = :id";
+    public function desativarUsuario(int $id): bool {
+        $sql = "UPDATE Usuarios SET estado = 'INATIVO' WHERE id_usuario = :id";
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
+    }
+
+    public function ativarUsuario(int $id): bool {
+        $sql = "UPDATE Usuarios SET estado = 'ATIVO' WHERE id_usuario = :id";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function deleteUsuario(int $id): bool {
+        return $this->desativarUsuario($id);
     }
 }

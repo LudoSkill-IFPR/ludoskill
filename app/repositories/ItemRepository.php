@@ -41,6 +41,18 @@ class ItemRepository{
         return $items;
     }
 
+    public function getItemsAtivos(): array{
+        $stm = $this->connection->prepare("SELECT * FROM Itens WHERE estado = b'1'");
+        $stm->execute();
+        $items = $stm->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($items as &$item) {
+            $item = $this->normalizeItem($item);
+        }
+
+        return $items;
+    }
+
     public function getItemById(int $id){
         $stm = $this->connection->prepare("SELECT * FROM Itens WHERE id_item = :id");
         $stm->bindValue('id', $id, PDO::PARAM_INT);
@@ -63,10 +75,20 @@ class ItemRepository{
         return $stm->execute();
     }
 
-    public function deleteItem(int $id){
-        $stm = $this->connection->prepare("DELETE FROM Itens WHERE id_item = :id");
-        $stm->bindValue('id', $id);
+    public function desativarItem(int $id): bool {
+        $stm = $this->connection->prepare("UPDATE Itens SET estado = b'0' WHERE id_item = :id");
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
         return $stm->execute();
+    }
+
+    public function ativarItem(int $id): bool {
+        $stm = $this->connection->prepare("UPDATE Itens SET estado = b'1' WHERE id_item = :id");
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
+        return $stm->execute();
+    }
+
+    public function deleteItem(int $id): bool {
+        return $this->desativarItem($id);
     }
 
     public function updateItem(Item $item){
@@ -82,7 +104,7 @@ class ItemRepository{
     }
 
     public function countItens(): int {
-        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Itens");
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Itens WHERE estado = b'1'");
         $stm->execute();
         return (int) $stm->fetchColumn();
     }

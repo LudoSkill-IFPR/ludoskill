@@ -24,9 +24,10 @@ class Funcionario extends Usuario{
         Empresa $empresa,
         int $bolotas_totais,
         int $pontuacao_total,
-        int $nivel
+        int $nivel,
+        string $estado = 'ATIVO'
     ) {
-        parent::__construct($id, $nomeCompleto, $dataNascimento, $cpf, $email, $senha, $numeroTelefone);
+        parent::__construct($id, $nomeCompleto, $dataNascimento, $cpf, $email, $senha, $numeroTelefone, 'funcionario', $estado);
         $this->empresa = $empresa;
         $this->bolotas_totais = $bolotas_totais;
         $this->pontuacao_total = $pontuacao_total;

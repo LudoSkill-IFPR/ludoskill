@@ -44,6 +44,14 @@ class UsuarioService
         return $this->repository->saveUsuario($usuario);
     }
 
+    public function desativarUsuario(int $id): bool {
+        return $this->repository->desativarUsuario($id);
+    }
+
+    public function ativarUsuario(int $id): bool {
+        return $this->repository->ativarUsuario($id);
+    }
+
     public function deleteUsuario(int $id): bool {
         return $this->repository->deleteUsuario($id);
     }

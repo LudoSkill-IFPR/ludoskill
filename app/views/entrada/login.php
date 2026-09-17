@@ -35,18 +35,20 @@
                 <img id="skillo" src="assets/imagens/icone-ludoskill-transparente.png" alt="">
                 <h1>Bem vindo de volta!</h1>
             
-                <div id="erro"></div>
+                <?php if (!empty($erro)): ?>
+                    <div id="erro" role="alert"><?= htmlspecialchars($erro) ?></div>
+                <?php endif; ?>
             
                 <div class="formgroup">
                     <label for="email">Email:</label>
-                    <input class="botao" type="email" name="email" id="email" placeholder="skillo@bolotas.com">
+                    <input class="botao" type="email" name="email" id="email" placeholder="skillo@bolotas.com" value="<?= htmlspecialchars($email ?? '') ?>" autocomplete="email" required>
                 </div>
                 <div class="formgroup">
                     <label for="senha">Senha:</label>
-                    <input class="botao" type="password" name="senha" id="senha" placeholder="euAMObolotas123!">
+                    <input class="botao" type="password" name="senha" id="senha" placeholder="euAMObolotas123!" autocomplete="current-password" required>
                 </div>
 
-                <button class="botao brilho">Entrar</button>
+                <button class="botao brilho" type="submit">Entrar</button>
             
                 <div class="formgroup">
                     <input class="lembrar" type="checkbox" name="lembrar">

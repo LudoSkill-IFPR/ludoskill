@@ -38,6 +38,8 @@ $router->get('/administrador/itens/cadastrar', 'ItemController@criar');
 $router->get('/administrador/itens/editar', 'ItemController@editar');
 $router->post('/administrador/itens/salvar', 'ItemController@salvar');
 $router->post('/administrador/itens/atualizar', 'ItemController@atualizar');
+$router->post('/administrador/itens/desativar', 'ItemController@desativar');
+$router->post('/administrador/itens/ativar', 'ItemController@ativar');
 $router->post('/administrador/itens/excluir', 'ItemController@excluir');
 
 //gestores
@@ -46,6 +48,8 @@ $router->get('/administrador/gestores/cadastrar', 'GestorController@criar');
 $router->get('/administrador/gestores/editar', 'GestorController@editar');
 $router->post('/administrador/gestores/salvar', 'GestorController@salvar');
 $router->post('/administrador/gestores/atualizar', 'GestorController@atualizar');
+$router->post('/administrador/gestores/desativar', 'GestorController@desativar');
+$router->post('/administrador/gestores/ativar', 'GestorController@ativar');
 $router->post('/administrador/gestores/excluir', 'GestorController@excluir');
 
 //atividades
@@ -72,6 +76,8 @@ $router->get('/gestor/funcionarios/cadastrar', 'FuncionarioController@criar');
 $router->get('/gestor/funcionarios/editar', 'FuncionarioController@editar');
 $router->post('/gestor/funcionarios/salvar', 'FuncionarioController@salvar');
 $router->post('/gestor/funcionarios/atualizar', 'FuncionarioController@atualizar');
+$router->post('/gestor/funcionarios/desativar', 'FuncionarioController@desativar');
+$router->post('/gestor/funcionarios/ativar', 'FuncionarioController@ativar');
 $router->post('/gestor/funcionarios/excluir', 'FuncionarioController@excluir');
 
 $router->get('/cadastro-nao-liberado', 'AutenticacaoController@cadastroNaoLiberado');

@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     CPF VARCHAR(11) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
-    numero_telefone VARCHAR(20)
+    numero_telefone VARCHAR(20),
+    estado ENUM('ATIVO', 'INATIVO') NOT NULL DEFAULT 'ATIVO'
 );
 
 -- -----------------------------------------------------------------------------

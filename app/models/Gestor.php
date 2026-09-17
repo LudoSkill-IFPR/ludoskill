@@ -19,10 +19,11 @@ class Gestor extends Usuario
         string $cpf,
         string $email,
         string $senha,
-        string  $numeroTelefone,
-        Empresa $empresa
+        string $numeroTelefone,
+        Empresa $empresa,
+        string $estado = 'ATIVO'
     ) {
-        parent::__construct($id, $nomeCompleto, $dataNascimento, $cpf, $email, $senha, $numeroTelefone);
+        parent::__construct($id, $nomeCompleto, $dataNascimento, $cpf, $email, $senha, $numeroTelefone, 'gestor', $estado);
         $this->empresa = $empresa;
         $this->funcionarioRepository = new FuncionarioRepository();
     }
