@@ -87,6 +87,9 @@ $router->get('/gestor/inicial', 'GestorController@inicial');
 $router->get('/funcionario/inicial', 'FuncionarioController@inicial');
 
 $router->get('/funcionario/loja', 'ItemController@listarTodosFuncionario');
+$router->get('/funcionario/comprar', 'ItemController@comprar');
+$router->get('/funcionario/editar', 'FuncionarioController@funcEditar');
+$router->post('/funcionario/atualizar', 'FuncionarioController@funcAtualizar');
 $router->get('/funcionario/modulos', 'ModuloController@listarTodosFuncionario');
 
 $router->run();
