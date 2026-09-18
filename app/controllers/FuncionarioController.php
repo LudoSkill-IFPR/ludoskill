@@ -98,6 +98,75 @@ class FuncionarioController extends Controller
         $this->view('gestor/funcionarios/funcionario_edit', $data);
     }
 
+    public function funcEditar()
+    {
+        $this->funcionarioRequired();
+        $id = $_SESSION['usuario_logado']->getId();
+        if (!$id) {
+            $this->redirect(URL_BASE . '/gestor/funcionarios');
+        }
+        $funcionario = $this->funcionarioService->getFuncionarioByUsuario($id);
+        $idEmpresa = $funcionario["id_empresa"];
+        $idFuncionario = $funcionario["id_funcionario"];
+
+        $data['funcionario'] = $this->funcionarioService->getFuncionarioByIdAndEmpresa($idFuncionario, $idEmpresa);
+        if (!$data['funcionario']) {
+            $this->redirect(URL_BASE . '/funcionario/inicial');
+        }
+        $this->view('funcionario/editar', $data);
+    }
+
+    public function funcAtualizar()
+    {
+        $this->funcionarioRequired();
+        $id = $_SESSION['usuario_logado']->getId();
+        if (!$id) {
+            $this->redirect(URL_BASE . '/gestor/funcionarios');
+        }
+        $funcionario = $this->funcionarioService->getFuncionarioByUsuario($id);
+        $idEmpresa = $funcionario["id_empresa"];
+        $idFuncionario = $funcionario["id_funcionario"];
+        if (!$idFuncionario || !$this->funcionarioService->getFuncionarioByIdAndEmpresa($idFuncionario, $idEmpresa)) {
+            $this->redirect(URL_BASE . '/gestor/funcionarios');
+        }
+        $dados = $_POST;
+        $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf'] ?? '');
+        $dados['id_empresa'] = $idEmpresa;
+        $erros = Validador::validarFuncionario($dados, false);
+        if (empty($erros['cpf']) && $this->funcionarioService->cpfExiste($dados['cpf'], $idFuncionario)) {
+            $erros['cpf'] = 'Já existe um usuário com este CPF.';
+        }
+        if (empty($erros['email']) && $this->funcionarioService->emailExiste($dados['email'], $idFuncionario)) {
+            $erros['email'] = 'Já existe um usuário com este e-mail.';
+        }
+        if (!empty($erros)) {
+            $data['erros'] = $erros;
+            $data['funcionario'] = $dados;
+            $this->view('gestor/funcionarios/funcionario_edit', $data);
+            return;
+        }
+
+        $empresa = (new Empresa())->setId($idEmpresa);
+
+        $funcionario = new Funcionario(
+            $idFuncionario,
+            $dados['nome_completo'],
+            new \DateTimeImmutable($dados['data_nascimento']),
+            $dados['cpf'],
+            $dados['email'],
+            $dados['senha_hash'] ?? '',
+            $dados['numero_telefone'],
+            $empresa,
+            (int) $dados['bolotas_totais'],
+            (int) $dados['pontuacao_total'],
+            (int) $dados['nivel']
+        );
+
+        $this->funcionarioService->updateFuncionario($funcionario, $idEmpresa, $dados['senha_hash'] ?? null);
+        $_SESSION['usuario_logado']->setNomeCompleto($dados['nome_completo']);
+        $this->redirect(URL_BASE . '/funcionario/inicial');
+    }
+
     public function desativar()
     {
         $this->gestorRequired();

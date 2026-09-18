@@ -14,6 +14,11 @@ class FuncionarioService
         $this->funcionarioRepository = new FuncionarioRepository();
     }
 
+    public function getFuncionarioByUsuario(int $id_usuario)
+    {
+        return $this->funcionarioRepository->getFuncionarioByUsuario($id_usuario);
+    }
+
     public function getFuncionariosByEmpresa(int $idEmpresa): array
     {
         return $this->funcionarioRepository->getFuncionariosByEmpresa($idEmpresa);

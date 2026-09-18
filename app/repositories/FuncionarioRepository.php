@@ -22,6 +22,14 @@ class FuncionarioRepository
         return $stm->fetchAll();
     }
 
+    public function getFuncionarioByUsuario($id_usuario)
+    {
+        $stm = $this->connection->prepare("SELECT * FROM Funcionarios WHERE id_usuario = :idUsuario");
+        $stm->bindValue('idUsuario', $id_usuario, PDO::PARAM_INT);
+        $stm->execute();
+        return $stm->fetch();
+    }
+
     public function getFuncionariosByEmpresa(int $idEmpresa): array
     {
         $sql = "SELECT f.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,

@@ -1,10 +1,12 @@
 <?php
 use app\repositories\FuncionarioRepository;
+use app\repositories\UsuarioRepository;
 use app\helpers\Auth;
 
 Auth::funcionario_required();
 
 $funcionarioRepository = new FuncionarioRepository();
+$usuarioRepository = new UsuarioRepository();
 
 $usuario = $_SESSION['usuario_logado'];
 
