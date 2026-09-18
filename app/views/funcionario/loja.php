@@ -27,6 +27,9 @@ foreach ($funcionarios as $func) {
     <link rel="stylesheet" href="../assets/css/geralUsuario.css">
     <link rel="stylesheet" href="../assets/css/lojaFuncionario.css">
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
     <title>LudoSkill - Loja</title>
 </head>
 
@@ -44,7 +47,7 @@ foreach ($funcionarios as $func) {
                 </div>
                 
                 <div class="card verde">
-                    <p><img src="assets/imagens/bolotona.png" alt="icone de bolotas">Saldo de bolotas:</p>
+                    <p><img style="width: 20px;" src="../assets/imagens/bolotona.png" alt="icone de bolotas">Saldo de bolotas:</p>
                     <p>B$ <?= htmlspecialchars($funcionario['bolotas_totais'] ?? 0) ?></p>
                 </div>
             </div>
@@ -97,11 +100,14 @@ foreach ($funcionarios as $func) {
                         <?php foreach (($lista ?? []) as $item): ?>
                             <li>
                                 <div class="card">
-                                    <img src="../public/<?= htmlspecialchars($item['imagem'] ?? '') ?>" alt="imagem do item" width="200px">
+                                    <img src="../public/<?= htmlspecialchars($item['imagem'] ?? '') ?>" alt="imagem do item" width="200px" height="200px">
                                     <h4><?= htmlspecialchars($item['nome'] ?? '') ?></h4>
                                     <p>B$<?= htmlspecialchars($item['preco'] ?? '') ?></p>
-                    
-                                    <a class="botao brilho" href=""><i class="bi bi-bag-plus-fill"></i> Comprar</a>
+                                    <?php if($item['preco'] > $funcionario['bolotas_totais']){ ?>
+                                        <a disabled class="botao" onclick="comprar(<?= $item['id_item']?>, <?= $item['preco']?>)"><i class="bi bi-ban"></i> Bolotas Insuficientes</a>
+                                    <?php }else{ ?>
+                                        <a class="botao brilho" href="<?= URL_BASE ?>/funcionario/comprar?id=<?= $item['id_item'] ?>"><i class="bi bi-bag-plus-fill"></i> Comprar</a>
+                                    <?php } ?>
                                 </div>
                             </li>
                         <?php endforeach; ?>

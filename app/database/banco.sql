@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS Inventarios (
     id_inventario INT AUTO_INCREMENT PRIMARY KEY,
     id_funcionario INT NOT NULL,
     id_item INT NOT NULL,
-    data_aquisicao DATE NOT NULL,
+    data_aquisicao DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     em_uso BIT(1) NOT NULL DEFAULT b'0', -- Controla se o item/tema está ativado no momento | 1 para Ativo, 0 para Inativo
     CONSTRAINT fk_inventario_funcionario FOREIGN KEY (id_funcionario) 
         REFERENCES Funcionarios(id_funcionario) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -32,10 +32,7 @@
                     <p><?= $quantidadeGestores ?></p>
                 </div>
 
-                <div class="card">
-
-                    
-
+                <div class="card" style="overflow-y: scroll">
                     <h3><i class="bi bi-file-post"></i><a href="<?= URL_BASE ?>/administrador/modulos/">Módulos cadastrados</a></h3>
                     <p><?= $quantidadeModulos ?></p>
 

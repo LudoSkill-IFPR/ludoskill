@@ -6,13 +6,18 @@ use app\core\Controller;
 use app\models\Item;
 use app\services\ItemService;
 use app\helpers\Validador;
+use app\services\FuncionarioService;
+use app\database\ConnectionFactory;
+use PDO;
 
 class ItemController extends Controller 
 {
     private ItemService $itemService;
+    private PDO $connection;
 
     public function __construct() {
         $this->itemService = new ItemService();
+        $this->connection = ConnectionFactory::getConnection();
     }
 
     private function processarUploadImagem(array $imagem, array &$erros): ?string {
@@ -82,6 +87,25 @@ class ItemController extends Controller
             $this->redirect(URL_BASE . '/administrador/itens');
         }
         $this->view('/administrador/itens/itens_list', $data);
+    }
+
+    public function comprar() {
+        $funcionarioService= new FuncionarioService();
+        $id = $_GET['id'];
+        $usuario = $_SESSION['usuario_logado'];
+        $funcionario = $funcionarioService->getFuncionarioByUsuario($usuario->getId());
+        $item = $this->itemService->getItemById($id);
+
+        if($item['preco'] > $funcionario['bolotas_totais']){
+            $this->redirect(URL_BASE . '/funcionario/loja');
+        }
+
+        $sql = "INSERT INTO inventarios (id_funcionario, id_item) VALUES (:idFuncionario, :idItem)";
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('idFuncionario', $funcionario['id_funcionario']);
+        $stm->bindValue('idItem', $id);
+        $stm->execute();
+        $this->redirect(URL_BASE . '/funcionario/inicial');
     }
 
     public function criar() {
