@@ -2,11 +2,15 @@
 use app\repositories\FuncionarioRepository;
 use app\repositories\UsuarioRepository;
 use app\helpers\Auth;
+use app\database\ConnectionFactory;
+use app\repositories\ItemRepository;
 
 Auth::funcionario_required();
 
 $funcionarioRepository = new FuncionarioRepository();
 $usuarioRepository = new UsuarioRepository();
+$connection = ConnectionFactory::getConnection();
+$itemRepository = new ItemRepository();
 
 $usuario = $_SESSION['usuario_logado'];
 
@@ -17,6 +21,23 @@ foreach ($funcionarios as $func) {
     if($usuario->getId() == $func['id_usuario']){
         $funcionario = $func;
         break;
+    }
+}
+
+
+$stm = $connection->prepare("SELECT * FROM inventarios");
+$stm->execute();
+$items = $stm->fetchAll(PDO::FETCH_ASSOC);
+$inventario = [];
+
+foreach($items as $i){
+    if($i['id_funcionario'] == $funcionario['id_funcionario']){
+        if($i['em_uso'] == 0){
+            $i['em_uso'] = "livre";
+        }else{
+            $i['em_uso'] = "equipado";
+        }
+        array_push($inventario, $i);
     }
 }
 
@@ -90,13 +111,15 @@ foreach ($funcionarios as $func) {
 
                     <ul id="inventario">
                         <!-- usar uma estrutura de repetição com base no html abaixo para adicionar os itens -->
-                        <li>
+                        <li><?php foreach($inventario as $i): ?>
+                            <?php $item = $itemRepository->getItemById($i['id_item']);?>
                             <div class="card-secundario">
-                                <img src="" alt="imagem do item">
-                                <h4>[Nome do item]</h4>
-                                <p>[status do item (ativo ou não)]</p>
-                                <a href="">[ativar/desativar]</a>
+                                <img src="../<?= $item['imagem'] ?>" alt="imagem do item" width='200px' height='200px'>
+                                <h4><?= $item['nome'] ?></h4>
+                                <p><?= $i['em_uso'] ?></p>
+                                <a href="" <?php if($i['em_uso'] == "livre"){ ?>disabled<?php } ?>>[Equipar]</a>
                             </div>
+                            <?php endforeach; ?>
                         </li>
                     </ul>
 
