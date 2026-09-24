@@ -169,7 +169,7 @@ class ExercicioController extends Controller{
         foreach ($exercicios as $exercicio) {
             foreach ($exercicio['questoes'] as $indice => $exercicio) {
                 $total++;
-                $idExercicio = (string) $exercicio['id_exercicio'];
+                $idExercicio = (string) $indice;
                 $resposta = filter_var(
                     $respostas[$idExercicio][$indice] ?? null,
                     FILTER_VALIDATE_INT,

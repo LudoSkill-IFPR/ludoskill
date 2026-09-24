@@ -105,6 +105,12 @@ class ItemController extends Controller
         $stm->bindValue('idFuncionario', $funcionario['id_funcionario']);
         $stm->bindValue('idItem', $id);
         $stm->execute();
+
+        $sql = "UPDATE funcionarios SET bolotas_totais = bolotas_totais - :precoItem WHERE id_funcionario = :idFuncionario";
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('idFuncionario', $funcionario['id_funcionario']);
+        $stm->bindValue('precoItem', $item['preco']);
+        $stm->execute();
         $this->redirect(URL_BASE . '/funcionario/inicial');
     }
 

@@ -38,7 +38,7 @@
                             <?php foreach ($exercicio['questoes'] as $indiceExercicio => $exercicio): ?>
                                 <?php
                                 $numeroGlobal++;
-                                $idExercicio = (string) $exercicio['id_exercicio'];
+                                $idExercicio = (string) $indiceExercicio;
                                 $selecionada = $respostas[$idExercicio][$indiceExercicio] ?? null;
                                 $correta = (int) ($exercicio['alternativa_correta'] ?? -1);
                                 ?>
@@ -53,7 +53,7 @@
                                             if (isset($resultado) && (int) $selecionada === $indice && $indice !== $correta) $classes .= ' alternativa-incorreta-resultado';
                                             ?>
                                             <label class="<?= $classes ?>">
-                                                <input type="radio" name="respostas[<?= (int) $exercicio['id_exercicio'] ?>][<?= (int) $indiceExercicio ?>]" value="<?= (int) $indice ?>" <?= (string) $selecionada === (string) $indice ? 'checked' : '' ?> <?= isset($resultado) ? 'disabled' : 'required' ?>>
+                                                <input type="radio" name="respostas[<?= (int) $idExercicio ?>][<?= (int) $indiceExercicio ?>]" value="<?= (int) $indice ?>" <?= (string) $selecionada === (string) $indice ? 'checked' : '' ?> <?= isset($resultado) ? 'disabled' : 'required' ?>>
                                                 <span><?= htmlspecialchars($alternativa) ?></span>
                                             </label>
                                         <?php endforeach; ?>

@@ -4,10 +4,12 @@ use app\repositories\UsuarioRepository;
 use app\helpers\Auth;
 use app\database\ConnectionFactory;
 use app\repositories\ItemRepository;
+use app\repositories\AtividadeRepository;
 
 Auth::funcionario_required();
 
 $funcionarioRepository = new FuncionarioRepository();
+$atividadeRepository = new AtividadeRepository();
 $usuarioRepository = new UsuarioRepository();
 $connection = ConnectionFactory::getConnection();
 $itemRepository = new ItemRepository();
@@ -29,6 +31,17 @@ $stm = $connection->prepare("SELECT * FROM inventarios");
 $stm->execute();
 $items = $stm->fetchAll(PDO::FETCH_ASSOC);
 $inventario = [];
+
+$stm = $connection->prepare("SELECT * FROM funcionario_atividade WHERE id_funcionario = " . $funcionario['id_funcionario']);
+$stm->execute();
+$progresso = $stm->fetchAll(PDO::FETCH_ASSOC);
+$pontuacao = [];
+
+foreach ($progresso as $p) {
+    $pontuacao = $p;
+}
+
+$atividadeAtual = $atividadeRepository->getAtividadeById($pontuacao['id_atividade']);
 
 foreach($items as $i){
     if($i['id_funcionario'] == $funcionario['id_funcionario']){
@@ -89,11 +102,11 @@ foreach($items as $i){
                     <h2>Continue de onde parou!</h2>
                     
                     <div class="card-secundario">
-                        <h3>[Atividade x]</h3>
-                        <p>[Nome da atividade]</p>
+                        <h3>Atividade <?= $atividadeAtual['id_atividade']; ?></h3>
+                        <p><?= $atividadeAtual['nome'] ?></p>
                         <p>[descrição da atividade]</p>
             
-                        <a href="#" class="botao brilho">iniciar</a>
+                        <a href="<?= URL_BASE . "/funcionario/atividades/exercicios?id={$pontuacao['id_atividade']}" ?>" class="botao brilho">iniciar</a>
                     </div>
                 </div>
 
