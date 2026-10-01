@@ -42,6 +42,27 @@ class Usuario
 
     public static function arrayParaObjeto(array $usuario): self
     {
+        $u = self::extrairDadosUsuario($usuario);
+
+        return new self(
+            $u['id'],
+            $u['nomeCompleto'],
+            $u['dataNascimento'],
+            $u['cpf'],
+            $u['email'],
+            $u['senha'],
+            $u['numeroTelefone'],
+            $u['perfil'],
+            $u['estado']
+        );
+    }
+
+    /**
+     * Converte o array do banco nos dados de Usuario.
+     * Reaproveitado por Administrador, Gestor e Funcionario (que herdam de Usuario).
+     */
+    protected static function extrairDadosUsuario(array $usuario): array
+    {
         $dataNascimento = $usuario['data_nascimento'] ?? null;
         if (is_string($dataNascimento) && $dataNascimento !== '') {
             $dataNascimento = new DateTimeImmutable($dataNascimento);
@@ -51,17 +72,17 @@ class Usuario
         // acidentais vindas de importações ou inserções manuais no banco.
         $senha = rtrim((string) ($usuario['senha_hash'] ?? $usuario['senha'] ?? ''));
 
-        return new self(
-            (int) ($usuario['id_usuario'] ?? 0),
-            $usuario['nome_completo'] ?? '',
-            $dataNascimento,
-            $usuario['CPF'] ?? $usuario['cpf'] ?? '',
-            $usuario['email'] ?? '',
-            $senha,
-            $usuario['numero_telefone'] ?? null,
-            $usuario['perfil'] ?? null,
-            $usuario['estado'] ?? 'ATIVO'
-        );
+        return [
+            'id' => (int) ($usuario['id_usuario'] ?? 0),
+            'nomeCompleto' => $usuario['nome_completo'] ?? '',
+            'dataNascimento' => $dataNascimento,
+            'cpf' => $usuario['CPF'] ?? $usuario['cpf'] ?? '',
+            'email' => $usuario['email'] ?? '',
+            'senha' => $senha,
+            'numeroTelefone' => $usuario['numero_telefone'] ?? null,
+            'perfil' => $usuario['perfil'] ?? null,
+            'estado' => $usuario['estado'] ?? 'ATIVO',
+        ];
     }
 
     public function getId(): int

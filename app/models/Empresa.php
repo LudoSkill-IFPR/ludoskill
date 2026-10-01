@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use DateTimeImmutable;
 
 class Empresa{
     private int $id;
@@ -9,8 +10,30 @@ class Empresa{
     private string $email;
     private string $plano;
 
+    public function __construct(
+        int $id = 0,
+        string $cnpj = '',
+        string $nome = '',
+        string $email = '',
+        string $plano = 'BASICO' // Valor padrão para o plano
+    ) {
+        $this->id = $id;
+        $this->cnpj = $cnpj;
+        $this->nome = $nome;
+        $this->email = $email;
+        $this->plano = $plano; // Valor padrão para o plano
+    }
    
-
+    public static function arrayParaObjeto(array $empresa): self
+    {
+        return new self(
+            (int) ($empresa['id_empresa'] ?? 0),
+            $empresa['cnpj'] ?? '',
+            $empresa['nome'] ?? '',
+            $empresa['email'] ?? '',
+            $empresa['plano'] ?? 'BASICO'
+        );
+    }
     /**
      * Get the value of id
      */

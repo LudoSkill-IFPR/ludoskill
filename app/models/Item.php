@@ -10,7 +10,41 @@ class Item {
     private int $preco;
     private string $imagem;
 
+    public function __construct(
+        int $id = 0,
+        string $estado = 'ATIVO', // Valor padrão para o estado
+        string $nome = '',
+        string $tipo = '',
+        int $preco = 0,
+        string $imagem = ''
+    ) {
+        $this->id = $id;
+        $this->estado = $estado; // Valor padrão para o estado
+        $this->nome = $nome;
+        $this->tipo = $tipo;
+        $this->preco = $preco;
+        $this->imagem = $imagem;
+    }
 
+    public static function arrayParaObjeto(array $item): self
+    {
+        // A coluna estado é BIT(1): pode chegar como 1, '1', true ou "\x01".
+        $bit = $item['estado'] ?? 1;
+        if ($bit === 'ATIVO' || $bit === 'INATIVO') {
+            $estado = $bit;
+        } else {
+            $estado = ($bit === true || $bit === 1 || $bit === '1' || $bit === "\x01") ? 'ATIVO' : 'INATIVO';
+        }
+
+        return new self(
+            (int) ($item['id_item'] ?? 0),
+            $estado,
+            $item['nome'] ?? '',
+            $item['tipo'] ?? '',
+            (int) ($item['preco'] ?? 0),
+            $item['imagem'] ?? ''
+        );
+    }
     /**
      * Get the value of id
      */

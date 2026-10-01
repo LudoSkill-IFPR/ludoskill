@@ -8,6 +8,27 @@ class Modulo {
     private string $descricao;
     private int $minEstrelasLiberacao;
 
+    public function __construct(
+        int $id = 0,
+        string $nome = '',
+        string $descricao = '',
+        int $minEstrelasLiberacao = 0
+    ) {
+        $this->id = $id;
+        $this->nome = $nome;
+        $this->descricao = $descricao;
+        $this->minEstrelasLiberacao = $minEstrelasLiberacao;
+    }
+
+    public static function arrayParaObjeto(array $modulo): self
+    {
+        return new self(
+            (int) ($modulo['id_modulo'] ?? 0),
+            $modulo['nome'] ?? '',
+            $modulo['descricao'] ?? '',
+            (int) ($modulo['min_estrelas_liberacao'] ?? 0)
+        );
+    }
 
     /**
      * Get the value of id

@@ -7,10 +7,45 @@ class Atividade {
     private Modulo $modulo;
     private string $tipoAtividade;
     private string $nome;
-    private string $estado; //
+    private string $estado;
     private int $pontuacao;
     private int $estrelas;
 
+    public function __construct(
+        int $id = 0,
+        ?Modulo $modulo = null,
+        string $tipoAtividade = '',
+        string $nome = '',
+        string $estado = 'PENDENTE', // Valor padrão para o estado
+        int $pontuacao = 0,
+        int $estrelas = 0
+    ) {
+        $this->id = $id;
+        $this->modulo = $modulo ?? new Modulo();
+        $this->tipoAtividade = $tipoAtividade;
+        $this->nome = $nome;
+        $this->estado = $estado; // Valor padrão para o estado
+        $this->pontuacao = $pontuacao;
+        $this->estrelas = $estrelas;
+    }
+
+    /**
+     * Se o objeto Modulo não for informado, cria um Modulo apenas com o id (FK id_modulo).
+     */
+    public static function arrayParaObjeto(array $atividade, ?Modulo $modulo = null): self
+    {
+        $modulo ??= new Modulo((int) ($atividade['id_modulo'] ?? 0));
+
+        return new self(
+            (int) ($atividade['id_atividade'] ?? 0),
+            $modulo,
+            $atividade['tipo_atividade'] ?? '',
+            $atividade['nome'] ?? '',
+            $atividade['estado'] ?? 'PENDENTE',
+            (int) ($atividade['pontuacao'] ?? 0),
+            (int) ($atividade['estrelas'] ?? 0)
+        );
+    }
     
     /**
      * Get the value of id
