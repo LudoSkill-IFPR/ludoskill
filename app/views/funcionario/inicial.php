@@ -3,8 +3,11 @@ use app\repositories\FuncionarioRepository;
 use app\repositories\UsuarioRepository;
 use app\helpers\Auth;
 use app\database\ConnectionFactory;
+use app\models\Funcionario;
 use app\repositories\ItemRepository;
 use app\repositories\AtividadeRepository;
+use app\models\Atividade;
+use app\models\Item;
 
 Auth::funcionario_required();
 
@@ -42,6 +45,7 @@ foreach ($progresso as $p) {
 }
 
 $atividadeAtual = $atividadeRepository->getAtividadeById($pontuacao['id_atividade']);
+$item_equipado = [];
 
 foreach($items as $i){
     if($i['id_funcionario'] == $funcionario['id_funcionario']){
@@ -49,11 +53,14 @@ foreach($items as $i){
             $i['em_uso'] = "livre";
         }else{
             $i['em_uso'] = "equipado";
+            $item_equipado = $itemRepository->getItemById($i['id_item']);
         }
         array_push($inventario, $i);
     }
 }
 
+$funcionario = Funcionario::arrayParaObjeto($funcionario);
+$atividadeAtual = Atividade::arrayParaObjeto($atividadeAtual);
 ?>
 
 <!DOCTYPE html>
@@ -76,14 +83,16 @@ foreach($items as $i){
 
     <main>
         <div class="container">
-
+            <div id="foto" style="background-image: url('../public/assets/imagens/esquilo-pfp.jpg');">
+                <img src="../<?= $item_equipado['imagem'] ?>" alt="">
+            </div>
             <h1>Olá, <?= $usuario->getNomeCompleto() ?>!</h1>
             <h2 class="mensagem">Continue trilhando seu caminho para a qualificação</h2>
             
             <section class="infobase">
                 <div class="card">
                     <h3><i class="bi bi-piggy-bank-fill"></i>Saldo de bolotas:</h3>
-                    <p>B$<?= $funcionario['bolotas_totais'] ?></p>
+                    <p>B$<?= $funcionario->getBolotasTotais() ?></p>
                 </div>
 
                 <div class="card">
@@ -102,9 +111,8 @@ foreach($items as $i){
                     <h2>Continue de onde parou!</h2>
                     
                     <div class="card-secundario">
-                        <h3>Atividade <?= $atividadeAtual['id_atividade']; ?></h3>
-                        <p><?= $atividadeAtual['nome'] ?></p>
-                        <p>[descrição da atividade]</p>
+                        <h3>Atividade <?= $atividadeAtual->getId(); ?></h3>
+                        <p><?= $atividadeAtual->getNome() ?></p>
             
                         <a href="<?= URL_BASE . "/funcionario/atividades/exercicios?id={$pontuacao['id_atividade']}" ?>" class="botao brilho">iniciar</a>
                     </div>
@@ -130,7 +138,7 @@ foreach($items as $i){
                                 <img src="../<?= $item['imagem'] ?>" alt="imagem do item" width='200px' height='200px'>
                                 <h4><?= $item['nome'] ?></h4>
                                 <p><?= $i['em_uso'] ?></p>
-                                <a href="" <?php if($i['em_uso'] == "livre"){ ?>disabled<?php } ?>>[Equipar]</a>
+                                <a href="<?= URL_BASE ?>/funcionario/equipar?id_item=<?= $i['id_item'] ?>&id_funcionario=<?= $funcionario->getIdFuncionario() ?>">[Equipar]</a>
                             </div>
                             <?php endforeach; ?>
                         </li>
