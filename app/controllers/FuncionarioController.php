@@ -8,6 +8,8 @@ use app\services\FuncionarioService;
 use app\helpers\Validador;
 use DateTimeImmutable;
 use app\models\Empresa;
+use app\database\ConnectionFactory;
+use PDO;
 
 class FuncionarioController extends Controller
 {
@@ -260,5 +262,20 @@ class FuncionarioController extends Controller
         }
 
         return $idEmpresa;
+    }
+
+    public function equipaItem()
+    {
+        $idItem = $_GET['id_item'];
+        $idFuncionario = $_GET['id_funcionario'];
+        $connection = ConnectionFactory::getConnection();
+        $stm = $connection->prepare("UPDATE inventarios SET em_uso = 0");
+        $stm->execute();
+        $stm = $connection->prepare("UPDATE inventarios SET em_uso = 1 WHERE id_item = :idItem AND id_funcionario = :idFuncionario");
+        $stm->bindValue('idItem', $idItem);
+        $stm->bindValue('idFuncionario', $idFuncionario);
+        $stm->execute();
+        
+        $this->redirect(URL_BASE . '/funcionario/inicial');
     }
 }
