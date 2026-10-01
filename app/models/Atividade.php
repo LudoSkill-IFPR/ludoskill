@@ -7,7 +7,7 @@ class Atividade {
     private Modulo $modulo;
     private string $tipoAtividade;
     private string $nome;
-    private string $estado;
+    private string $estado; //
     private int $pontuacao;
     private int $estrelas;
 
