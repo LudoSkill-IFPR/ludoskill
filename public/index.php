@@ -91,5 +91,6 @@ $router->get('/funcionario/comprar', 'ItemController@comprar');
 $router->get('/funcionario/editar', 'FuncionarioController@funcEditar');
 $router->post('/funcionario/atualizar', 'FuncionarioController@funcAtualizar');
 $router->get('/funcionario/modulos', 'ModuloController@listarTodosFuncionario');
+$router->get('/funcionario/equipar', 'FuncionarioController@equipaItem');
 
 $router->run();
