@@ -1,3 +1,19 @@
+<?php
+use app\models\Funcionario;
+use app\repositories\FuncionarioRepository;
+use app\repositories\UsuarioRepository;
+
+$funcionarioRepository = new FuncionarioRepository();
+
+$usuarios = 
+$funcionarios = $funcionarioRepository->getFuncionarios();
+
+$funcionarios = array_map(
+    fn(array $f) => Funcionario::arrayParaObjeto($f),
+    $funcionarioRepository->getFuncionarios()
+);
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -40,6 +56,19 @@
                 <div id="grafico" class="card verde">
                     <h2><i class="bi bi-graph-up"></i> Desempenho dos Funcionários</h2>
                     <p>Gráfico de desempenho virá aqui</p>
+                    <?php 
+                    $maiorDesempenho = $funcionarios[0]->getPontuacaoTotal();
+                    foreach ($funcionarios as $key => $f): ?>
+                        <div class="funcionario">
+                            <div class="nome">
+                                <?= $key + 1 ?> - <?= $f->getNomeCompleto() ?>
+                            </div>
+                            <div class="desempenho">
+                                <?php $desempenho = $f->getPontuacaoTotal() / $maiorDesempenho * 100 ?>
+                                <div class="progresso" style="width: <?= $desempenho ?>%;"></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
 
             </section>

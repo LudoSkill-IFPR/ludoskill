@@ -17,7 +17,12 @@ class FuncionarioRepository
 
     public function getFuncionarios(): array
     {
-        $stm = $this->connection->prepare("SELECT * FROM Funcionarios");
+        $sql = "SELECT f.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
+                       u.email, u.numero_telefone, u.estado
+                FROM Funcionarios f
+                INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario
+                ORDER BY f.pontuacao_total";
+        $stm = $this->connection->prepare($sql);
         $stm->execute();
         return $stm->fetchAll();
     }
