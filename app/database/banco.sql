@@ -79,9 +79,12 @@ CREATE TABLE IF NOT EXISTS Atividades (
     id_modulo INT NOT NULL,
     tipo_atividade ENUM('INTRODUCAO', 'REVISAO', 'SIMULACAO') NOT NULL,
     nome VARCHAR(255) NOT NULL,
-    estado ENUM('PENDENTE', 'INICIADO', 'CONCLUIDO') NOT NULL DEFAULT 'PENDENTE',
-    pontuacao INT NOT NULL DEFAULT 0,
-    estrelas INT NOT NULL DEFAULT 0,
+    --estado ENUM('PENDENTE', 'INICIADO', 'CONCLUIDO') NOT NULL DEFAULT 'PENDENTE',
+    estado ENUM('ATIVO', 'INATIVO') NOT NULL DEFAULT 'ATIVO',
+    ordem INT NOT NULL DEFAULT 1,
+    tempo_limite INT NOT NULL DEFAULT 180, -- Tempo limite em segundos (3 Minutos)
+    --pontuacao INT NOT NULL DEFAULT 0,
+    --estrelas INT NOT NULL DEFAULT 0,
     CONSTRAINT fk_atividade_modulo FOREIGN KEY (id_modulo) 
         REFERENCES Modulos(id_modulo) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -103,6 +106,7 @@ CREATE TABLE IF NOT EXISTS Funcionario_atividade (
     id_funcionario_atividade INT AUTO_INCREMENT PRIMARY KEY,
     id_funcionario INT NOT NULL,
     id_atividade INT NOT NULL,
+    estado ENUM('PENDENTE', 'INICIADO', 'CONCLUIDO') NOT NULL DEFAULT 'PENDENTE',
     pontuacao_obtida INT DEFAULT 0,
     estrelas_obtidas INT DEFAULT 0,
     bolotas_obtidas INT DEFAULT 0,
