@@ -5,13 +5,18 @@ use app\repositories\UsuarioRepository;
 
 $funcionarioRepository = new FuncionarioRepository();
 
-$usuarios = 
 $funcionarios = $funcionarioRepository->getFuncionarios();
 
 $funcionarios = array_map(
     fn(array $f) => Funcionario::arrayParaObjeto($f),
     $funcionarioRepository->getFuncionarios()
 );
+
+foreach ($funcionarios as $key => $f) {
+    if($empresa['id_empresa'] != $f->getEmpresa()->getId()){
+        unset($funcionarios[$key]);
+    }
+}
 ?>
 
 <!DOCTYPE html>
