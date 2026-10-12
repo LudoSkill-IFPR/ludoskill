@@ -4,6 +4,7 @@ namespace app\repositories;
 
 use app\database\ConnectionFactory;
 use app\models\Gestor;
+use app\models\Empresa;
 use PDO;
 
 class GestorRepository
@@ -26,8 +27,14 @@ class GestorRepository
              ORDER BY u.nome_completo"
         );
         $stm->execute();
-        $gestores = $stm->fetchAll();
-        return $gestores;
+        return array_map(function (array $registro): Gestor {
+            $empresa = new \app\models\Empresa(
+                (int) $registro['id_empresa'],
+                '',
+                (string) ($registro['nome_empresa'] ?? '')
+            );
+            return Gestor::arrayParaObjeto($registro, $empresa);
+        }, $stm->fetchAll());
     }
 
     public function getGestorById(int $id)
@@ -44,7 +51,33 @@ class GestorRepository
 
         $gestor = $stm->fetch();
 
-        return $gestor;
+        return $gestor ? Gestor::arrayParaObjeto($gestor) : null;
+    }
+
+    public function getGestorByUsuario(int $idUsuario): ?Gestor
+    {
+        $stm = $this->connection->prepare(
+            "SELECT g.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
+                    u.email, u.senha_hash, u.numero_telefone, u.estado,
+                    e.cnpj AS empresa_cnpj, e.nome AS empresa_nome,
+                    e.email AS empresa_email, e.plano AS empresa_plano
+             FROM Gestores g
+             INNER JOIN Usuarios u ON u.id_usuario = g.id_usuario
+             INNER JOIN Empresas e ON e.id_empresa = g.id_empresa
+             WHERE g.id_usuario = :idUsuario"
+        );
+        $stm->bindValue('idUsuario', $idUsuario, PDO::PARAM_INT);
+        $stm->execute();
+        $gestor = $stm->fetch();
+        if (!$gestor) return null;
+        $empresa = new Empresa(
+            (int) $gestor['id_empresa'],
+            (string) $gestor['empresa_cnpj'],
+            (string) $gestor['empresa_nome'],
+            (string) $gestor['empresa_email'],
+            (string) $gestor['empresa_plano']
+        );
+        return Gestor::arrayParaObjeto($gestor, $empresa);
     }
 
     public function saveGestor(Gestor $gestor): bool
@@ -69,11 +102,29 @@ class GestorRepository
         }
     }
 
-    // public function deleteGestor(int $id){
-    //     $stm = $this->connection->prepare("DELETE u FROM Usuarios u INNER JOIN Gestores g ON g.id_usuario = u.id_usuario WHERE g.id_gestor = :id");
-    //     $stm->bindValue('id', $id);
-    //     return $stm->execute();
-    // }
+    public function cpfExiste(string $cpf, ?int $idGestorIgnorado = null): bool
+    {
+        $sql = 'SELECT 1 FROM Usuarios u LEFT JOIN Gestores g ON g.id_usuario = u.id_usuario WHERE u.CPF = :valor';
+        if ($idGestorIgnorado !== null) $sql .= ' AND (g.id_gestor IS NULL OR g.id_gestor <> :id)';
+        $sql .= ' LIMIT 1';
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('valor', $cpf);
+        if ($idGestorIgnorado !== null) $stm->bindValue('id', $idGestorIgnorado, PDO::PARAM_INT);
+        $stm->execute();
+        return $stm->fetchColumn() !== false;
+    }
+
+    public function emailExiste(string $email, ?int $idGestorIgnorado = null): bool
+    {
+        $sql = 'SELECT 1 FROM Usuarios u LEFT JOIN Gestores g ON g.id_usuario = u.id_usuario WHERE u.email = :valor';
+        if ($idGestorIgnorado !== null) $sql .= ' AND (g.id_gestor IS NULL OR g.id_gestor <> :id)';
+        $sql .= ' LIMIT 1';
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('valor', $email);
+        if ($idGestorIgnorado !== null) $stm->bindValue('id', $idGestorIgnorado, PDO::PARAM_INT);
+        $stm->execute();
+        return $stm->fetchColumn() !== false;
+    }
 
     public function desativarGestor(int $id): bool
     {
@@ -105,19 +156,26 @@ class GestorRepository
     {
         $atual = $this->getGestorById($idGestor);
         if (!$atual) return false;
-        $senhaSql = $novaSenha !== null && $novaSenha !== '' ? ', senha_hash = :senha' : '';
-        $sql = "UPDATE Usuarios SET nome_completo = :nomeCompleto, data_nascimento = :dataNascimento, CPF = :cpf, email = :email, numero_telefone = :numeroTelefone{$senhaSql} WHERE id_usuario = :idUsuario";
-        $stm = $this->connection->prepare($sql);
-        $stm->bindValue('nomeCompleto', $gestor->getNomeCompleto());
-        $stm->bindValue('dataNascimento', $gestor->getDataNascimento()->format('Y-m-d'));
-        $stm->bindValue('cpf', $gestor->getCpf());
-        $stm->bindValue('email', $gestor->getEmail());
-        $stm->bindValue('numeroTelefone', $gestor->getNumeroTelefone());
-        $stm->bindValue('idUsuario', $atual['id_usuario']);
-        if ($novaSenha !== null && $novaSenha !== '') $stm->bindValue('senha', password_hash($novaSenha, PASSWORD_DEFAULT));
-        $stm->execute();
-        $stm = $this->connection->prepare("UPDATE Gestores SET id_empresa = :empresa WHERE id_gestor = :id");
-        return $stm->execute(['empresa' => $gestor->getEmpresa()->getId(), 'id' => $idGestor]);
+        $this->connection->beginTransaction();
+        try {
+            $senhaSql = $novaSenha !== null && $novaSenha !== '' ? ', senha_hash = :senha' : '';
+            $sql = "UPDATE Usuarios SET nome_completo = :nomeCompleto, data_nascimento = :dataNascimento, CPF = :cpf, email = :email, numero_telefone = :numeroTelefone{$senhaSql} WHERE id_usuario = :idUsuario";
+            $stm = $this->connection->prepare($sql);
+            $stm->bindValue('nomeCompleto', $gestor->getNomeCompleto());
+            $stm->bindValue('dataNascimento', $gestor->getDataNascimento()->format('Y-m-d'));
+            $stm->bindValue('cpf', $gestor->getCpf());
+            $stm->bindValue('email', $gestor->getEmail());
+            $stm->bindValue('numeroTelefone', $gestor->getNumeroTelefone());
+            $stm->bindValue('idUsuario', $atual->getId(), PDO::PARAM_INT);
+            if ($novaSenha !== null && $novaSenha !== '') $stm->bindValue('senha', password_hash($novaSenha, PASSWORD_DEFAULT));
+            $stm->execute();
+            $stm = $this->connection->prepare("UPDATE Gestores SET id_empresa = :empresa WHERE id_gestor = :id");
+            $stm->execute(['empresa' => $gestor->getEmpresa()->getId(), 'id' => $idGestor]);
+            return $this->connection->commit();
+        } catch (\Throwable $exception) {
+            if ($this->connection->inTransaction()) $this->connection->rollBack();
+            throw $exception;
+        }
     }
 
     public function countGestores(): int

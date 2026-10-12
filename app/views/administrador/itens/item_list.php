@@ -43,22 +43,22 @@
                     <tbody>
                         <?php foreach (($lista ?? []) as $item): ?>
                             <?php
-                                $imagem = $item['imagem'] ?? '';
+                                $imagem = $item->getImagem();
                                 $imagemUrl = !empty($imagem)
                                     ? URL_BASE . '/' . ltrim($imagem, '/')
                                     : '';
                         ?>
                         <tr>
-                            <td><?= htmlspecialchars($item['id_item'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($item['nome'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($item['preco'] ?? '') ?></td>
+                            <td><?= $item->getId() ?></td>
+                            <td><?= htmlspecialchars($item->getNome()) ?></td>
+                            <td><?= $item->getPreco() ?></td>
                             <td class="imagem">
                                  <?php if (!empty($imagemUrl)): ?>
-                                    <img src="<?= htmlspecialchars($imagemUrl) ?>" alt="<?= htmlspecialchars($item['nome'] ?? '') ?>" style="max-width: 100px; max-height: 100px;">
+                                    <img src="<?= htmlspecialchars($imagemUrl) ?>" alt="<?= htmlspecialchars($item->getNome()) ?>" style="max-width: 100px; max-height: 100px;">
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <?php if (($item['estado'] ?? '1') === '1'): ?>
+                                <?php if ($item->getEstado() === 'ATIVO'): ?>
                                     <span class="badge badge-ativo">Ativo</span>
                                 <?php else: ?>
                                     <span class="badge badge-inativo">Inativo</span>
@@ -66,17 +66,17 @@
                             </td>
 
                             <td id="acao">
-                                <a href="<?= URL_BASE ?>/administrador/itens/editar?id=<?= $item['id_item'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
+                                <a href="<?= URL_BASE ?>/administrador/itens/editar?id=<?= $item->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
                                 
                         
-                                <?php if (($item['estado'] ?? '1') === '1'): ?>
+                                <?php if ($item->getEstado() === 'ATIVO'): ?>
                                     <form action="<?= URL_BASE ?>/administrador/itens/desativar" method="post" onsubmit="return confirm('Deseja desativar este item?')">
-                                        <input type="hidden" name="id" value="<?= htmlspecialchars($item['id_item'] ?? '') ?>">
+                                        <input type="hidden" name="id" value="<?= $item->getId() ?>">
                                         <button type="submit" class="botao brilhinho botao-desativar"><i class="bi bi-eye-slash"></i> Desativar</button>
                                     </form>
                                 <?php else: ?>
                                     <form action="<?= URL_BASE ?>/administrador/itens/ativar" method="post" onsubmit="return confirm('Deseja reativar este item?')">
-                                        <input type="hidden" name="id" value="<?= htmlspecialchars($item['id_item'] ?? '') ?>">
+                                        <input type="hidden" name="id" value="<?= $item->getId() ?>">
                                         <button type="submit" class="botao brilho botao-ativar"><i class="bi bi-eye"></i> Ativar</button>
                                     </form>
                                 <?php endif; ?>

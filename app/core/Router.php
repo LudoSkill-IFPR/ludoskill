@@ -2,8 +2,6 @@
 
 namespace app\core;
 
-use Exception;
-
 class Router
 {
     private array $routes = [];
@@ -34,8 +32,8 @@ class Router
         // Remove a pasta do projeto (caso esteja rodando em subpasta no Apache)
         $scriptDir = str_replace('/public', '', dirname($_SERVER['SCRIPT_NAME']));
 
-        if ($scriptDir !== '/') {
-            $uri = str_replace($scriptDir, '', $uri);
+        if ($scriptDir !== '/' && str_starts_with($uri, $scriptDir)) {
+            $uri = substr($uri, strlen($scriptDir));
         }
 
         $uri = str_replace('/public', '', $uri);
@@ -54,6 +52,12 @@ class Router
 
         $method = strtolower($_SERVER['REQUEST_METHOD']);
 
+        if ($method === 'post' && !Controller::csrfValido($_POST['_csrf'] ?? null)) {
+            http_response_code(403);
+            require __DIR__ . '/../views/outros/403.php';
+            return;
+        }
+
         foreach ($this->routes as $route) {
             $routePath = $route['route'];
             if ($routePath !== '/' && str_ends_with($routePath, '/')) {
@@ -65,10 +69,9 @@ class Router
             }
         }
 
-        $path = __DIR__ . "/../views/outros/404.php";
-        require_once($path);
         http_response_code(404);
-        die();
+        require __DIR__ . '/../views/outros/404.php';
+        return;
     }
 
     public function dispatch($route){
@@ -78,13 +81,11 @@ class Router
         $controllerClass = "app\\controllers\\$controller";
 
         if (!class_exists($controllerClass)) {
-            print "Controller $controller não encontrado";
-            die;
+            throw new \RuntimeException('Controller da rota não encontrado.');
         }
 
         if (!method_exists($controllerClass, $method)) {
-            print "Método $method não encontrado em $controllerClass";
-            die;
+            throw new \RuntimeException('Ação da rota não encontrada.');
         }
         
         $controller = new $controllerClass;

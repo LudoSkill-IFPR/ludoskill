@@ -55,7 +55,7 @@
                 </div>
                 <div class="formgroup">
                     <label for="senha_hash" class="form-label">Senha</label>
-                    <input class="card-secundario" type="password" id="senha_hash" name="senha_hash" value="<?= isset($funcionario['senha_hash']) ? htmlspecialchars($funcionario['senha_hash']) : '' ?>">
+                    <input class="card-secundario" type="password" id="senha_hash" name="senha_hash" minlength="8">
                     <?php if (isset($erros['senha_hash'])): ?>
                         <span class="text-danger"><?= htmlspecialchars($erros['senha_hash']) ?></span>
                     <?php endif; ?>

@@ -45,16 +45,29 @@ error_reporting(E_ALL);
                     </select>
                     <?php if (isset($erros['tipo_atividade'])): ?><div class="erro"><?= htmlspecialchars($erros['tipo_atividade']) ?></div><?php endif; ?>
                 </div>
-                <div>
-                    <input type="hidden" value="0" id="estrelas" name="estrelas">
-                    <input type="hidden" value="0" id="pontuacao" name="pontuacao">
-                    <input type="hidden" value="PENDENTE" id="estado" name="estado">
+                <div class="formgroup">
+                    <label for="estado">Estado:</label>
+                    <select class="card-secundario" id="estado" name="estado">
+                        <option value="ATIVO" <?= ($atividade['estado'] ?? 'ATIVO') === 'ATIVO' ? 'selected' : '' ?>>Ativo</option>
+                        <option value="INATIVO" <?= ($atividade['estado'] ?? '') === 'INATIVO' ? 'selected' : '' ?>>Inativo</option>
+                    </select>
+                    <?php if (isset($erros['estado'])): ?><div class="erro"><?= htmlspecialchars($erros['estado']) ?></div><?php endif; ?>
+                </div>
+                <div class="formgroup">
+                    <label for="ordem">Ordem:</label>
+                    <input class="card-secundario" type="number" min="1" id="ordem" name="ordem" value="<?= htmlspecialchars($atividade['ordem'] ?? '1') ?>">
+                    <?php if (isset($erros['ordem'])): ?><div class="erro"><?= htmlspecialchars($erros['ordem']) ?></div><?php endif; ?>
+                </div>
+                <div class="formgroup">
+                    <label for="tempo_limite">Tempo limite (segundos):</label>
+                    <input class="card-secundario" type="number" min="1" id="tempo_limite" name="tempo_limite" value="<?= htmlspecialchars($atividade['tempo_limite'] ?? '180') ?>">
+                    <?php if (isset($erros['tempo_limite'])): ?><div class="erro"><?= htmlspecialchars($erros['tempo_limite']) ?></div><?php endif; ?>
                 </div>
                 <div class="formgroup">
                     <label for="id_modulo">Modulo:</label>
                     <select class="card-secundario" id="id_modulo" name="id_modulo">
                         <option value="">Selecione um modulo</option>
-                        <?php foreach ($modulos as $modulo): ?><option value="<?= (int) $modulo['id_modulo'] ?>" <?= (string) ($atividade['id_modulo'] ?? '') === (string) $modulo['id_modulo'] ? 'selected' : '' ?>><?= htmlspecialchars($modulo['nome']) ?></option><?php endforeach; ?>
+                        <?php foreach ($modulos as $modulo): ?><option value="<?= $modulo->getId() ?>" <?= (string) ($atividade['id_modulo'] ?? '') === (string) $modulo->getId() ? 'selected' : '' ?>><?= htmlspecialchars($modulo->getNome()) ?></option><?php endforeach; ?>
                     </select>
                     <?php if (isset($erros['id_modulo'])): ?><div class="erro"><?= htmlspecialchars($erros['id_modulo']) ?></div><?php endif; ?>
                 </div>

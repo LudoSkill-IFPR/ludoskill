@@ -26,12 +26,12 @@
                         </tr>
                     </thead>
                     <tbody><?php foreach ($lista as $gestor): ?><tr>
-                                <td><?= htmlspecialchars($gestor['nome_completo']) ?></td>
-                                <td><?= htmlspecialchars($gestor['email']) ?></td>
-                                <td><?= htmlspecialchars($gestor['nome_empresa']) ?></td>
+                                <td><?= htmlspecialchars($gestor->getNomeCompleto()) ?></td>
+                                <td><?= htmlspecialchars($gestor->getEmail()) ?></td>
+                                <td><?= htmlspecialchars($gestor->getEmpresa()->getNome()) ?></td>
                                 <td>
                                     
-                                    <?php if (($gestor['estado'] ?? 'ATIVO') === 'ATIVO'): ?>
+                                    <?php if ($gestor->isAtivo()): ?>
                                         <span class="badge badge-ativo">Ativo</span>
                                     <?php else: ?>
                                         <span class="badge badge-inativo">Inativo</span>
@@ -39,15 +39,15 @@
                                 </td>
                                 <td>
                                     <div id="acao">
-                                        <a class="botao brilho" href="<?= URL_BASE ?>/administrador/gestores/editar?id=<?= (int) $gestor['id_gestor'] ?>">Editar</a>
-                                        <?php if (($gestor['estado'] ?? 'ATIVO') === 'ATIVO'): ?>
+                                        <a class="botao brilho" href="<?= URL_BASE ?>/administrador/gestores/editar?id=<?= $gestor->getIdGestor() ?>">Editar</a>
+                                        <?php if ($gestor->isAtivo()): ?>
                                             <form method="post" action="<?= URL_BASE ?>/administrador/gestores/desativar" onsubmit="return confirm('Deseja desativar este gestor?')">
-                                                <input type="hidden" name="id" value="<?= (int) $gestor['id_gestor'] ?>">
+                                                <input type="hidden" name="id" value="<?= $gestor->getIdGestor() ?>">
                                                 <button class="botao brilhinho botao-desativar" type="submit">Desativar</button>
                                             </form>
                                         <?php else: ?>
                                             <form method="post" action="<?= URL_BASE ?>/administrador/gestores/ativar" onsubmit="return confirm('Deseja reativar este gestor?')">
-                                                <input type="hidden" name="id" value="<?= (int) $gestor['id_gestor'] ?>">
+                                                <input type="hidden" name="id" value="<?= $gestor->getIdGestor() ?>">
                                                 <button class="botao brilho botao-ativar" type="submit">Ativar</button>
                                             </form>
                                         <?php endif; ?>

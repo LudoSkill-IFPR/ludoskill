@@ -1,24 +1,3 @@
-<?php
-use app\models\Funcionario;
-use app\repositories\FuncionarioRepository;
-use app\repositories\UsuarioRepository;
-
-$funcionarioRepository = new FuncionarioRepository();
-
-$funcionarios = $funcionarioRepository->getFuncionarios();
-
-$funcionarios = array_map(
-    fn(array $f) => Funcionario::arrayParaObjeto($f),
-    $funcionarioRepository->getFuncionarios()
-);
-
-foreach ($funcionarios as $key => $f) {
-    if($empresa['id_empresa'] != $f->getEmpresa()->getId()){
-        unset($funcionarios[$key]);
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -52,25 +31,24 @@ foreach ($funcionarios as $key => $f) {
 
                 <div class="card">
                     <h3><i class="bi bi-building"></i> Empresa</h3>
-                    <p><?= htmlspecialchars($empresa['nome'] ?? 'N/A') ?></p>
+                    <p><?= htmlspecialchars($empresa?->getNome() ?? 'N/A') ?></p>
                 </div>
+                <div class="card"><h3>Taxa de conclusão</h3><p><?= number_format($taxaConclusao, 1, ',', '.') ?>%</p></div>
 
             </section>
 
             <section class="grafico">
                 <div id="grafico" class="card verde">
                     <h2><i class="bi bi-graph-up"></i> Desempenho dos Funcionários</h2>
-                    <p>Gráfico de desempenho virá aqui</p>
-                    <?php 
-                    $maiorDesempenho = $funcionarios[0]->getPontuacaoTotal();
-                    foreach ($funcionarios as $key => $f): ?>
+                    <?php if (empty($desempenho)): ?><p>Nenhum funcionário ativo cadastrado.</p><?php endif; ?>
+                    <?php foreach ($desempenho as $key => $registro): ?>
                         <div class="funcionario">
                             <div class="nome">
-                                <?= $key + 1 ?> - <?= $f->getNomeCompleto() ?>
+                                <?= $key + 1 ?> - <?= htmlspecialchars($registro['nome_completo']) ?>
+                                (<?= number_format((float) $registro['media_estrelas'], 1, ',', '.') ?> estrelas)
                             </div>
                             <div class="desempenho">
-                                <?php $desempenho = $f->getPontuacaoTotal() / $maiorDesempenho * 100 ?>
-                                <div class="progresso" style="width: <?= $desempenho ?>%;"></div>
+                                <div class="progresso" style="width: <?= min(100, ((float) $registro['media_estrelas'] / 3) * 100) ?>%;"></div>
                             </div>
                         </div>
                     <?php endforeach; ?>

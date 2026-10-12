@@ -1,13 +1,3 @@
-<?php
-    use app\repositories\EmpresaRepository;
-    use app\repositories\UsuarioRepository;
-    use app\models\Usuario;
-
-    $empresaRepository = new EmpresaRepository();
-    $usuarioRepository = new UsuarioRepository();
-    $funcionarios = $data['lista'];
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -53,20 +43,15 @@
                     </thead>
 
                     <tbody>
-                        <?php foreach ($funcionarios as $funcionario): ?>
-                            <?php
-                            $nome_empresa = $empresaRepository->getEmpresaById($funcionario['id_empresa']);
-                            $nome_empresa = $nome_empresa['nome'];
-                            $usuario = $usuarioRepository->getUsuario($funcionario['id_usuario']);
-                        ?>
+                        <?php foreach (($lista ?? []) as $funcionario): ?>
                         <tr>
-                            <td><?= htmlspecialchars($usuario['nome_completo']) ?></td>
-                            <td><?= htmlspecialchars($usuario['data_nascimento']) ?></td>
-                            <td><?= htmlspecialchars($usuario['CPF']) ?></td>
-                            <td><?= htmlspecialchars($usuario['email']) ?></td>
-                            <td><?= htmlspecialchars($usuario['numero_telefone']) ?></td>
+                            <td><?= htmlspecialchars($funcionario->getNomeCompleto()) ?></td>
+                            <td><?= htmlspecialchars($funcionario->getDataNascimento()?->format('d/m/Y') ?? '') ?></td>
+                            <td><?= htmlspecialchars($funcionario->getCpf()) ?></td>
+                            <td><?= htmlspecialchars($funcionario->getEmail()) ?></td>
+                            <td><?= htmlspecialchars($funcionario->getNumeroTelefone() ?? '') ?></td>
                             <td>
-                                <?php if (($usuario['estado'] ?? 'ATIVO') === 'ATIVO'): ?>
+                                <?php if ($funcionario->isAtivo()): ?>
                                     <span class="badge badge-ativo">Ativo</span>
                                 <?php else: ?>
                                     <span class="badge badge-inativo">Inativo</span>
@@ -74,20 +59,15 @@
                             </td>
                     
                             <td id="acao">
-                                <a href="<?= URL_BASE ?>/gestor/funcionarios/editar?id=<?= $funcionario['id_funcionario'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                                
-                                <form action="<?= URL_BASE ?>/gestor/funcionarios/excluir" method="post" onsubmit="return confirm('Deseja excluir o(a) funcionario(a) <?= $usuario['nome_completo']?>?')">
-                                    <input type="hidden" name="id" value="<?= htmlspecialchars($funcionario['id_funcionario'] ?? '') ?>">
-                                    <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
-                                </form>
-                                <?php if (($usuario['estado'] ?? 'ATIVO') === 'ATIVO'): ?>
-                                    <form action="<?= URL_BASE ?>/gestor/funcionarios/desativar" method="post" onsubmit="return confirm('Deseja desativar o(a) funcionario(a) <?= htmlspecialchars($usuario['nome_completo']) ?>?')">
-                                        <input type="hidden" name="id" value="<?= htmlspecialchars($funcionario['id_funcionario'] ?? '') ?>">
+                                <a href="<?= URL_BASE ?>/gestor/funcionarios/editar?id=<?= $funcionario->getIdFuncionario() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
+                                <?php if ($funcionario->isAtivo()): ?>
+                                    <form action="<?= URL_BASE ?>/gestor/funcionarios/desativar" method="post" onsubmit="return confirm('Deseja desativar este funcionário?')">
+                                        <input type="hidden" name="id" value="<?= $funcionario->getIdFuncionario() ?>">
                                         <button type="submit" class="botao brilhinho botao-desativar"><i class="bi bi-person-x"></i> Desativar</button>
                                     </form>
                                 <?php else: ?>
-                                    <form action="<?= URL_BASE ?>/gestor/funcionarios/ativar" method="post" onsubmit="return confirm('Deseja reativar o(a) funcionario(a) <?= htmlspecialchars($usuario['nome_completo']) ?>?')">
-                                        <input type="hidden" name="id" value="<?= htmlspecialchars($funcionario['id_funcionario'] ?? '') ?>">
+                                    <form action="<?= URL_BASE ?>/gestor/funcionarios/ativar" method="post" onsubmit="return confirm('Deseja reativar este funcionário?')">
+                                        <input type="hidden" name="id" value="<?= $funcionario->getIdFuncionario() ?>">
                                         <button type="submit" class="botao brilho botao-ativar"><i class="bi bi-person-check"></i> Ativar</button>
                                     </form>
                                 <?php endif; ?>

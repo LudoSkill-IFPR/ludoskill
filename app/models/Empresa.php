@@ -1,7 +1,6 @@
 <?php
 
 namespace app\models;
-use DateTimeImmutable;
 
 class Empresa{
     private int $id;

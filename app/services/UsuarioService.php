@@ -9,52 +9,12 @@ class UsuarioService
 {
     private UsuarioRepository $repository;
 
-    public function getUsuarioById(int $id) {
-        return $this->repository->getUsuarioById($id);
-    }
-
-    public function getUsuarioByEmail(string $email) {
-        return $this->repository->getUsuarioByEmail($email);
-    }
-
-    public function updateUsuario(Usuario $usuario): bool {
-        return $this->repository->updateUsuario($usuario);
-    }
+    public function emailExiste(string $email, int $idIgnorado): bool { return $this->repository->emailExiste($email, $idIgnorado); }
+    public function updatePerfil(Usuario $usuario, ?string $senha = null): bool { return $this->repository->updatePerfil($usuario, $senha); }
 
     public function __construct()
     {
         $this->repository = new UsuarioRepository();
     }
 
-    public function getUsuarios(): array
-    {
-        return $this->repository->getUsuarios();
-    }
-
-    public function saveUsuario(Usuario $usuario): bool {
-    // 1. Verifica se o e-mail já está cadastrado
-        $usuarioExistente = $this->repository->getUsuarioByEmail($usuario->getEmail());
-        
-        if ($usuarioExistente) {
-            // Se o usuário existe, a regra de negócio impede o cadastro
-            return false; 
-        }
-        
-        // 2. Se não existir, prossegue com o salvamento
-        return $this->repository->saveUsuario($usuario);
-    }
-
-    public function desativarUsuario(int $id): bool {
-        return $this->repository->desativarUsuario($id);
-    }
-
-    public function ativarUsuario(int $id): bool {
-        return $this->repository->ativarUsuario($id);
-    }
-
-    public function deleteUsuario(int $id): bool {
-        return $this->repository->deleteUsuario($id);
-    }
-
-    
 }

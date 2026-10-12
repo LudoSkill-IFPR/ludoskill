@@ -1,7 +1,4 @@
-<?php
-use app\helpers\Auth;
-Auth::funcionario_required();
-?>
+<?php header('Location: ' . URL_BASE . '/perfil'); exit; ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

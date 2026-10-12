@@ -24,14 +24,18 @@ class GestorService
         return $this->repository->getGestorById($id);
     }
 
+    public function getGestorByUsuario(int $idUsuario): ?Gestor
+    {
+        return $this->repository->getGestorByUsuario($idUsuario);
+    }
+
     public function saveGestor(Gestor $gestor)
     {
         return $this->repository->saveGestor($gestor);
     }
 
-    // public function deleteGestor(int $id) {
-    //     return $this->repository->deleteGestor($id);
-    // }
+    public function cpfExiste(string $cpf, ?int $ignorar = null): bool { return $this->repository->cpfExiste($cpf, $ignorar); }
+    public function emailExiste(string $email, ?int $ignorar = null): bool { return $this->repository->emailExiste($email, $ignorar); }
 
     public function desativarGestor(int $id)
     {

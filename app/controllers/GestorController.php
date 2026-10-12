@@ -9,6 +9,7 @@ use app\services\GestorService;
 use app\services\EmpresaService;
 use app\services\FuncionarioService;
 use app\helpers\Validador;
+use app\services\FuncionarioAtividadeService;
 
 class GestorController extends Controller
 {
@@ -21,35 +22,21 @@ class GestorController extends Controller
     {
         $this->gestorRequired();
 
-        // Obter dados do gestor logado
-        $usuarioLogado = $_SESSION['usuario_logado'];
-        $idUsuario = $usuarioLogado->getId();
-
-        // Obter gestor e sua empresa
-        $gestores = $this->gestorService->getGestores();
-        $gestor = null;
-        $idEmpresa = null;
-
-        foreach ($gestores as $g) {
-            if ($g['id_usuario'] == $idUsuario) {
-                $gestor = $g;
-                $idEmpresa = $g['id_empresa'];
-                break;
-            }
-        }
-
-        // Obter quantidade de funcionários cadastrados por este gestor
-        $quantidadeFuncionarios = 0;
-        $empresa = null;
-        if ($idEmpresa) {
-            $quantidadeFuncionarios = $this->funcionarioService->countFuncionariosByEmpresa($idEmpresa);
-            $empresa = $this->empresaService->getEmpresaById($idEmpresa);
-        }
+        $gestor = $this->gestorService->getGestorByUsuario($_SESSION['usuario_logado']->getId());
+        if (!$gestor) $this->redirect(URL_BASE . '/login');
+        $idEmpresa = $gestor->getEmpresa()->getId();
+        $quantidadeFuncionarios = $this->funcionarioService->countFuncionariosByEmpresa($idEmpresa);
+        $empresa = $this->empresaService->getEmpresaById($idEmpresa);
+        $atividadeService = new FuncionarioAtividadeService();
+        $desempenho = $atividadeService->getDesempenhoByEmpresa($idEmpresa);
+        $taxaConclusao = $atividadeService->getTaxaConclusaoByEmpresa($idEmpresa);
 
         $this->view('gestor/inicial', [
             'quantidadeFuncionarios' => $quantidadeFuncionarios,
             'gestor' => $gestor,
-            'empresa' => $empresa
+            'empresa' => $empresa,
+            'desempenho' => $desempenho,
+            'taxaConclusao' => $taxaConclusao
         ]);
     }
 
@@ -67,19 +54,6 @@ class GestorController extends Controller
         $this->view('administrador/gestores/gestor_list', $data);
     }
 
-    public function listarGestor()
-    {
-        $this->adminRequired();
-
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/administrador/gestores');
-        }
-
-        $id = $_GET['id'];
-        $data['gestor'] = $this->gestorService->getGestorById($id);
-        $this->redirect(URL_BASE . '/administrador/gestores');
-    }
-
     public function criar()
     {
         $this->adminRequired();
@@ -90,7 +64,11 @@ class GestorController extends Controller
     public function salvar()
     {
         $this->adminRequired();
+        $_POST['cpf'] = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
         $erros = Validador::validarGestor($_POST);
+        if (empty($erros['id_empresa']) && !$this->empresaService->getEmpresaById((int) $_POST['id_empresa'])) $erros['id_empresa'] = 'A empresa selecionada não existe.';
+        if (empty($erros['cpf']) && $this->gestorService->cpfExiste(preg_replace('/\D/', '', $_POST['cpf'] ?? ''))) $erros['cpf'] = 'Já existe um usuário com este CPF.';
+        if (empty($erros['email']) && $this->gestorService->emailExiste($_POST['email'] ?? '')) $erros['email'] = 'Já existe um usuário com este e-mail.';
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['gestor'] = $_POST;
@@ -170,10 +148,17 @@ class GestorController extends Controller
         if (!$idGestor || !$this->gestorService->getGestorById($idGestor)) {
             $this->redirect(URL_BASE . '/administrador/gestores');
         }
+        $_POST['cpf'] = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
         $erros = Validador::validarGestor($_POST, false);
+        if (empty($erros['id_empresa']) && !$this->empresaService->getEmpresaById((int) $_POST['id_empresa'])) $erros['id_empresa'] = 'A empresa selecionada não existe.';
+        if (empty($erros['cpf']) && $this->gestorService->cpfExiste(preg_replace('/\D/', '', $_POST['cpf'] ?? ''), $idGestor)) $erros['cpf'] = 'Já existe um usuário com este CPF.';
+        if (empty($erros['email']) && $this->gestorService->emailExiste($_POST['email'] ?? '', $idGestor)) $erros['email'] = 'Já existe um usuário com este e-mail.';
         if (!empty($erros)) {
             $data['erros'] = $erros;
-            $data['gestor'] = $_POST;
+            $dadosGestor = $_POST;
+            $dadosGestor['id_gestor'] = $idGestor;
+            $dadosGestor['id_usuario'] = $this->gestorService->getGestorById($idGestor)?->getId() ?? 0;
+            $data['gestor'] = Gestor::arrayParaObjeto($dadosGestor);
             $data['empresas'] = $this->empresaService->getEmpresas();
             $this->view('administrador/gestores/gestor_edit', $data);
             return;

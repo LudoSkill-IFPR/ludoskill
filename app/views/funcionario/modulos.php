@@ -18,26 +18,29 @@
                     <div class="card"><p>Nenhum módulo cadastrado.</p></div>
                 <?php else: ?>
                     <?php foreach ($lista as $modulo): ?>
+                        <?php $moduloEntidade = $modulo['entidade']; ?>
                         <details class="card modulo-funcionario">
                             <summary>
-                                <span><strong><?= htmlspecialchars($modulo['nome']) ?></strong><small><?= htmlspecialchars($modulo['descricao'] ?? '') ?></small></span>
+                                <span><strong><?= htmlspecialchars($moduloEntidade->getNome()) ?></strong><small><?= htmlspecialchars($moduloEntidade->getDescricao()) ?></small></span>
                                 <span class="abrir-modulo">Ver atividades</span>
                             </summary>
                             <div class="atividades-modulo">
                                 <?php if (empty($modulo['atividades'])): ?>
                                     <p>Nenhuma atividade cadastrada neste módulo.</p>
                                 <?php else: ?>
-                                    <?php foreach ($modulo['atividades'] as $atividade): ?>
-                                        <?php $resultado = $resultados[(int) $atividade['id_atividade']] ?? null; ?>
+                                    <?php foreach ($modulo['atividades'] as $registroAtividade): ?>
+                                        <?php $atividade = $registroAtividade['entidade']; $resultado = $resultados[$atividade->getId()] ?? null; ?>
                                         <article class="card-secundario atividade-modulo">
                                             <div>
-                                                <h2><?= htmlspecialchars($atividade['nome']) ?></h2>
-                                                <p><?= htmlspecialchars($atividade['tipo_atividade']) ?></p>
+                                                <h2><?= htmlspecialchars($atividade->getNome()) ?></h2>
+                                                <p><?= htmlspecialchars($atividade->getTipoAtividade()) ?></p>
                                                 <?php if ($resultado): ?>
-                                                    <p class="atividade-concluida">Melhor resultado: <?= (int) $resultado['pontuacao_obtida'] ?> pontos · <?= (int) $resultado['estrelas_obtidas'] ?> estrelas · <?= (int) $resultado['qtd_tentativas'] ?> tentativa(s)</p>
+                                                    <p class="atividade-concluida">Melhor resultado: <?= $resultado->getPontuacaoObtida() ?> pontos · <?= $resultado->getEstrelasObtidas() ?> estrelas · <?= $resultado->getQtdTentativas() ?> tentativa(s)</p>
                                                 <?php endif; ?>
                                             </div>
-                                            <a class="botao brilho" href="<?= URL_BASE ?>/funcionario/atividades/exercicios?id=<?= (int) $atividade['id_atividade'] ?>"><?= $resultado ? 'Refazer exercício' : 'Realizar exercício' ?></a>
+                                            <?php if ($registroAtividade['liberada']): ?>
+                                                <a class="botao brilho" href="<?= URL_BASE ?>/funcionario/atividades/exercicios?id=<?= $atividade->getId() ?>"><?= $resultado ? 'Refazer exercício' : 'Realizar exercício' ?></a>
+                                            <?php else: ?><span class="botao">Bloqueada</span><?php endif; ?>
                                         </article>
                                     <?php endforeach; ?>
                                 <?php endif; ?>

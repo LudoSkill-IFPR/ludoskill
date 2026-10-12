@@ -23,7 +23,7 @@
                 <?php foreach (['nome_completo' => ['Nome completo', 'text'], 'data_nascimento' => ['Data de nascimento', 'date'], 'cpf' => ['CPF', 'text'], 'email' => ['E-mail', 'email'], 'senha' => ['Senha', 'password'], 'numero_telefone' => ['Número de telefone', 'text']] as $campo => [$rotulo, $tipo]): ?>
                     <div class="formgroup">
                         <label for="<?= $campo ?>"><?= $rotulo ?>:</label>
-                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" value="<?= $tipo !== 'password' ? htmlspecialchars($gestor[$campo] ?? '') : '' ?>">
+                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" <?= $tipo === 'password' ? 'minlength="8"' : '' ?> value="<?= $tipo !== 'password' ? htmlspecialchars($gestor[$campo] ?? '') : '' ?>">
                         <?php if (isset($erros[$campo])): ?><div class="erro"><?= htmlspecialchars($erros[$campo]) ?></div><?php endif; ?>
                     </div>
                 <?php endforeach; ?>
@@ -31,7 +31,7 @@
                     <label for="id_empresa">Empresa:</label>
                     <select class="card-secundario" id="id_empresa" name="id_empresa">
                         <option value="">Selecione uma empresa</option>
-                        <?php foreach ($empresas as $empresa): ?><option value="<?= (int) $empresa['id_empresa'] ?>" <?= (string) ($gestor['id_empresa'] ?? '') === (string) $empresa['id_empresa'] ? 'selected' : '' ?>><?= htmlspecialchars($empresa['nome']) ?></option><?php endforeach; ?>
+                        <?php foreach ($empresas as $empresa): ?><option value="<?= $empresa->getId() ?>" <?= (string) ($gestor['id_empresa'] ?? '') === (string) $empresa->getId() ? 'selected' : '' ?>><?= htmlspecialchars($empresa->getNome()) ?></option><?php endforeach; ?>
                     </select>
                     <?php if (isset($erros['id_empresa'])): ?><div class="erro"><?= htmlspecialchars($erros['id_empresa']) ?></div><?php endif; ?>
                 </div>

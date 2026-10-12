@@ -1,9 +1,5 @@
 <?php
 
-/**
- * CORRIGIDO
- */
-
 namespace app\repositories;
 
 use app\database\ConnectionFactory;
@@ -20,8 +16,7 @@ class EmpresaRepository {
     public function getEmpresas(): array {
         $stm = $this->connection->prepare("SELECT * FROM Empresas");
         $stm->execute();
-        $empresas = $stm->fetchAll();
-        return $empresas;
+        return array_map([Empresa::class, 'arrayParaObjeto'], $stm->fetchAll());
     }
 
     public function getEmpresasComQuantidadeUsuarios(): array {
@@ -47,8 +42,7 @@ class EmpresaRepository {
         $stm->execute();
 
         $empresa = $stm->fetch();
-
-        return $empresa;
+        return $empresa ? Empresa::arrayParaObjeto($empresa) : null;
     }
 
     public function cnpjExiste(string $cnpj, ?int $idIgnorado = null): bool {

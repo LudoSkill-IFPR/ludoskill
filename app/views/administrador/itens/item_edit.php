@@ -1,3 +1,4 @@
+<?php $item = $item instanceof \app\models\Item ? $item : \app\models\Item::arrayParaObjeto($item); ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -25,26 +26,26 @@
             </div>
 
             <form class="card" action="<?= URL_BASE ?>/administrador/itens/atualizar" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="id" value="<?= htmlspecialchars($item['id_item'] ?? '') ?>">
-                <input type="hidden" name="imagem_atual" value="<?= htmlspecialchars($item['imagem'] ?? '') ?>">
+                <input type="hidden" name="id" value="<?= $item->getId() ?>">
+                <input type="hidden" name="imagem_atual" value="<?= htmlspecialchars($item->getImagem()) ?>">
 
                 <div class="formgroup">
                     <label for="nome">Nome:</label>
-                    <input class="card-secundario" type="text" id="nome" name="nome" value="<?= isset($item['nome']) ? htmlspecialchars($item['nome']) : '' ?>">
+                    <input class="card-secundario" type="text" id="nome" name="nome" value="<?= htmlspecialchars($item->getNome()) ?>">
 
                     <?php if (isset($erros['nome'])): ?>
-                        <div class="erro"><?= $erros['nome'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['nome']) ?></div>
                     <?php endif; ?>
                 </div>
 
                 <div class="formgroup">
                     <label for="estado">Estado:</label>
                     <select class="card-secundario" name="estado" id="estado" >
-                        <option value="1" <?= (!isset($item['estado']) || $item['estado'] === '1' || $item['estado'] === '') ? 'selected' : '' ?>>Ativo</option>
-                        <option value="0" <?= isset($item['estado']) && $item['estado'] === '0' ? 'selected' : '' ?>>Inativo</option>
+                        <option value="1" <?= $item->getEstado() === 'ATIVO' ? 'selected' : '' ?>>Ativo</option>
+                        <option value="0" <?= $item->getEstado() === 'INATIVO' ? 'selected' : '' ?>>Inativo</option>
                     </select>
                     <?php if (isset($erros['estado'])): ?>
-                        <div class="erro"><?= $erros['estado'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['estado']) ?></div>
                     <?php endif; ?>
                 </div>
 
@@ -52,26 +53,26 @@
                     <label for="tipo" >Tipo:</label>
                     <select class="card-secundario" name="tipo" id="tipo">
                         <option value="">Selecione um tipo</option>
-                        <option value="TEMA" <?= isset($item['tipo']) && $item['tipo'] === 'TEMA' ? 'selected' : '' ?>>Tema</option>
-                        <option value="VISUAL_ESQUILOSO" <?= isset($item['tipo']) && $item['tipo'] === 'VISUAL_ESQUILOSO' ? 'selected' : '' ?>>Visual Esquilo</option>
+                        <option value="TEMA" <?= $item->getTipo() === 'TEMA' ? 'selected' : '' ?>>Tema</option>
+                        <option value="VISUAL_ESQUILOSO" <?= $item->getTipo() === 'VISUAL_ESQUILOSO' ? 'selected' : '' ?>>Visual Esquilo</option>
                     </select>
                     <?php if (isset($erros['tipo'])): ?>
-                        <div class="erro"><?= $erros['tipo'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['tipo']) ?></div>
                     <?php endif; ?>
                 </div>
 
                 <div class="formgroup">
                     <label for="preco" class="form-label">Preço:</label>
-                    <input class="card-secundario" type="number" step="0.01" class="form-control" id="preco" name="preco" value="<?= isset($item['preco']) ? htmlspecialchars($item['preco']) : '' ?>">
+                    <input class="card-secundario" type="number" min="0" class="form-control" id="preco" name="preco" value="<?= $item->getPreco() ?>">
                     <?php if (isset($erros['preco'])): ?>
-                        <div class="erro"><?= $erros['preco'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['preco']) ?></div>
                     <?php endif; ?>
                 </div>
 
                 <div class="formgroup" id="campo-imagem">
                     <label for="imagem">Imagem:</label>
                     <?php
-                        $imagemAtual = $item['imagem'] ?? '';
+                        $imagemAtual = $item->getImagem();
                         $imagemUrl = !empty($imagemAtual)
                             ? URL_BASE . '/' . ltrim($imagemAtual, '/')
                             : '';
@@ -80,7 +81,7 @@
 
                     <div>
                         <img src="<?= htmlspecialchars($imagemUrl) ?>"
-                            alt="<?= htmlspecialchars($item['nome'] ?? '') ?>"
+                            alt="<?= htmlspecialchars($item->getNome()) ?>"
                             style="max-width: 120px; max-height: 120px; display: block; margin-bottom: 0.5rem;">
                         <small>
                             Deixe em branco para manter a imagem atual.
@@ -90,7 +91,7 @@
 
                     <input class="card-secundario" type="file" id="imagem" name="imagem">
                     <?php if (isset($erros['imagem'])): ?>
-                        <div class="erro"><?= $erros['imagem'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['imagem']) ?></div>
                     <?php endif; ?>
                 </div>
 

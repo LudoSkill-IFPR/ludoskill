@@ -16,8 +16,16 @@ class ModuloService {
         return $this->moduloRepository->getModulos();
     }
 
+    public function getModulosAtivos(): array {
+        return $this->moduloRepository->getModulosAtivos();
+    }
+
     public function getModuloById(int $id) {
         return $this->moduloRepository->getModuloById($id);
+    }
+
+    public function nomeExiste(string $nome, ?int $idIgnorado = null): bool {
+        return $this->moduloRepository->nomeExiste($nome, $idIgnorado);
     }
 
     public function saveModulo(Modulo $modulo) {

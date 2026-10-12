@@ -13,32 +13,12 @@ class ItemRepository{
         $this->connection = ConnectionFactory::getConnection();
     }
 
-    private function normalizeEstado($estado): string {
-        if (is_string($estado) && strlen($estado) === 1) {
-            return ord($estado) === 1 ? '1' : '0';
-        }
-
-        return (string)(int)$estado;
-    }
-
-    private function normalizeItem(array $item): array {
-        if (isset($item['estado'])) {
-            $item['estado'] = $this->normalizeEstado($item['estado']);
-        }
-
-        return $item;
-    }
-
     public function getItems(): array{
         $stm = $this->connection->prepare("SELECT * FROM Itens");
         $stm->execute();
         $items = $stm->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach ($items as &$item) {
-            $item = $this->normalizeItem($item);
-        }
-
-        return $items;
+        return array_map([Item::class, 'arrayParaObjeto'], $items);
     }
 
     public function getItemsAtivos(): array{
@@ -46,11 +26,7 @@ class ItemRepository{
         $stm->execute();
         $items = $stm->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach ($items as &$item) {
-            $item = $this->normalizeItem($item);
-        }
-
-        return $items;
+        return array_map([Item::class, 'arrayParaObjeto'], $items);
     }
 
     public function getItemById(int $id){
@@ -61,13 +37,13 @@ class ItemRepository{
 
         $item = $stm->fetch(PDO::FETCH_ASSOC);
 
-        return $item ? $this->normalizeItem($item) : null;
+        return $item ? Item::arrayParaObjeto($item) : null;
     }
 
     public function saveItem(Item $item){
         $sql = "INSERT INTO Itens (estado, nome, tipo, preco, imagem) VALUES (:estado, :nome, :tipo, :preco, :imagem)";
         $stm = $this->connection->prepare($sql);
-        $stm->bindValue('estado', (int) $item->getEstado(), PDO::PARAM_INT);
+        $stm->bindValue('estado', $item->getEstado() === 'ATIVO' ? 1 : 0, PDO::PARAM_INT);
         $stm->bindValue('nome', $item->getNome());
         $stm->bindValue('tipo', $item->getTipo());
         $stm->bindValue('preco', $item->getPreco());
@@ -94,7 +70,7 @@ class ItemRepository{
     public function updateItem(Item $item){
         $sql = "UPDATE Itens SET estado = :estado, nome = :nome, tipo = :tipo, preco = :preco, imagem = :imagem WHERE id_item = :id";
         $stm = $this->connection->prepare($sql);
-        $stm->bindValue('estado', (int) $item->getEstado(), PDO::PARAM_INT);
+        $stm->bindValue('estado', $item->getEstado() === 'ATIVO' ? 1 : 0, PDO::PARAM_INT);
         $stm->bindValue('nome', $item->getNome());
         $stm->bindValue('tipo', $item->getTipo());
         $stm->bindValue('preco', $item->getPreco());

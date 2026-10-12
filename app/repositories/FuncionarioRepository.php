@@ -4,6 +4,7 @@ namespace app\repositories;
 
 use app\database\ConnectionFactory;
 use app\models\Funcionario;
+use app\models\Empresa;
 use PDO;
 
 class FuncionarioRepository
@@ -21,18 +22,36 @@ class FuncionarioRepository
                        u.email, u.numero_telefone, u.estado
                 FROM Funcionarios f
                 INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario
-                ORDER BY f.pontuacao_total";
+                ORDER BY f.pontuacao_total DESC, u.nome_completo";
         $stm = $this->connection->prepare($sql);
         $stm->execute();
-        return $stm->fetchAll();
+        return array_map([Funcionario::class, 'arrayParaObjeto'], $stm->fetchAll());
     }
 
-    public function getFuncionarioByUsuario($id_usuario)
+    public function getFuncionarioByUsuario(int $id_usuario): ?Funcionario
     {
-        $stm = $this->connection->prepare("SELECT * FROM Funcionarios WHERE id_usuario = :idUsuario");
+        $stm = $this->connection->prepare(
+            "SELECT f.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
+                    u.email, u.senha_hash, u.numero_telefone, u.estado,
+                    e.cnpj AS empresa_cnpj, e.nome AS empresa_nome,
+                    e.email AS empresa_email, e.plano AS empresa_plano
+             FROM Funcionarios f
+             INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario
+             INNER JOIN Empresas e ON e.id_empresa = f.id_empresa
+             WHERE f.id_usuario = :idUsuario"
+        );
         $stm->bindValue('idUsuario', $id_usuario, PDO::PARAM_INT);
         $stm->execute();
-        return $stm->fetch();
+        $funcionario = $stm->fetch();
+        if (!$funcionario) return null;
+        $empresa = new Empresa(
+            (int) $funcionario['id_empresa'],
+            (string) $funcionario['empresa_cnpj'],
+            (string) $funcionario['empresa_nome'],
+            (string) $funcionario['empresa_email'],
+            (string) $funcionario['empresa_plano']
+        );
+        return Funcionario::arrayParaObjeto($funcionario, $empresa);
     }
 
     public function getFuncionariosByEmpresa(int $idEmpresa): array
@@ -46,7 +65,7 @@ class FuncionarioRepository
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
         $stm->execute();
-        return $stm->fetchAll();
+        return array_map([Funcionario::class, 'arrayParaObjeto'], $stm->fetchAll());
     }
 
     public function getFuncionarioByIdAndEmpresa(int $id, int $idEmpresa)
@@ -62,7 +81,8 @@ class FuncionarioRepository
 
         $stm->execute();
 
-        return $stm->fetch() ?: null;
+        $funcionario = $stm->fetch();
+        return $funcionario ? Funcionario::arrayParaObjeto($funcionario) : null;
     }
 
     public function getEmpresaIdByGestorUsuario(int $idUsuario): ?int
@@ -153,15 +173,6 @@ class FuncionarioRepository
         }
     }
 
-    // public function deleteFuncionario(int $id, int $idEmpresa): bool {
-    //     $stm = $this->connection->prepare(
-    //         "DELETE u FROM Usuarios u INNER JOIN Funcionarios f ON f.id_usuario = u.id_usuario WHERE f.id_funcionario = :id AND f.id_empresa = :idEmpresa"
-    //     );
-    //     $stm->bindValue('id', $id, PDO::PARAM_INT);
-    //     $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
-    //     return $stm->execute();
-    // }
-
     public function desativarFuncionario(int $id, int $idEmpresa): bool
     {
         $stm = $this->connection->prepare(
@@ -196,7 +207,7 @@ class FuncionarioRepository
 
     public function updateFuncionario(Funcionario $funcionario, int $idEmpresa, ?string $novaSenha = null): bool
     {
-        $atual = $this->getFuncionarioByIdAndEmpresa($funcionario->getId(), $idEmpresa);
+        $atual = $this->getFuncionarioByIdAndEmpresa($funcionario->getIdFuncionario(), $idEmpresa);
         if (!$atual) {
             return false;
         }
@@ -209,19 +220,10 @@ class FuncionarioRepository
         $stm->bindValue('cpf', $funcionario->getCpf());
         $stm->bindValue('email', $funcionario->getEmail());
         $stm->bindValue('numeroTelefone', $funcionario->getNumeroTelefone());
-        $stm->bindValue('id', $atual['id_usuario'], PDO::PARAM_INT);
+        $stm->bindValue('id', $atual->getId(), PDO::PARAM_INT);
         if ($novaSenha !== null && $novaSenha !== '') {
             $stm->bindValue('senha', password_hash($novaSenha, PASSWORD_DEFAULT));
         }
-        $stm->execute();
-
-        $sql = "UPDATE Funcionarios SET bolotas_totais = :bolotasTotais, pontuacao_total = :pontuacaoTotal, nivel = :nivel WHERE id_funcionario = :id AND id_empresa = :idEmpresa";
-        $stm = $this->connection->prepare($sql);
-        $stm->bindValue('id', $funcionario->getId(), PDO::PARAM_INT);
-        $stm->bindValue('bolotasTotais', $funcionario->getBolotasTotais());
-        $stm->bindValue('pontuacaoTotal', $funcionario->getPontuacaoTotal());
-        $stm->bindValue('nivel', $funcionario->getNivel());
-        $stm->bindValue('idEmpresa', $funcionario->getEmpresa()->getId());
         return $stm->execute();
     }
 

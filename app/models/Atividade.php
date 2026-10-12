@@ -8,25 +8,25 @@ class Atividade {
     private string $tipoAtividade;
     private string $nome;
     private string $estado;
-    private int $pontuacao;
-    private int $estrelas;
+    private int $ordem;
+    private int $tempoLimite;
 
     public function __construct(
         int $id = 0,
         ?Modulo $modulo = null,
         string $tipoAtividade = '',
         string $nome = '',
-        string $estado = 'PENDENTE', // Valor padrão para o estado
-        int $pontuacao = 0,
-        int $estrelas = 0
+        string $estado = 'ATIVO',
+        int $ordem = 1,
+        int $tempoLimite = 180
     ) {
         $this->id = $id;
         $this->modulo = $modulo ?? new Modulo();
         $this->tipoAtividade = $tipoAtividade;
         $this->nome = $nome;
-        $this->estado = $estado; // Valor padrão para o estado
-        $this->pontuacao = $pontuacao;
-        $this->estrelas = $estrelas;
+        $this->estado = $estado;
+        $this->ordem = $ordem;
+        $this->tempoLimite = $tempoLimite;
     }
 
     /**
@@ -41,9 +41,9 @@ class Atividade {
             $modulo,
             $atividade['tipo_atividade'] ?? '',
             $atividade['nome'] ?? '',
-            $atividade['estado'] ?? 'PENDENTE',
-            (int) ($atividade['pontuacao'] ?? 0),
-            (int) ($atividade['estrelas'] ?? 0)
+            $atividade['estado'] ?? 'ATIVO',
+            (int) ($atividade['ordem'] ?? 1),
+            (int) ($atividade['tempo_limite'] ?? 180)
         );
     }
     
@@ -137,39 +137,25 @@ class Atividade {
         return $this;
     }
 
-    /**
-     * Get the value of pontuacao
-     */
-    public function getPontuacao(): int
+    public function getOrdem(): int
     {
-        return $this->pontuacao;
+        return $this->ordem;
     }
 
-    /**
-     * Set the value of pontuacao
-     */
-    public function setPontuacao(int $pontuacao): self
+    public function setOrdem(int $ordem): self
     {
-        $this->pontuacao = $pontuacao;
-
+        $this->ordem = $ordem;
         return $this;
     }
 
-    /**
-     * Get the value of estrelas
-     */
-    public function getEstrelas(): int
+    public function getTempoLimite(): int
     {
-        return $this->estrelas;
+        return $this->tempoLimite;
     }
 
-    /**
-     * Set the value of estrelas
-     */
-    public function setEstrelas(int $estrelas): self
+    public function setTempoLimite(int $tempoLimite): self
     {
-        $this->estrelas = $estrelas;
-
+        $this->tempoLimite = $tempoLimite;
         return $this;
     }
 }

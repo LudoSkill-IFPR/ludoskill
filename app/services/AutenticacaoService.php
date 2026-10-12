@@ -40,7 +40,17 @@ class AutenticacaoService
             return null;
         }
 
+        session_regenerate_id(true);
+        unset($_SESSION['tema_equipado']);
         $_SESSION['usuario_logado'] = $usuario;
+        if ($usuario->getPerfil() === 'funcionario') {
+            foreach ((new InventarioService())->getByUsuario($usuario->getId()) as $registro) {
+                if ($registro->isEmUso() && $registro->getItem()->getTipo() === 'TEMA') {
+                    $_SESSION['tema_equipado'] = $registro->getItem()->getId();
+                    break;
+                }
+            }
+        }
 
         return $usuario;
     }

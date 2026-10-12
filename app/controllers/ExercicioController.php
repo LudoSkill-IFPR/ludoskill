@@ -28,20 +28,6 @@ class ExercicioController extends Controller{
         $this->view('administrador/exercicios/exercicio_list', $data);
     }
 
-    public function listarExercicio(){
-
-
-        $this->adminRequired();
-
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/administrador/exercicios');
-        }
-
-        $id = $_GET['id']; 
-        $data['exercicio'] = $this->exercicioService->getExercicioById($id);
-        $this->view('exercicios/exercicio_list', $data);
-    }
-
     public function criar(){
         $this->adminRequired();
         $this->view('administrador/exercicios/exercicio_create', ['atividades' => $this->atividadeService->getAtividades()]);
@@ -53,6 +39,7 @@ class ExercicioController extends Controller{
         $questoes = $this->normalizarQuestoes($dados['questoes'] ?? []);
         $dados['conteudo'] = json_encode($questoes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $erros = Validador::validarExercicio($dados);
+        if (empty($erros['atividade_id']) && !$this->atividadeService->getAtividadeById((int) $dados['atividade_id'])) $erros['atividade_id'] = 'A atividade selecionada não existe.';
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['exercicio'] = $dados;
@@ -82,7 +69,7 @@ class ExercicioController extends Controller{
 
         $data['exercicio'] = $this->exercicioService->getExercicioById($id);
         if (!$data['exercicio']) $this->redirect(URL_BASE . '/administrador/exercicios');
-        $data['questoes'] = $this->decodificarConteudo($data['exercicio']['conteudo']);
+        $data['questoes'] = $this->decodificarConteudo($data['exercicio']->getConteudo());
         $data['atividades'] = $this->atividadeService->getAtividades();
         $this->view('administrador/exercicios/exercicio_edit', $data);
     }
@@ -106,6 +93,7 @@ class ExercicioController extends Controller{
         $questoes = $this->normalizarQuestoes($dados['questoes'] ?? []);
         $dados['conteudo'] = json_encode($questoes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $erros = Validador::validarExercicio($dados);
+        if (empty($erros['atividade_id']) && !$this->atividadeService->getAtividadeById((int) $dados['atividade_id'])) $erros['atividade_id'] = 'A atividade selecionada não existe.';
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['exercicio'] = $dados;
@@ -136,12 +124,13 @@ class ExercicioController extends Controller{
         }
 
         $atividade = $this->atividadeService->getAtividadeById($idAtividade);
-        if (!$atividade) {
+        if (!$atividade || !$this->funcionarioAtividadeService->podeAcessarAtividade($_SESSION['usuario_logado']->getId(), $idAtividade)) {
             $this->redirect(URL_BASE . '/funcionario/modulos');
         }
 
         $exercicios = $this->montarExerciciosDaAtividade($idAtividade);
         $_SESSION['atividade_inicio'][$idAtividade] = microtime(true);
+        $this->funcionarioAtividadeService->iniciarAtividade($_SESSION['usuario_logado']->getId(), $idAtividade);
 
         $this->view('funcionario/exercicios', [
             'atividade' => $atividade,
@@ -157,7 +146,7 @@ class ExercicioController extends Controller{
         }
 
         $atividade = $this->atividadeService->getAtividadeById($idAtividade);
-        if (!$atividade) {
+        if (!$atividade || !$this->funcionarioAtividadeService->podeAcessarAtividade($_SESSION['usuario_logado']->getId(), $idAtividade)) {
             $this->redirect(URL_BASE . '/funcionario/modulos');
         }
 
@@ -167,15 +156,15 @@ class ExercicioController extends Controller{
         $acertos = 0;
 
         foreach ($exercicios as $exercicio) {
-            foreach ($exercicio['questoes'] as $indice => $exercicio) {
+            foreach ($exercicio['questoes'] as $indice => $questao) {
                 $total++;
-                $idExercicio = (string) $indice;
+                $idExercicio = (string) $exercicio['id_exercicio'];
                 $resposta = filter_var(
                     $respostas[$idExercicio][$indice] ?? null,
                     FILTER_VALIDATE_INT,
                     ['options' => ['min_range' => 0]]
                 );
-                if ($resposta === false || !array_key_exists($resposta, $exercicio['alternativas'] ?? [])) {
+                if ($resposta === false || !array_key_exists($resposta, $questao['alternativas'] ?? [])) {
                     $this->view('funcionario/exercicios', [
                         'atividade' => $atividade,
                         'exercicios' => $exercicios,
@@ -184,7 +173,7 @@ class ExercicioController extends Controller{
                     ]);
                     return;
                 }
-                if ((int) $resposta === (int) ($exercicio['alternativa_correta'] ?? -1)) {
+                if ((int) $resposta === (int) ($questao['alternativa_correta'] ?? -1)) {
                     $acertos++;
                 }
             }
@@ -195,10 +184,12 @@ class ExercicioController extends Controller{
         }
 
         $pontuacao = (int) round(($acertos / $total) * 100);
-        $estrelas = $pontuacao >= 80 ? 3 : ($pontuacao >= 60 ? 2 : ($pontuacao >= 40 ? 1 : 0));
-        $bolotas = $acertos * 10;
         $inicio = (float) ($_SESSION['atividade_inicio'][$idAtividade] ?? microtime(true));
         $tempoExecucao = max(0.001, microtime(true) - $inicio);
+        $erros = $total - $acertos;
+        $estrelas = max(0, 3 - $erros - ($tempoExecucao > $atividade->getTempoLimite() ? 1 : 0));
+        $concluida = $pontuacao >= 66;
+        $bolotas = $concluida ? $acertos * 10 : 0;
         unset($_SESSION['atividade_inicio'][$idAtividade]);
 
         $registro = $this->funcionarioAtividadeService->registrarResultado(
@@ -219,8 +210,8 @@ class ExercicioController extends Controller{
                 'total' => $total,
                 'pontuacao' => $pontuacao,
                 'estrelas' => $estrelas,
-                'bolotas' => $bolotas,
-                'tentativas' => $registro['qtd_tentativas'],
+                'bolotas' => $registro->getBolotasObtidas(),
+                'tentativas' => $registro->getQtdTentativas(),
                 'tempo' => $tempoExecucao
             ]
         ]);
@@ -230,9 +221,9 @@ class ExercicioController extends Controller{
         $exercicios = [];
         foreach ($this->exercicioService->getExerciciosByAtividade($idAtividade) as $registro) {
             $exercicios[] = [
-                'id_exercicio' => (int) $registro['id_exercicio'],
-                'descricao' => $registro['descricao'],
-                'questoes' => $this->decodificarConteudo($registro['conteudo'])
+                'id_exercicio' => $registro->getId(),
+                'descricao' => $registro->getDescricao(),
+                'questoes' => $this->decodificarConteudo($registro->getConteudo())
             ];
         }
         return $exercicios;

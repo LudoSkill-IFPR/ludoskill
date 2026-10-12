@@ -4,7 +4,9 @@ namespace app\repositories;
 
 use app\database\ConnectionFactory;
 use app\models\Usuario;
-use DateTimeImmutable;
+use app\models\Administrador;
+use app\models\Gestor;
+use app\models\Funcionario;
 use PDO;
 
 class UsuarioRepository{
@@ -14,40 +16,13 @@ class UsuarioRepository{
         $this->connection = ConnectionFactory::getConnection();
     }
 
-    public function getUsuarios(): array{
-        $sql = "SELECT * FROM Usuarios";
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
-
-    public function getUsuario(int $id): array{
-        $stm = $this->connection->prepare("SELECT * FROM Usuarios WHERE id_usuario = :id");
-        $stm->bindValue(':id', $id);
-
-        $stm->execute();
-
-        $usuario = $stm->fetch();
-
-        return $usuario;
-    }
-
-    public function getUsuarioById(int $id): Usuario{
-        $stm = $this->connection->prepare("SELECT * FROM Usuarios WHERE id_usuario = :id");
-        $stm->bindValue('id', $id);
-
-        $stm->execute();
-
-        $usuario = $stm->fetch();
-
-        return Usuario::arrayParaObjeto($usuario);
-    }
-
     public function getUsuarioByEmail(string $email): ?Usuario
     {
         $sql = "
             SELECT 
-                u.*,
+                u.*, a.id_administrador, g.id_gestor, g.id_empresa AS gestor_empresa,
+                f.id_funcionario, f.id_empresa AS funcionario_empresa,
+                f.bolotas_totais, f.pontuacao_total, f.nivel,
                 CASE
                     WHEN a.id_administrador IS NOT NULL THEN 'admin'
                     WHEN g.id_gestor IS NOT NULL THEN 'gestor'
@@ -74,72 +49,37 @@ class UsuarioRepository{
             return null;
         }
 
-        $usuario['data_nascimento'] = new DateTimeImmutable($usuario['data_nascimento']);
-
-        // var_dump($usuario);
-
-        return Usuario::arrayParaObjeto($usuario);
+        return match ($usuario['perfil']) {
+            'admin' => Administrador::arrayParaObjeto($usuario),
+            'gestor' => Gestor::arrayParaObjeto(array_merge($usuario, ['id_empresa' => $usuario['gestor_empresa']])),
+            'funcionario' => Funcionario::arrayParaObjeto(array_merge($usuario, ['id_empresa' => $usuario['funcionario_empresa']])),
+            default => Usuario::arrayParaObjeto($usuario),
+        };
     }
 
-    public function updateUsuario(Usuario $usuario): bool
+    public function emailExiste(string $email, int $idIgnorado): bool
     {
-        $sql = "UPDATE Usuarios
-                SET nome_completo = :nomeCompleto,
-                    data_nascimento = :dataNascimento,
-                    cpf = :cpf,
-                    email = :email,
-                    senha_hash = :senha,
-                    numero_telefone = :numeroTelefone
+        $stm = $this->connection->prepare('SELECT 1 FROM Usuarios WHERE email = :email AND id_usuario <> :id LIMIT 1');
+        $stm->execute(['email' => $email, 'id' => $idIgnorado]);
+        return $stm->fetchColumn() !== false;
+    }
+
+    public function updatePerfil(Usuario $usuario, ?string $novaSenha = null): bool
+    {
+        $senhaSql = $novaSenha !== null && $novaSenha !== '' ? ', senha_hash = :senha' : '';
+        $sql = "UPDATE Usuarios SET nome_completo = :nome, data_nascimento = :data,
+                email = :email, numero_telefone = :telefone{$senhaSql}
                 WHERE id_usuario = :id";
-
-        $stmt = $this->connection->prepare($sql);
-
-        $stmt->bindValue(':nomeCompleto', $usuario->getNomeCompleto());
-        $stmt->bindValue(':dataNascimento', $usuario->getDataNascimento());
-        $stmt->bindValue(':cpf', $usuario->getCpf());
-        $stmt->bindValue(':email', $usuario->getEmail());
-        $stmt->bindValue(':senha', $usuario->getSenha());
-        $stmt->bindValue(':numeroTelefone', $usuario->getNumeroTelefone());
-        $stmt->bindValue(':id', $usuario->getId());
-
-        return $stmt->execute();
+        $stm = $this->connection->prepare($sql);
+        $dados = [
+            'nome' => $usuario->getNomeCompleto(),
+            'data' => $usuario->getDataNascimento()?->format('Y-m-d'),
+            'email' => $usuario->getEmail(),
+            'telefone' => $usuario->getNumeroTelefone(),
+            'id' => $usuario->getId(),
+        ];
+        if ($senhaSql !== '') $dados['senha'] = password_hash($novaSenha, PASSWORD_DEFAULT);
+        return $stm->execute($dados);
     }
 
-    public function saveUsuario(Usuario $usuario)
-    {
-        $sql = "INSERT INTO Usuarios 
-                (nome_completo, data_nascimento, cpf, email, senha_hash, numero_telefone)
-                VALUES
-                (:nomeCompleto, :dataNascimento, :cpf, :email, :senha, :numeroTelefone)";
-
-        $stmt = $this->connection->prepare($sql);
-
-        $stmt->bindValue(':nomeCompleto', $usuario->getNomeCompleto());
-        $stmt->bindValue(':dataNascimento', $usuario->getDataNascimento());
-        $stmt->bindValue(':cpf', $usuario->getCpf());
-        $stmt->bindValue(':email', $usuario->getEmail());
-        $stmt->bindValue(':senha', password_hash($usuario->getSenha(), PASSWORD_DEFAULT));
-        $stmt->bindValue(':numeroTelefone', $usuario->getNumeroTelefone());
-
-        return $stmt->execute();
-    }
-
-    public function desativarUsuario(int $id): bool {
-        $sql = "UPDATE Usuarios SET estado = 'INATIVO' WHERE id_usuario = :id";
-        $stmt = $this->connection->prepare($sql);
-        $stmt->bindValue(':id', $id);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
-    }
-
-    public function ativarUsuario(int $id): bool {
-        $sql = "UPDATE Usuarios SET estado = 'ATIVO' WHERE id_usuario = :id";
-        $stmt = $this->connection->prepare($sql);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
-    }
-
-    public function deleteUsuario(int $id): bool {
-        return $this->desativarUsuario($id);
-    }
 }

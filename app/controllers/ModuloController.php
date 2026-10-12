@@ -29,30 +29,19 @@ class ModuloController extends Controller
 
     public function listarTodosFuncionario() {
         $this->funcionarioRequired();
-        $data['lista'] = $this->moduloService->getModulos();
+        $data['lista'] = $this->moduloService->getModulosAtivos();
         foreach ($data['lista'] as &$modulo) {
-            $modulo['atividades'] = $this->atividadeService->getAtividadesByModulo((int) $modulo['id_modulo']);
+            $atividades = $this->atividadeService->getAtividadesAtivasByModulo($modulo->getId());
+            $modulo = ['entidade' => $modulo, 'atividades' => array_map(fn($atividade) => [
+                'entidade' => $atividade,
+                'liberada' => $this->funcionarioAtividadeService->podeAcessarAtividade($_SESSION['usuario_logado']->getId(), $atividade->getId())
+            ], $atividades)];
         }
         unset($modulo);
         $data['resultados'] = $this->funcionarioAtividadeService->getResultadosByUsuario(
             $_SESSION['usuario_logado']->getId()
         );
         $this->view('/funcionario/modulos', $data);
-    }
-
-    public function listarModulo(){
-        $this->adminRequired();
-
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        if (!$id) {
-            $this->redirect(URL_BASE . '/administrador/modulos');
-        }
-
-        $data['modulo'] = $this->moduloService->getModuloById($id);
-        if (!$data['modulo']) {
-            $this->redirect(URL_BASE . '/administrador/modulos');
-        }
-        $this->view('/administrador/modulos/modulo_list', $data);
     }
 
     public function criar(){
@@ -63,6 +52,7 @@ class ModuloController extends Controller
     public function salvar(){
         $this->adminRequired();
         $erros = Validador::validarModulo($_POST);
+        if (empty($erros['nome']) && $this->moduloService->nomeExiste(trim($_POST['nome'] ?? ''))) $erros['nome'] = 'Já existe um módulo com este nome.';
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['modulo'] = $_POST;
@@ -74,6 +64,7 @@ class ModuloController extends Controller
         $modulo->setNome($_POST['nome']);
         $modulo->setDescricao($_POST['descricao']);
         $modulo->setMinEstrelasLiberacao($_POST['min_estrelas_liberacao']);
+        $modulo->setEstado($_POST['estado'] ?? 'ATIVO');
 
         $this->moduloService->saveModulo($modulo);
         $this->redirect(URL_BASE . '/administrador/modulos');
@@ -81,12 +72,12 @@ class ModuloController extends Controller
 
     public function editar(){
         $this->adminRequired();
-        if (!isset($_GET['id'])) {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
             $this->redirect(URL_BASE . '/administrador/modulos');
         }
-
-        $id = $_GET['id'];
         $data['modulo'] = $this->moduloService->getModuloById($id);
+        if (!$data['modulo']) $this->redirect(URL_BASE . '/administrador/modulos');
         $this->view('/administrador/modulos/modulo_edit', $data);
     }
 
@@ -110,9 +101,12 @@ class ModuloController extends Controller
         $_POST['id'] = $id;
 
         $erros = Validador::validarModulo($_POST);
+        if (empty($erros['nome']) && $this->moduloService->nomeExiste(trim($_POST['nome'] ?? ''), (int) $id)) $erros['nome'] = 'Já existe um módulo com este nome.';
         if (!empty($erros)) {
             $data['erros'] = $erros;
-            $data['modulo'] = $_POST;
+            $dados = $_POST;
+            $dados['id_modulo'] = (int) $id;
+            $data['modulo'] = Modulo::arrayParaObjeto($dados);
             $this->view('/administrador/modulos/modulo_edit', $data);
             return;
         }
@@ -122,6 +116,7 @@ class ModuloController extends Controller
         $modulo->setNome($_POST['nome']);
         $modulo->setDescricao($_POST['descricao']);
         $modulo->setMinEstrelasLiberacao((int) $_POST['min_estrelas_liberacao']);
+        $modulo->setEstado($_POST['estado'] ?? 'ATIVO');
 
         $this->moduloService->updateModulo($modulo);
         $this->redirect(URL_BASE . '/administrador/modulos');

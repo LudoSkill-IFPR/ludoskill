@@ -23,16 +23,16 @@
                     <thead><tr><th>ID</th><th>Descrição</th><th>Atividade</th><th>Questões</th><th>Ações</th></tr></thead>
                     <tbody>
                         <?php foreach ($lista as $exercicio): ?>
-                            <?php $conteudo = json_decode($exercicio['conteudo'], true); ?>
+                            <?php $conteudo = json_decode($exercicio->getConteudo(), true); ?>
                             <tr>
-                                <td><?= (int) $exercicio['id_exercicio'] ?></td>
-                                <td><?= htmlspecialchars($exercicio['descricao']) ?></td>
-                                <td><?= htmlspecialchars($exercicio['nome_atividade']) ?></td>
+                                <td><?= $exercicio->getId() ?></td>
+                                <td><?= htmlspecialchars($exercicio->getDescricao()) ?></td>
+                                <td><?= htmlspecialchars($exercicio->getAtividade()->getNome()) ?></td>
                                 <td><?= is_array($conteudo) ? count($conteudo) : 0 ?></td>
                                 <td><div id="acao">
-                                    <a class="botao brilho" href="<?= URL_BASE ?>/administrador/exercicios/editar?id=<?= (int) $exercicio['id_exercicio'] ?>">Editar</a>
+                                    <a class="botao brilho" href="<?= URL_BASE ?>/administrador/exercicios/editar?id=<?= $exercicio->getId() ?>">Editar</a>
                                     <form method="post" action="<?= URL_BASE ?>/administrador/exercicios/excluir" onsubmit="return confirm('Deseja excluir este exercício?')">
-                                        <input type="hidden" name="id" value="<?= (int) $exercicio['id_exercicio'] ?>">
+                                        <input type="hidden" name="id" value="<?= $exercicio->getId() ?>">
                                         <button class="botao brilhinho" type="submit">Excluir</button>
                                     </form>
                                 </div></td>

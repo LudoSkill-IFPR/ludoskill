@@ -4,8 +4,6 @@ namespace app\models;
 
 use DateTimeImmutable;
 
-// use DateTimeImmutable;
-
 class Usuario
 {
     private int $id;
@@ -102,11 +100,21 @@ class Usuario
         return $this->nomeCompleto;
     }
 
+    public function getNome(): string
+    {
+        return $this->getNomeCompleto();
+    }
+
     public function setNomeCompleto(string $nomeCompleto): self
     {
         $this->nomeCompleto = $nomeCompleto;
 
         return $this;
+    }
+
+    public function setNome(string $nome): self
+    {
+        return $this->setNomeCompleto($nome);
     }
 
     public function getCpf(): string

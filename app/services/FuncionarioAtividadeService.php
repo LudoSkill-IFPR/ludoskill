@@ -18,6 +18,29 @@ class FuncionarioAtividadeService
         return $this->repository->getResultadosByUsuario($idUsuario);
     }
 
+    public function getDesempenhoByEmpresa(int $idEmpresa): array
+    {
+        return $this->repository->getDesempenhoByEmpresa($idEmpresa);
+    }
+
+    public function getTaxaConclusaoByEmpresa(int $idEmpresa): float
+    {
+        return $this->repository->getTaxaConclusaoByEmpresa($idEmpresa);
+    }
+
+    public function podeAcessarAtividade(int $idUsuario, int $idAtividade): bool
+    {
+        return $this->repository->podeAcessarAtividade($idUsuario, $idAtividade);
+    }
+
+    public function iniciarAtividade(int $idUsuario, int $idAtividade): void
+    {
+        $this->repository->iniciarAtividade($idUsuario, $idAtividade);
+    }
+
+    public function getResumoByUsuario(int $idUsuario): array { return $this->repository->getResumoByUsuario($idUsuario); }
+    public function getProximaAtividade(int $idUsuario): ?\app\models\Atividade { return $this->repository->getProximaAtividade($idUsuario); }
+
     public function registrarResultado(
         int $idUsuario,
         int $idAtividade,
@@ -25,7 +48,7 @@ class FuncionarioAtividadeService
         int $estrelas,
         int $bolotas,
         float $tempoExecucao
-    ): array {
+    ): \app\models\FuncionarioAtividade {
         return $this->repository->registrarResultado(
             $idUsuario,
             $idAtividade,

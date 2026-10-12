@@ -26,20 +26,6 @@ class AtividadeController extends Controller
         $this->view('administrador/atividades/atividade_list', $data);
     }
 
-    //
-    public function listarAtividade() {
-        $this->adminRequired();
-
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        if (!$id) {
-            $this->redirect(URL_BASE . '/administrador/atividades');
-        }
-
-        $id = $_GET['id'];
-        $data['atividade'] = $this->atividadeService->getAtividadeById($id);
-        $this->view('atividades/atividade_list', $data);
-    }
-
     public function criar() {
         $this->adminRequired();
         $this->view('administrador/atividades/atividade_create', ['modulos' => $this->moduloService->getModulos()]);
@@ -48,6 +34,7 @@ class AtividadeController extends Controller
     public function salvar() {
         $this->adminRequired();
         $erros = Validador::validarAtividade($_POST);
+        if (empty($erros['id_modulo']) && !$this->moduloService->getModuloById((int) $_POST['id_modulo'])) $erros['id_modulo'] = 'O módulo selecionado não existe.';
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['atividade'] = $_POST;
@@ -60,11 +47,9 @@ class AtividadeController extends Controller
         $atividade->setNome($_POST['nome']);
         $atividade->setTipoAtividade($_POST['tipo_atividade']);
         $atividade->setEstado($_POST['estado']);
-        $atividade->setPontuacao((int) $_POST['pontuacao']);
-        $atividade->setEstrelas((int) $_POST['estrelas']);
+        $atividade->setOrdem((int) $_POST['ordem']);
+        $atividade->setTempoLimite((int) $_POST['tempo_limite']);
 
-        // Aqui você precisaria criar um objeto Modulo com base no ID do módulo enviado no formulário
-        // Supondo que você tenha um método para buscar o módulo pelo ID
         $modulo = (new Modulo())->setId((int) $_POST['id_modulo']);
         $atividade->setModulo($modulo);
 
@@ -99,9 +84,12 @@ class AtividadeController extends Controller
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
         if (!$id || !$this->atividadeService->getAtividadeById($id)) $this->redirect(URL_BASE . '/administrador/atividades');
         $erros = Validador::validarAtividade($_POST);
+        if (empty($erros['id_modulo']) && !$this->moduloService->getModuloById((int) $_POST['id_modulo'])) $erros['id_modulo'] = 'O módulo selecionado não existe.';
         if (!empty($erros)) {
             $data['erros'] = $erros;
-            $data['atividade'] = $_POST;
+            $dados = $_POST;
+            $dados['id_atividade'] = $id;
+            $data['atividade'] = Atividade::arrayParaObjeto($dados);
             $data['modulos'] = $this->moduloService->getModulos();
             $this->view('administrador/atividades/atividade_edit', $data);
             return;
@@ -112,11 +100,9 @@ class AtividadeController extends Controller
         $atividade->setNome($_POST['nome']);
         $atividade->setTipoAtividade($_POST['tipo_atividade']);
         $atividade->setEstado($_POST['estado']);
-        $atividade->setPontuacao((int) $_POST['pontuacao']);
-        $atividade->setEstrelas((int) $_POST['estrelas']);
+        $atividade->setOrdem((int) $_POST['ordem']);
+        $atividade->setTempoLimite((int) $_POST['tempo_limite']);
 
-        // Aqui você precisaria criar um objeto Modulo com base no ID do módulo enviado no formulário
-        // Supondo que você tenha um método para buscar o módulo pelo ID
         $modulo = (new Modulo())->setId((int) $_POST['id_modulo']);
         $atividade->setModulo($modulo);
 

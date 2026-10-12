@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS Modulos (
     id_modulo INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     descricao VARCHAR(255),
-    min_estrelas_liberacao INT NOT NULL DEFAULT 0
+    min_estrelas_liberacao INT NOT NULL DEFAULT 0,
+    estado ENUM('ATIVO', 'INATIVO') NOT NULL DEFAULT 'ATIVO'
 );
 
 -- Atividades
@@ -79,12 +80,9 @@ CREATE TABLE IF NOT EXISTS Atividades (
     id_modulo INT NOT NULL,
     tipo_atividade ENUM('INTRODUCAO', 'REVISAO', 'SIMULACAO') NOT NULL,
     nome VARCHAR(255) NOT NULL,
-    --estado ENUM('PENDENTE', 'INICIADO', 'CONCLUIDO') NOT NULL DEFAULT 'PENDENTE',
     estado ENUM('ATIVO', 'INATIVO') NOT NULL DEFAULT 'ATIVO',
     ordem INT NOT NULL DEFAULT 1,
-    tempo_limite INT NOT NULL DEFAULT 180, -- Tempo limite em segundos (3 Minutos)
-    --pontuacao INT NOT NULL DEFAULT 0,
-    --estrelas INT NOT NULL DEFAULT 0,
+    tempo_limite INT NOT NULL DEFAULT 180,
     CONSTRAINT fk_atividade_modulo FOREIGN KEY (id_modulo) 
         REFERENCES Modulos(id_modulo) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -110,8 +108,9 @@ CREATE TABLE IF NOT EXISTS Funcionario_atividade (
     pontuacao_obtida INT DEFAULT 0,
     estrelas_obtidas INT DEFAULT 0,
     bolotas_obtidas INT DEFAULT 0,
-    qtd_tentativas INT DEFAULT 1,
+    qtd_tentativas INT DEFAULT 0,
     tempo_execucao DECIMAL(10,4) DEFAULT 0.0000,
+    CONSTRAINT uq_funcionario_atividade UNIQUE (id_funcionario, id_atividade),
     CONSTRAINT fk_fa_funcionario FOREIGN KEY (id_funcionario) 
         REFERENCES Funcionarios(id_funcionario) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_fa_atividade FOREIGN KEY (id_atividade) 
@@ -139,8 +138,9 @@ CREATE TABLE IF NOT EXISTS Inventarios (
     id_item INT NOT NULL,
     data_aquisicao DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     em_uso BIT(1) NOT NULL DEFAULT b'0', -- Controla se o item/tema está ativado no momento | 1 para Ativo, 0 para Inativo
+    CONSTRAINT uq_inventario_item UNIQUE (id_funcionario, id_item),
     CONSTRAINT fk_inventario_funcionario FOREIGN KEY (id_funcionario) 
         REFERENCES Funcionarios(id_funcionario) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_inventario_item FOREIGN KEY (id_item) 
-        REFERENCES Itens(id_item) ON DELETE CASCADE ON UPDATE CASCADE
+        REFERENCES Itens(id_item) ON DELETE RESTRICT ON UPDATE CASCADE
 );

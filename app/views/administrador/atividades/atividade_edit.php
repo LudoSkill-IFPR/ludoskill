@@ -20,11 +20,11 @@
             </div>
 
             <form class="card" action="<?= URL_BASE ?>/administrador/atividades/atualizar" method="post">
-                <input type="hidden" name="id" value="<?= htmlspecialchars($atividade['id_atividade'] ?? $atividade['id'] ?? '') ?>">
+                <input type="hidden" name="id" value="<?= $atividade->getId() ?>">
 
                 <div class="formgroup">
                     <label for="nome">Nome da atividade:</label>
-                    <input class="card-secundario" type="text" id="nome" name="nome" value="<?= htmlspecialchars($atividade['nome'] ?? '') ?>">
+                    <input class="card-secundario" type="text" id="nome" name="nome" value="<?= htmlspecialchars($atividade->getNome()) ?>">
                     <?php if (isset($erros['nome'])): ?><div class="erro"><?= htmlspecialchars($erros['nome']) ?></div><?php endif; ?>
                 </div>
 
@@ -33,22 +33,22 @@
                     <select class="card-secundario" id="tipo_atividade" name="tipo_atividade">
                         <option value="">Selecione um tipo</option>
                         <?php foreach (['INTRODUCAO' => 'Introdução', 'REVISAO' => 'Revisão', 'SIMULACAO' => 'Simulação'] as $valor => $rotulo): ?>
-                            <option value="<?= $valor ?>" <?= ($atividade['tipo_atividade'] ?? '') === $valor ? 'selected' : '' ?>><?= $rotulo ?></option>
+                            <option value="<?= $valor ?>" <?= $atividade->getTipoAtividade() === $valor ? 'selected' : '' ?>><?= $rotulo ?></option>
                         <?php endforeach; ?>
                     </select>
                     <?php if (isset($erros['tipo_atividade'])): ?><div class="erro"><?= htmlspecialchars($erros['tipo_atividade']) ?></div><?php endif; ?>
                 </div>
 
-                <input type="hidden" name="estado" value="<?= htmlspecialchars($atividade['estado'] ?? 'PENDENTE') ?>">
-                <input type="hidden" name="pontuacao" value="<?= htmlspecialchars($atividade['pontuacao'] ?? '0') ?>">
-                <input type="hidden" name="estrelas" value="<?= htmlspecialchars($atividade['estrelas'] ?? '0') ?>">
+                <div class="formgroup"><label for="estado">Estado:</label><select class="card-secundario" id="estado" name="estado"><option value="ATIVO" <?= $atividade->getEstado() === 'ATIVO' ? 'selected' : '' ?>>Ativo</option><option value="INATIVO" <?= $atividade->getEstado() === 'INATIVO' ? 'selected' : '' ?>>Inativo</option></select></div>
+                <div class="formgroup"><label for="ordem">Ordem:</label><input class="card-secundario" type="number" min="1" id="ordem" name="ordem" value="<?= $atividade->getOrdem() ?>"><?php if (isset($erros['ordem'])): ?><div class="erro"><?= htmlspecialchars($erros['ordem']) ?></div><?php endif; ?></div>
+                <div class="formgroup"><label for="tempo_limite">Tempo limite (segundos):</label><input class="card-secundario" type="number" min="1" id="tempo_limite" name="tempo_limite" value="<?= $atividade->getTempoLimite() ?>"><?php if (isset($erros['tempo_limite'])): ?><div class="erro"><?= htmlspecialchars($erros['tempo_limite']) ?></div><?php endif; ?></div>
 
                 <div class="formgroup">
                     <label for="id_modulo">Módulo:</label>
                     <select class="card-secundario" id="id_modulo" name="id_modulo">
                         <option value="">Selecione um módulo</option>
                         <?php foreach ($modulos as $modulo): ?>
-                            <option value="<?= (int) $modulo['id_modulo'] ?>" <?= (string) ($atividade['id_modulo'] ?? '') === (string) $modulo['id_modulo'] ? 'selected' : '' ?>><?= htmlspecialchars($modulo['nome']) ?></option>
+                            <option value="<?= $modulo->getId() ?>" <?= $atividade->getModulo()->getId() === $modulo->getId() ? 'selected' : '' ?>><?= htmlspecialchars($modulo->getNome()) ?></option>
                         <?php endforeach; ?>
                     </select>
                     <?php if (isset($erros['id_modulo'])): ?><div class="erro"><?= htmlspecialchars($erros['id_modulo']) ?></div><?php endif; ?>

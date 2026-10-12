@@ -7,17 +7,17 @@ use app\models\Item;
 use app\services\ItemService;
 use app\helpers\Validador;
 use app\services\FuncionarioService;
-use app\database\ConnectionFactory;
-use PDO;
+use app\services\InventarioService;
+use DomainException;
 
 class ItemController extends Controller 
 {
     private ItemService $itemService;
-    private PDO $connection;
+    private InventarioService $inventarioService;
 
     public function __construct() {
         $this->itemService = new ItemService();
-        $this->connection = ConnectionFactory::getConnection();
+        $this->inventarioService = new InventarioService();
     }
 
     private function processarUploadImagem(array $imagem, array &$erros): ?string {
@@ -69,49 +69,28 @@ class ItemController extends Controller
     }
 
     public function listarTodosFuncionario() {
-        $this->autenticacaoRequired();
+        $this->funcionarioRequired();
         $data['lista'] = $this->itemService->getItemsAtivos();
+        $data['funcionario'] = (new FuncionarioService())->getFuncionarioByUsuario($_SESSION['usuario_logado']->getId());
+        $data['inventario'] = $this->inventarioService->getByUsuario($_SESSION['usuario_logado']->getId());
+        $data['mensagem'] = $_SESSION['mensagem'] ?? null;
+        $data['erro'] = $_SESSION['erro'] ?? null;
+        unset($_SESSION['mensagem'], $_SESSION['erro']);
         $this->view('/funcionario/loja', $data);
     }
 
-    public function listarItem() {
-        $this->adminRequired();
-
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        if (!$id) {
-            $this->redirect(URL_BASE . '/administrador/itens/item_list');
-        }
-
-        $data['item'] = $this->itemService->getItemById($id);
-        if (!$data['item']) {
-            $this->redirect(URL_BASE . '/administrador/itens');
-        }
-        $this->view('/administrador/itens/itens_list', $data);
-    }
-
     public function comprar() {
-        $funcionarioService= new FuncionarioService();
-        $id = $_GET['id'];
-        $usuario = $_SESSION['usuario_logado'];
-        $funcionario = $funcionarioService->getFuncionarioByUsuario($usuario->getId());
-        $item = $this->itemService->getItemById($id);
-
-        if($item['preco'] > $funcionario['bolotas_totais']){
-            $this->redirect(URL_BASE . '/funcionario/loja');
+        $this->funcionarioRequired();
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id) $this->redirect(URL_BASE . '/funcionario/loja');
+        try {
+            $this->inventarioService->comprar($_SESSION['usuario_logado']->getId(), $id);
+            $_SESSION['mensagem'] = 'Item comprado com sucesso.';
+        } catch (\Throwable $exception) {
+            error_log($exception->__toString());
+            $_SESSION['erro'] = $exception instanceof DomainException ? $exception->getMessage() : 'Não foi possível concluir a compra.';
         }
-
-        $sql = "INSERT INTO inventarios (id_funcionario, id_item) VALUES (:idFuncionario, :idItem)";
-        $stm = $this->connection->prepare($sql);
-        $stm->bindValue('idFuncionario', $funcionario['id_funcionario']);
-        $stm->bindValue('idItem', $id);
-        $stm->execute();
-
-        $sql = "UPDATE funcionarios SET bolotas_totais = bolotas_totais - :precoItem WHERE id_funcionario = :idFuncionario";
-        $stm = $this->connection->prepare($sql);
-        $stm->bindValue('idFuncionario', $funcionario['id_funcionario']);
-        $stm->bindValue('precoItem', $item['preco']);
-        $stm->execute();
-        $this->redirect(URL_BASE . '/funcionario/inicial');
+        $this->redirect(URL_BASE . '/funcionario/loja');
     }
 
     public function criar() {
@@ -151,12 +130,12 @@ class ItemController extends Controller
         return 'assets/imagens/imagemTEMA.png';
     }
 
-    private function converterEstadoParaBit($estado): int {
+    private function converterEstadoParaBit($estado): string {
         if ($estado === 'ATIVO' || $estado === '1' || $estado === 1 || $estado === true) {
-            return 1;
+            return 'ATIVO';
         }
 
-        return 0;
+        return 'INATIVO';
     }
 
     public function salvar() {
@@ -198,12 +177,12 @@ class ItemController extends Controller
 
     public function editar() {
         $this->adminRequired();
-        if (!isset($_GET['id'])) {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
             $this->redirect(URL_BASE . '/administrador/itens');
         }
-
-        $id = $_GET['id'];
         $data['item'] = $this->itemService->getItemById($id);
+        if (!$data['item']) $this->redirect(URL_BASE . '/administrador/itens');
         $this->view('/administrador/itens/item_edit', $data);
     }
 
@@ -244,7 +223,10 @@ class ItemController extends Controller
         $erros = Validador::validarItem($_POST, $_FILES);
         if (!empty($erros)) {
             $data['erros'] = $erros;
-            $data['item'] = $_POST;
+            $dadosItem = $_POST;
+            $dadosItem['id_item'] = $id;
+            $dadosItem['imagem'] = $_POST['imagem_atual'] ?? '';
+            $data['item'] = Item::arrayParaObjeto($dadosItem);
             $this->view('/administrador/itens/item_edit', $data);
             return;
         }
@@ -254,14 +236,19 @@ class ItemController extends Controller
             $this->removerImagemAntiga($imagem);
             $imagem = $this->getImagemTemaPadrao();
         } elseif (isset($_FILES['imagem']) && $_FILES['imagem']['error'] === UPLOAD_ERR_OK) {
-            $this->removerImagemAntiga($imagem);
-            $imagem = $this->processarUploadImagem($_FILES['imagem'], $erros);
+            $imagemAntiga = $imagem;
+            $novaImagem = $this->processarUploadImagem($_FILES['imagem'], $erros);
             if (!empty($erros)) {
                 $data['erros'] = $erros;
-                $data['item'] = $_POST;
+                $dadosItem = $_POST;
+                $dadosItem['id_item'] = $id;
+                $dadosItem['imagem'] = $imagem;
+                $data['item'] = Item::arrayParaObjeto($dadosItem);
                 $this->view('/administrador/itens/item_edit', $data);
                 return;
             }
+            $this->removerImagemAntiga($imagemAntiga);
+            $imagem = $novaImagem;
         }
 
         $item = new Item();

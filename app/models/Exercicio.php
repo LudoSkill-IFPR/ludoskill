@@ -25,7 +25,12 @@ class Exercicio {
      */
     public static function arrayParaObjeto(array $exercicio, ?Atividade $atividade = null): self
     {
-        $atividade ??= new Atividade((int) ($exercicio['id_atividade'] ?? 0));
+        $atividade ??= new Atividade(
+            (int) ($exercicio['id_atividade'] ?? 0),
+            null,
+            '',
+            (string) ($exercicio['nome_atividade'] ?? '')
+        );
 
         // A coluna JSON chega como string do PDO; se já vier decodificada, volta para JSON.
         $conteudo = $exercicio['conteudo'] ?? '';

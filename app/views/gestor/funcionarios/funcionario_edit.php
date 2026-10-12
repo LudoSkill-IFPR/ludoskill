@@ -23,7 +23,7 @@
             </div>
 
             <form class="card" action="<?= URL_BASE ?>/gestor/funcionarios/atualizar" method="post">
-                <input type="hidden" name="id_funcionario" value="<?= (int) ($funcionario['id_funcionario'] ?? 0) ?>">
+                <input type="hidden" name="id_funcionario" value="<?= $funcionario->getIdFuncionario() ?>">
 
                 <?php foreach ([
                     'nome_completo' => ['Nome completo', 'text'],
@@ -34,7 +34,8 @@
                 ] as $campo => [$rotulo, $tipo]): ?>
                     <div class="formgroup">
                         <label for="<?= $campo ?>"><?= $rotulo ?>:</label>
-                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" value="<?= htmlspecialchars($funcionario[$campo] ?? '') ?>">
+                        <?php $valor = match ($campo) { 'nome_completo' => $funcionario->getNomeCompleto(), 'data_nascimento' => $funcionario->getDataNascimento()?->format('Y-m-d') ?? '', 'cpf' => $funcionario->getCpf(), 'email' => $funcionario->getEmail(), 'numero_telefone' => $funcionario->getNumeroTelefone() ?? '', default => '' }; ?>
+                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" value="<?= htmlspecialchars($valor) ?>">
                         <?php if (isset($erros[$campo])): ?>
                             <div class="erro"><?= htmlspecialchars($erros[$campo]) ?></div>
                         <?php endif; ?>
@@ -43,26 +44,12 @@
 
                 <div class="formgroup">
                     <label for="senha_hash">Nova senha:</label>
-                    <input class="card-secundario" type="password" id="senha_hash" name="senha_hash">
+                    <input class="card-secundario" type="password" id="senha_hash" name="senha_hash" minlength="8">
                     <small>Deixe em branco para manter a senha atual.</small>
                     <?php if (isset($erros['senha_hash'])): ?>
                         <div class="erro"><?= htmlspecialchars($erros['senha_hash']) ?></div>
                     <?php endif; ?>
                 </div>
-
-                <?php foreach ([
-                    'bolotas_totais' => 'Bolotas totais',
-                    'pontuacao_total' => 'Pontuação total',
-                    'nivel' => 'Nível'
-                ] as $campo => $rotulo): ?>
-                    <div class="formgroup">
-                        <label for="<?= $campo ?>"><?= $rotulo ?>:</label>
-                        <input class="card-secundario" type="number" min="0" id="<?= $campo ?>" name="<?= $campo ?>" value="<?= htmlspecialchars($funcionario[$campo] ?? '0') ?>">
-                        <?php if (isset($erros[$campo])): ?>
-                            <div class="erro"><?= htmlspecialchars($erros[$campo]) ?></div>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
 
                 <button type="submit" class="botao brilho">Atualizar</button>
             </form>

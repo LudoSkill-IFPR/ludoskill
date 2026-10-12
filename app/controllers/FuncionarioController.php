@@ -8,8 +8,8 @@ use app\services\FuncionarioService;
 use app\helpers\Validador;
 use DateTimeImmutable;
 use app\models\Empresa;
-use app\database\ConnectionFactory;
-use PDO;
+use app\services\InventarioService;
+use DomainException;
 
 class FuncionarioController extends Controller
 {
@@ -17,9 +17,18 @@ class FuncionarioController extends Controller
 
     public function inicial()
     {
-        $this->autenticacaoRequired();
-
-        $this->view('funcionario/inicial');
+        $this->funcionarioRequired();
+        $idUsuario = $_SESSION['usuario_logado']->getId();
+        $atividadeService = new \app\services\FuncionarioAtividadeService();
+        $this->view('funcionario/inicial', [
+            'funcionario' => $this->funcionarioService->getFuncionarioByUsuario($idUsuario),
+            'inventario' => (new InventarioService())->getByUsuario($idUsuario),
+            'resumo' => $atividadeService->getResumoByUsuario($idUsuario),
+            'proximaAtividade' => $atividadeService->getProximaAtividade($idUsuario),
+            'mensagem' => $_SESSION['mensagem'] ?? null,
+            'erro' => $_SESSION['erro'] ?? null,
+        ]);
+        unset($_SESSION['mensagem'], $_SESSION['erro']);
     }
 
     public function __construct()
@@ -105,11 +114,12 @@ class FuncionarioController extends Controller
         $this->funcionarioRequired();
         $id = $_SESSION['usuario_logado']->getId();
         if (!$id) {
-            $this->redirect(URL_BASE . '/gestor/funcionarios');
+            $this->redirect(URL_BASE . '/login');
         }
         $funcionario = $this->funcionarioService->getFuncionarioByUsuario($id);
-        $idEmpresa = $funcionario["id_empresa"];
-        $idFuncionario = $funcionario["id_funcionario"];
+        if (!$funcionario) $this->redirect(URL_BASE . '/funcionario/inicial');
+        $idEmpresa = $funcionario->getEmpresa()->getId();
+        $idFuncionario = $funcionario->getIdFuncionario();
 
         $data['funcionario'] = $this->funcionarioService->getFuncionarioByIdAndEmpresa($idFuncionario, $idEmpresa);
         if (!$data['funcionario']) {
@@ -123,35 +133,38 @@ class FuncionarioController extends Controller
         $this->funcionarioRequired();
         $id = $_SESSION['usuario_logado']->getId();
         if (!$id) {
-            $this->redirect(URL_BASE . '/gestor/funcionarios');
+            $this->redirect(URL_BASE . '/login');
         }
         $funcionario = $this->funcionarioService->getFuncionarioByUsuario($id);
-        $idEmpresa = $funcionario["id_empresa"];
-        $idFuncionario = $funcionario["id_funcionario"];
+        if (!$funcionario) $this->redirect(URL_BASE . '/funcionario/inicial');
+        $idEmpresa = $funcionario->getEmpresa()->getId();
+        $idFuncionario = $funcionario->getIdFuncionario();
         if (!$idFuncionario || !$this->funcionarioService->getFuncionarioByIdAndEmpresa($idFuncionario, $idEmpresa)) {
-            $this->redirect(URL_BASE . '/gestor/funcionarios');
+            $this->redirect(URL_BASE . '/funcionario/inicial');
         }
         $dados = $_POST;
-        $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf'] ?? '');
+        $dados['cpf'] = $funcionario->getCpf();
         $dados['id_empresa'] = $idEmpresa;
         $erros = Validador::validarFuncionario($dados, false);
-        if (empty($erros['cpf']) && $this->funcionarioService->cpfExiste($dados['cpf'], $idFuncionario)) {
-            $erros['cpf'] = 'Já existe um usuário com este CPF.';
-        }
         if (empty($erros['email']) && $this->funcionarioService->emailExiste($dados['email'], $idFuncionario)) {
             $erros['email'] = 'Já existe um usuário com este e-mail.';
         }
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['funcionario'] = $dados;
-            $this->view('gestor/funcionarios/funcionario_edit', $data);
+            $dados['id_funcionario'] = $idFuncionario;
+            $dados['id_usuario'] = $funcionario->getId();
+            $dados['bolotas_totais'] = $funcionario->getBolotasTotais();
+            $dados['pontuacao_total'] = $funcionario->getPontuacaoTotal();
+            $dados['nivel'] = $funcionario->getNivel();
+            $this->view('funcionario/editar', ['erros' => $erros, 'funcionario' => Funcionario::arrayParaObjeto($dados)]);
             return;
         }
 
         $empresa = (new Empresa())->setId($idEmpresa);
 
         $funcionario = new Funcionario(
-            $idFuncionario,
+            $funcionario->getId(),
             $dados['nome_completo'],
             new \DateTimeImmutable($dados['data_nascimento']),
             $dados['cpf'],
@@ -159,9 +172,11 @@ class FuncionarioController extends Controller
             $dados['senha_hash'] ?? '',
             $dados['numero_telefone'],
             $empresa,
-            (int) $dados['bolotas_totais'],
-            (int) $dados['pontuacao_total'],
-            (int) $dados['nivel']
+            $funcionario->getBolotasTotais(),
+            $funcionario->getPontuacaoTotal(),
+            $funcionario->getNivel(),
+            $funcionario->getEstado(),
+            $idFuncionario
         );
 
         $this->funcionarioService->updateFuncionario($funcionario, $idEmpresa, $dados['senha_hash'] ?? null);
@@ -226,15 +241,22 @@ class FuncionarioController extends Controller
         }
         if (!empty($erros)) {
             $data['erros'] = $erros;
-            $data['funcionario'] = $dados;
+            $dados['id_funcionario'] = $idFuncionario;
+            $atual = $this->funcionarioService->getFuncionarioByIdAndEmpresa($idFuncionario, $idEmpresa);
+            $dados['id_usuario'] = $atual?->getId() ?? 0;
+            $dados['bolotas_totais'] = $atual?->getBolotasTotais() ?? 0;
+            $dados['pontuacao_total'] = $atual?->getPontuacaoTotal() ?? 0;
+            $dados['nivel'] = $atual?->getNivel() ?? 1;
+            $data['funcionario'] = Funcionario::arrayParaObjeto($dados);
             $this->view('gestor/funcionarios/funcionario_edit', $data);
             return;
         }
 
         $empresa = (new Empresa())->setId($idEmpresa);
 
+        $atual = $this->funcionarioService->getFuncionarioByIdAndEmpresa($idFuncionario, $idEmpresa);
         $funcionario = new Funcionario(
-            $idFuncionario,
+            $atual->getId(),
             $dados['nome_completo'],
             new \DateTimeImmutable($dados['data_nascimento']),
             $dados['cpf'],
@@ -242,9 +264,11 @@ class FuncionarioController extends Controller
             $dados['senha_hash'] ?? '',
             $dados['numero_telefone'],
             $empresa,
-            (int) $dados['bolotas_totais'],
-            (int) $dados['pontuacao_total'],
-            (int) $dados['nivel']
+            $atual->getBolotasTotais(),
+            $atual->getPontuacaoTotal(),
+            $atual->getNivel(),
+            $atual->getEstado(),
+            $idFuncionario
         );
 
         $this->funcionarioService->updateFuncionario($funcionario, $idEmpresa, $dados['senha_hash'] ?? null);
@@ -266,16 +290,17 @@ class FuncionarioController extends Controller
 
     public function equipaItem()
     {
-        $idItem = $_GET['id_item'];
-        $idFuncionario = $_GET['id_funcionario'];
-        $connection = ConnectionFactory::getConnection();
-        $stm = $connection->prepare("UPDATE inventarios SET em_uso = 0");
-        $stm->execute();
-        $stm = $connection->prepare("UPDATE inventarios SET em_uso = 1 WHERE id_item = :idItem AND id_funcionario = :idFuncionario");
-        $stm->bindValue('idItem', $idItem);
-        $stm->bindValue('idFuncionario', $idFuncionario);
-        $stm->execute();
-        
+        $this->funcionarioRequired();
+        $idItem = filter_input(INPUT_POST, 'id_item', FILTER_VALIDATE_INT);
+        if (!$idItem) $this->redirect(URL_BASE . '/funcionario/inicial');
+        try {
+            $tipo = (new InventarioService())->equipar($_SESSION['usuario_logado']->getId(), $idItem);
+            if ($tipo === 'TEMA') $_SESSION['tema_equipado'] = $idItem;
+            $_SESSION['mensagem'] = 'Item equipado com sucesso.';
+        } catch (\Throwable $exception) {
+            error_log($exception->__toString());
+            $_SESSION['erro'] = $exception instanceof DomainException ? $exception->getMessage() : 'Não foi possível equipar o item.';
+        }
         $this->redirect(URL_BASE . '/funcionario/inicial');
     }
 }

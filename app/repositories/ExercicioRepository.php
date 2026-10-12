@@ -21,8 +21,7 @@ class ExercicioRepository {
              ORDER BY e.id_exercicio DESC"
         );
         $stm->execute();
-        $exercicios = $stm->fetchAll();
-        return $exercicios;
+        return array_map([Exercicio::class, 'arrayParaObjeto'], $stm->fetchAll());
     }
 
     public function getExercicioById(int $id){
@@ -33,7 +32,7 @@ class ExercicioRepository {
 
         $exercicio = $stm->fetch();
 
-        return $exercicio;
+        return $exercicio ? Exercicio::arrayParaObjeto($exercicio) : null;
     }
 
     public function getExerciciosByAtividade(int $idAtividade): array {
@@ -46,7 +45,7 @@ class ExercicioRepository {
         );
         $stm->bindValue('id_atividade', $idAtividade, PDO::PARAM_INT);
         $stm->execute();
-        return $stm->fetchAll();
+        return array_map([Exercicio::class, 'arrayParaObjeto'], $stm->fetchAll());
     }
 
     public function saveExercicio(Exercicio $exercicio){

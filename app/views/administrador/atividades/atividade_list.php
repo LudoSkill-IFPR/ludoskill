@@ -35,8 +35,8 @@
                             <th>Tipo da atividade</th>
                             <th>Nome</th>
                             <th>Estado</th>
-                            <th>Pontuacao</th>
-                            <th>Estrelas</th>
+                            <th>Ordem</th>
+                            <th>Tempo limite</th>
                             <th>Acoes</th>
                         </tr>
                     </thead>
@@ -44,17 +44,17 @@
                     <tbody>
                         <?php foreach (($lista ?? []) as $atividade): ?>
                         <tr>
-                            <td><?= htmlspecialchars($atividade['id_atividade'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($atividade['tipo_atividade'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($atividade['nome'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($atividade['estado'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($atividade['pontuacao'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($atividade['estrelas'] ?? '') ?></td>
+                            <td><?= $atividade->getId() ?></td>
+                            <td><?= htmlspecialchars($atividade->getTipoAtividade()) ?></td>
+                            <td><?= htmlspecialchars($atividade->getNome()) ?></td>
+                            <td><?= htmlspecialchars($atividade->getEstado()) ?></td>
+                            <td><?= $atividade->getOrdem() ?></td>
+                            <td><?= $atividade->getTempoLimite() ?> s</td>
                             <td id="acao">
-                                <a href="<?= URL_BASE ?>/administrador/atividades/editar?id=<?= $atividade['id_atividade'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                                <form action="<?= URL_BASE ?>/administrador/atividades/excluir" method="post" onsubmit="return confirm('Deseja excluir esta atividade?')">
-                                    <input type="hidden" name="id" value="<?= htmlspecialchars($atividade['id_atividade'] ?? '') ?>">
-                                    <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
+                                <a href="<?= URL_BASE ?>/administrador/atividades/editar?id=<?= $atividade->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
+                                <form action="<?= URL_BASE ?>/administrador/atividades/excluir" method="post" onsubmit="return confirm('Deseja desativar esta atividade?')">
+                                    <input type="hidden" name="id" value="<?= $atividade->getId() ?>">
+                                    <button type="submit" class="botao brilhinho"><i class="bi bi-x-circle"></i> Desativar</button>
                                 </form>
                             </td>
                         </tr>

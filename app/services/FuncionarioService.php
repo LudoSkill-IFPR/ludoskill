@@ -49,10 +49,6 @@ class FuncionarioService
         return $this->funcionarioRepository->saveFuncionario($funcionario);
     }
 
-    // public function deleteFuncionario(int $id, int $idEmpresa) {
-    //     return $this->funcionarioRepository->deleteFuncionario($id, $idEmpresa);
-    // }
-
     public function desativarFuncionario(int $id, int $idEmpresa)
     {
         return $this->funcionarioRepository->desativarFuncionario($id, $idEmpresa);

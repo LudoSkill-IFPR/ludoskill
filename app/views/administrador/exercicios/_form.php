@@ -1,20 +1,26 @@
 <?php
+$exercicio = $exercicio ?? [];
 $questoesIniciais = $questoes ?? [[
     'enunciado' => '',
     'alternativas' => ['', ''],
     'alternativa_correta' => null,
     'justificativa' => ''
 ]];
+$exercicioId = $exercicio instanceof \app\models\Exercicio ? $exercicio->getId() : (int) ($exercicio['id_exercicio'] ?? $exercicio['id'] ?? 0);
+$descricaoExercicio = $exercicio instanceof \app\models\Exercicio ? $exercicio->getDescricao() : ($exercicio['descricao'] ?? '');
+$atividadeSelecionada = $exercicio instanceof \app\models\Exercicio
+    ? $exercicio->getAtividade()->getId()
+    : (int) ($exercicio['atividade_id'] ?? $exercicio['id_atividade'] ?? 0);
 ?>
 
 <form class="card formulario-exercicio" action="<?= $acaoFormulario ?>" method="post" id="form-exercicio">
-    <?php if (!empty($exercicio['id_exercicio'] ?? $exercicio['id'] ?? null)): ?>
-        <input type="hidden" name="id" value="<?= (int) ($exercicio['id_exercicio'] ?? $exercicio['id']) ?>">
+    <?php if ($exercicioId > 0): ?>
+        <input type="hidden" name="id" value="<?= $exercicioId ?>">
     <?php endif; ?>
 
     <div class="formgroup">
         <label for="descricao">Descrição do conjunto:</label>
-        <input class="card-secundario" type="text" id="descricao" name="descricao" maxlength="255" required value="<?= htmlspecialchars($exercicio['descricao'] ?? '') ?>">
+        <input class="card-secundario" type="text" id="descricao" name="descricao" maxlength="255" required value="<?= htmlspecialchars($descricaoExercicio) ?>">
         <?php if (isset($erros['descricao'])): ?><div class="erro"><?= htmlspecialchars($erros['descricao']) ?></div><?php endif; ?>
     </div>
 
@@ -23,8 +29,8 @@ $questoesIniciais = $questoes ?? [[
         <select class="card-secundario" id="atividade_id" name="atividade_id" required>
             <option value="">Selecione uma atividade</option>
             <?php foreach (($atividades ?? []) as $atividade): ?>
-                <option value="<?= (int) $atividade['id_atividade'] ?>" <?= (string) ($exercicio['atividade_id'] ?? $exercicio['id_atividade'] ?? '') === (string) $atividade['id_atividade'] ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($atividade['nome']) ?>
+                <option value="<?= $atividade->getId() ?>" <?= $atividadeSelecionada === $atividade->getId() ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($atividade->getNome()) ?>
                 </option>
             <?php endforeach; ?>
         </select>

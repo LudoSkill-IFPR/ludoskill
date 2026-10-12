@@ -4,8 +4,6 @@
 namespace app\controllers;
 
 use app\core\Controller;
-use app\models\Usuario;
-use app\services\UsuarioService;
 use app\services\GestorService;
 use app\services\ModuloService;
 use app\services\EmpresaService;
@@ -17,7 +15,6 @@ class AdministradorController extends UsuarioController
     {
         $this->adminRequired();
 
-        // Obter quantidades para o dashboard
         $gestorService = new GestorService();
         $moduloService = new ModuloService();
         $empresaService = new EmpresaService();

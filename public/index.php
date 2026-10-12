@@ -12,7 +12,10 @@ $router->get('/', 'HomepageController@homepage');
 $router->get('/sobreNos', 'HomepageController@sobreNos');
 $router->get('/login', 'HomepageController@login');
 $router->post('/logar', 'AutenticacaoController@logar');
-$router->get('/logout', 'AutenticacaoController@logout');
+$router->post('/logout', 'AutenticacaoController@logout');
+$router->get('/perfil', 'UsuarioController@perfil');
+$router->get('/perfil/editar', 'UsuarioController@editarPerfil');
+$router->post('/perfil/atualizar', 'UsuarioController@atualizarPerfil');
 
 
 
@@ -87,10 +90,16 @@ $router->get('/gestor/inicial', 'GestorController@inicial');
 $router->get('/funcionario/inicial', 'FuncionarioController@inicial');
 
 $router->get('/funcionario/loja', 'ItemController@listarTodosFuncionario');
-$router->get('/funcionario/comprar', 'ItemController@comprar');
+$router->post('/funcionario/comprar', 'ItemController@comprar');
 $router->get('/funcionario/editar', 'FuncionarioController@funcEditar');
 $router->post('/funcionario/atualizar', 'FuncionarioController@funcAtualizar');
 $router->get('/funcionario/modulos', 'ModuloController@listarTodosFuncionario');
-$router->get('/funcionario/equipar', 'FuncionarioController@equipaItem');
+$router->post('/funcionario/equipar', 'FuncionarioController@equipaItem');
 
-$router->run();
+try {
+    $router->run();
+} catch (\Throwable $exception) {
+    error_log($exception->__toString());
+    http_response_code(500);
+    require __DIR__ . '/../app/views/outros/500.php';
+}

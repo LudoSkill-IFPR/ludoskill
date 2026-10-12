@@ -35,6 +35,7 @@
                             <th>Nome</th>
                             <th>Descrição</th>
                             <th>Mínimo de Estrelas para Liberação</th>
+                            <th>Estado</th>
                             <th>Acoes</th>
                         </tr>
                     </thead>
@@ -42,15 +43,16 @@
                     <tbody>
                         <?php foreach (($lista ?? []) as $modulo): ?>
                         <tr>
-                            <td><?= htmlspecialchars($modulo['id_modulo'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($modulo['nome'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($modulo['descricao'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($modulo['min_estrelas_liberacao'] ?? '') ?></td>
+                            <td><?= $modulo->getId() ?></td>
+                            <td><?= htmlspecialchars($modulo->getNome()) ?></td>
+                            <td><?= htmlspecialchars($modulo->getDescricao()) ?></td>
+                            <td><?= $modulo->getMinEstrelasLiberacao() ?></td>
+                            <td><?= htmlspecialchars($modulo->getEstado()) ?></td>
                             <td id="acao">
-                                <a href="<?= URL_BASE ?>/administrador/modulos/editar?id=<?= $modulo['id_modulo'] ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                                <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" onsubmit="return confirm('Deseja excluir este módulo?')">
-                                    <input type="hidden" name="id" value="<?= htmlspecialchars($modulo['id_modulo'] ?? '') ?>">
-                                    <button type="submit" class="botao brilhinho"><i class="bi bi-trash"></i> Excluir</button>
+                                <a href="<?= URL_BASE ?>/administrador/modulos/editar?id=<?= $modulo->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
+                                <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" onsubmit="return confirm('Deseja desativar este módulo?')">
+                                    <input type="hidden" name="id" value="<?= $modulo->getId() ?>">
+                                    <button type="submit" class="botao brilhinho"><i class="bi bi-x-circle"></i> Desativar</button>
                                 </form>
                             </td>
                         </tr>

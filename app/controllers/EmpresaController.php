@@ -1,9 +1,5 @@
 <?php
 
-/**
- * CORRIGIDO
- */
-
 namespace app\controllers;
 
 use app\core\Controller;
@@ -22,18 +18,6 @@ class EmpresaController extends Controller{
     public function listarTodos() {
         $this->adminRequired();
         $data['lista'] = $this->empresaService->getEmpresas();
-        $this->view('/administrador/empresas/empresa_list', $data);
-    }
-
-    public function listarEmpresa(){
-        $this->adminRequired();
-
-        if (!isset($_GET['id'])) {
-            $this->redirect(URL_BASE . '/administrador/empresas');
-        }
-
-        $id = $_GET['id']; 
-        $data['empresa'] = $this->empresaService->getEmpresaById($id);
         $this->view('/administrador/empresas/empresa_list', $data);
     }
 

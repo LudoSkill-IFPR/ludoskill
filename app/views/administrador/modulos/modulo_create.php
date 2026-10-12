@@ -30,7 +30,7 @@
                     <label for="nome">Nome:</label>
                     <input class="card-secundario" type="text" id="nome" name="nome" value="<?= isset($modulo['nome']) ? htmlspecialchars($modulo['nome']) : '' ?>">
                     <?php if (isset($erros['nome'])): ?>
-                        <div class="erro"><?= $erros['nome'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['nome']) ?></div>
                     <?php endif; ?>
                 </div>
 
@@ -38,7 +38,7 @@
                     <label for="descricao">Descrição:</label>
                     <textarea class="card-secundario" id="descricao" name="descricao"><?= isset($modulo['descricao']) ? htmlspecialchars($modulo['descricao']) : '' ?></textarea>
                     <?php if (isset($erros['descricao'])): ?>
-                        <div class="erro"><?= $erros['descricao'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['descricao']) ?></div>
                     <?php endif; ?>
                 </div>
                 
@@ -46,9 +46,10 @@
                     <label for="min_estrelas_liberacao">Mínimo de Estrelas para Liberação:</label>
                     <input class="card-secundario" type="number" id="min_estrelas_liberacao" name="min_estrelas_liberacao" value="<?= isset($modulo['min_estrelas_liberacao']) ? htmlspecialchars($modulo['min_estrelas_liberacao']) : '' ?>">
                     <?php if (isset($erros['min_estrelas_liberacao'])): ?>
-                        <div class="erro"><?= $erros['min_estrelas_liberacao'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['min_estrelas_liberacao']) ?></div>
                     <?php endif; ?>
                 </div>
+                <div class="formgroup"><label for="estado">Estado:</label><select class="card-secundario" id="estado" name="estado"><option value="ATIVO" <?= ($modulo['estado'] ?? 'ATIVO') === 'ATIVO' ? 'selected' : '' ?>>Ativo</option><option value="INATIVO" <?= ($modulo['estado'] ?? '') === 'INATIVO' ? 'selected' : '' ?>>Inativo</option></select></div>
                 
                 <button type="submit" class="botao brilho">Salvar</button>
             

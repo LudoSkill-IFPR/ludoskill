@@ -15,10 +15,15 @@ class ModuloRepository {
 
 
     public function getModulos(): array {
-        $stm = $this->connection->prepare("SELECT * FROM Modulos");
+        $stm = $this->connection->prepare("SELECT * FROM Modulos ORDER BY id_modulo");
         $stm->execute();
-        $modulos = $stm->fetchAll();
-        return $modulos;
+        return array_map([Modulo::class, 'arrayParaObjeto'], $stm->fetchAll());
+    }
+
+    public function getModulosAtivos(): array {
+        $stm = $this->connection->prepare("SELECT * FROM Modulos WHERE estado = 'ATIVO' ORDER BY id_modulo");
+        $stm->execute();
+        return array_map([Modulo::class, 'arrayParaObjeto'], $stm->fetchAll());
     }
 
     public function getModuloById(int $id){
@@ -28,31 +33,43 @@ class ModuloRepository {
         $stm->execute();
 
         $modulo = $stm->fetch();
+        return $modulo ? Modulo::arrayParaObjeto($modulo) : null;
+    }
 
-        return $modulo;
+    public function nomeExiste(string $nome, ?int $idIgnorado = null): bool {
+        $sql = 'SELECT 1 FROM Modulos WHERE nome = :nome';
+        if ($idIgnorado !== null) $sql .= ' AND id_modulo <> :id';
+        $sql .= ' LIMIT 1';
+        $stm = $this->connection->prepare($sql);
+        $stm->bindValue('nome', $nome);
+        if ($idIgnorado !== null) $stm->bindValue('id', $idIgnorado, PDO::PARAM_INT);
+        $stm->execute();
+        return $stm->fetchColumn() !== false;
     }
 
     public function saveModulo(Modulo $modulo){
-        $sql = "INSERT INTO Modulos (nome, descricao, min_estrelas_liberacao) VALUES (:nome, :descricao, :minEstrelasLiberacao)";
+        $sql = "INSERT INTO Modulos (nome, descricao, min_estrelas_liberacao, estado) VALUES (:nome, :descricao, :minEstrelasLiberacao, :estado)";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('nome', $modulo->getNome());
         $stm->bindValue('descricao', $modulo->getDescricao());
         $stm->bindValue('minEstrelasLiberacao', $modulo->getMinEstrelasLiberacao());
+        $stm->bindValue('estado', $modulo->getEstado());
         return $stm->execute();
     }
 
     public function deleteModulo(int $id){
-        $stm = $this->connection->prepare("DELETE FROM Modulos WHERE id_modulo = :id");
-        $stm->bindValue('id', $id);
+        $stm = $this->connection->prepare("UPDATE Modulos SET estado = 'INATIVO' WHERE id_modulo = :id");
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
         return $stm->execute();
     }
 
     public function updateModulo(Modulo $modulo){
-        $sql = "UPDATE Modulos SET nome = :nome, descricao = :descricao, min_estrelas_liberacao = :minEstrelasLiberacao WHERE id_modulo = :id";
+        $sql = "UPDATE Modulos SET nome = :nome, descricao = :descricao, min_estrelas_liberacao = :minEstrelasLiberacao, estado = :estado WHERE id_modulo = :id";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('nome', $modulo->getNome());
         $stm->bindValue('descricao', $modulo->getDescricao());
         $stm->bindValue('minEstrelasLiberacao', $modulo->getMinEstrelasLiberacao());
+        $stm->bindValue('estado', $modulo->getEstado());
         $stm->bindValue('id', $modulo->getId());
         return $stm->execute();
     }

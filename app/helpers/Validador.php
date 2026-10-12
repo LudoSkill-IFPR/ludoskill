@@ -2,10 +2,6 @@
 
 namespace app\helpers;
 
-use app\database\ConnectionFactory;
-
-//TODO: IMPLEMENTAR MAIS VALIDACOES! @iza e @vini
-
 class Validador {
 
     public static function validarModulo(array $data): array {
@@ -17,28 +13,6 @@ class Validador {
 
         if (!empty($data['nome']) && strlen($data['nome']) > 255) {
             $erros['nome'] = 'O campo nome deve ter no máximo 255 caracteres.';
-        }
-
-        if (!empty($data['nome'])) {
-            $sql = 'SELECT 1 FROM Modulos WHERE nome = :nome'; //Evita de carregar todos os dados do módulo, apenas verifica se existe
-
-            if (!empty($data['id'])) {
-                $sql .= ' AND id_modulo <> :id';
-            }
-
-            $sql .= ' LIMIT 1'; //Interrompe a busca após encontrar o primeiro registro
-            $stm = ConnectionFactory::getConnection()->prepare($sql); //TODO: verificar com o prof se pode ficar aqui
-            $stm->bindValue('nome', $data['nome']);
-
-            if (!empty($data['id'])) {
-                $stm->bindValue('id', $data['id'], \PDO::PARAM_INT);
-            }
-
-            $stm->execute();
-
-            if ($stm->fetchColumn() !== false) {
-                $erros['nome'] = 'Já existe um módulo com este nome.';
-            }
         }
 
         if (empty($data['descricao'])) {
@@ -59,6 +33,10 @@ class Validador {
         
         if (isset($data['min_estrelas_liberacao']) && is_numeric($data['min_estrelas_liberacao']) && $data['min_estrelas_liberacao'] < 0) {
             $erros['min_estrelas_liberacao'] = 'O número de estrelas não pode ser negativo.';
+        }
+
+        if (!in_array($data['estado'] ?? 'ATIVO', ['ATIVO', 'INATIVO'], true)) {
+            $erros['estado'] = 'Selecione um estado válido.';
         }
 
 
@@ -117,13 +95,6 @@ class Validador {
 
         if (empty($data['atividade_id']) || !filter_var($data['atividade_id'], FILTER_VALIDATE_INT)) {
             $erros['atividade_id'] = 'Selecione uma atividade válida.';
-        } else {
-            $stm = ConnectionFactory::getConnection()->prepare('SELECT 1 FROM Atividades WHERE id_atividade = :id LIMIT 1');
-            $stm->bindValue('id', (int) $data['atividade_id'], \PDO::PARAM_INT);
-            $stm->execute();
-            if ($stm->fetchColumn() === false) {
-                $erros['atividade_id'] = 'A atividade selecionada não existe.';
-            }
         }
 
         return $erros;
@@ -187,6 +158,12 @@ class Validador {
 
         if (empty($data['tipo'])) {
             $erros['tipo'] = 'O campo tipo é obrigatório.';
+        } elseif (!in_array(strtoupper((string) $data['tipo']), ['TEMA', 'VISUAL_ESQUILOSO'], true)) {
+            $erros['tipo'] = 'Selecione um tipo válido.';
+        }
+
+        if (!in_array((string) $data['estado'], ['0', '1'], true)) {
+            $erros['estado'] = 'Selecione um estado válido.';
         }
 
         if (!isset($data['preco']) || $data['preco'] === '' || !is_numeric($data['preco'])) {
@@ -238,6 +215,11 @@ class Validador {
 
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
+        } else {
+            $dataNascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', $data['data_nascimento']);
+            if (!$dataNascimento || $dataNascimento->format('Y-m-d') !== $data['data_nascimento'] || $dataNascimento > new \DateTimeImmutable('today')) {
+                $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
+            }
         }
 
         if (empty($data['cpf'])) {
@@ -284,14 +266,19 @@ class Validador {
 
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
+        } else {
+            $dataNascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', $data['data_nascimento']);
+            if (!$dataNascimento || $dataNascimento->format('Y-m-d') !== $data['data_nascimento'] || $dataNascimento > new \DateTimeImmutable('today')) {
+                $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
+            }
         }
 
         if (empty($data['cpf'])) {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
-        if (!empty($data['cpf']) && strlen($data['cpf']) > 11) {
-            $erros['cpf'] = 'O campo cpf deve ter no máximo 11 caracteres.';
+        if (!empty($data['cpf']) && !preg_match('/^\d{11}$/', $data['cpf'])) {
+            $erros['cpf'] = 'O CPF deve possuir exatamente 11 dígitos.';
         }
 
         if (empty($data['email'])) {
@@ -302,8 +289,14 @@ class Validador {
             $erros['email'] = 'O campo email deve ter no máximo 255 caracteres.';
         }
 
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $erros['email'] = 'Informe um e-mail válido.';
+        }
+
         if ($senhaObrigatoria && empty($data['senha'])) {
             $erros['senha'] = 'O campo senha é obrigatório.';
+        } elseif (!empty($data['senha']) && strlen($data['senha']) < 8) {
+            $erros['senha'] = 'A senha deve possuir pelo menos 8 caracteres.';
         }
 
         if (empty($data['numero_telefone'])) {
@@ -367,6 +360,8 @@ class Validador {
 
         if ($senhaObrigatoria && empty($data['senha_hash'])) {
             $erros['senha_hash'] = 'O campo senha é obrigatório.';
+        } elseif (!empty($data['senha_hash']) && strlen($data['senha_hash']) < 8) {
+            $erros['senha_hash'] = 'A senha deve possuir pelo menos 8 caracteres.';
         }
 
         if (empty($data['numero_telefone'])) {
@@ -401,33 +396,19 @@ class Validador {
 
         if (empty($data['estado'])) {
             $erros['estado'] = 'O campo estado é obrigatório.';
-        } elseif (!in_array($data['estado'], ['PENDENTE', 'INICIADO', 'CONCLUIDO'], true)) {
+        } elseif (!in_array($data['estado'], ['ATIVO', 'INATIVO'], true)) {
             $erros['estado'] = 'Selecione um estado válido.';
         }
-
-        if (!isset($data['pontuacao']) || filter_var($data['pontuacao'], FILTER_VALIDATE_INT) === false) {
-            $erros['pontuacao'] = 'O campo pontuação deve ser um número inteiro.';
-        } elseif ((int) $data['pontuacao'] < 0) {
-            $erros['pontuacao'] = 'A pontuação não pode ser negativa.';
+        if (!isset($data['ordem']) || filter_var($data['ordem'], FILTER_VALIDATE_INT) === false || (int) $data['ordem'] < 1) {
+            $erros['ordem'] = 'A ordem deve ser um número inteiro maior que zero.';
         }
 
-        if (!isset($data['estrelas']) || filter_var($data['estrelas'], FILTER_VALIDATE_INT) === false) {
-            $erros['estrelas'] = 'O campo estrelas deve ser um número inteiro.';
-        } elseif ((int) $data['estrelas'] < 0) {
-            $erros['estrelas'] = 'As estrelas não podem ser negativas.';
+        if (!isset($data['tempo_limite']) || filter_var($data['tempo_limite'], FILTER_VALIDATE_INT) === false || (int) $data['tempo_limite'] < 1) {
+            $erros['tempo_limite'] = 'O tempo limite deve ser informado em segundos e ser maior que zero.';
         }
 
         if (empty($data['id_modulo']) || filter_var($data['id_modulo'], FILTER_VALIDATE_INT) === false) {
             $erros['id_modulo'] = 'Selecione um módulo válido.';
-        } else {
-            $sql = 'SELECT 1 FROM Modulos WHERE id_modulo = :id LIMIT 1';
-            $stm = ConnectionFactory::getConnection()->prepare($sql);
-            $stm->bindValue('id', $data['id_modulo'], \PDO::PARAM_INT);
-            $stm->execute();
-
-            if ($stm->fetchColumn() === false) {
-                $erros['id_modulo'] = 'O módulo selecionado não existe.';
-            }
         }
 
         return $erros;

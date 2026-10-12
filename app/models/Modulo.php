@@ -7,17 +7,20 @@ class Modulo {
     private string $nome;
     private string $descricao;
     private int $minEstrelasLiberacao;
+    private string $estado;
 
     public function __construct(
         int $id = 0,
         string $nome = '',
         string $descricao = '',
-        int $minEstrelasLiberacao = 0
+        int $minEstrelasLiberacao = 0,
+        string $estado = 'ATIVO'
     ) {
         $this->id = $id;
         $this->nome = $nome;
         $this->descricao = $descricao;
         $this->minEstrelasLiberacao = $minEstrelasLiberacao;
+        $this->estado = $estado;
     }
 
     public static function arrayParaObjeto(array $modulo): self
@@ -26,7 +29,8 @@ class Modulo {
             (int) ($modulo['id_modulo'] ?? 0),
             $modulo['nome'] ?? '',
             $modulo['descricao'] ?? '',
-            (int) ($modulo['min_estrelas_liberacao'] ?? 0)
+            (int) ($modulo['min_estrelas_liberacao'] ?? 0),
+            $modulo['estado'] ?? 'ATIVO'
         );
     }
 
@@ -101,4 +105,7 @@ class Modulo {
 
         return $this;
     }
+
+    public function getEstado(): string { return $this->estado; }
+    public function setEstado(string $estado): self { $this->estado = $estado; return $this; }
 }

@@ -30,7 +30,7 @@
                     <input type="text" class="card-secundario" id="nome" name="nome" value="<?= isset($item['nome']) ? htmlspecialchars($item['nome']) : '' ?>">
 
                     <?php if (isset($erros['nome'])): ?>
-                        <div class="erro"><?= $erros['nome'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['nome']) ?></div>
                     <?php endif; ?>
                 </div>
 
@@ -42,7 +42,7 @@
                     </select>
 
                     <?php if (isset($erros['estado'])): ?>
-                        <div class="erro"><?= $erros['estado'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['estado']) ?></div>
                     <?php endif; ?>
                 </div>
 
@@ -55,7 +55,7 @@
                     </select>
 
                     <?php if (isset($erros['tipo'])): ?>
-                        <div class="erro"><?= $erros['tipo'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['tipo']) ?></div>
                     <?php endif; ?>
                 </div>
 
@@ -64,7 +64,7 @@
                     <input type="number" step="0.01" class="card-secundario" id="preco" name="preco" value="<?= isset($item['preco']) ? htmlspecialchars($item['preco']) : '' ?>">
 
                     <?php if (isset($erros['preco'])): ?>
-                        <div class="erro"><?= $erros['preco'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['preco']) ?></div>
                     <?php endif; ?>
                 </div>
 
@@ -73,7 +73,7 @@
                     <input type="file" class="card-secundario" id="imagem" name="imagem">
 
                     <?php if (isset($erros['imagem'])): ?>
-                        <div class="erro"><?= $erros['imagem'] ?></div>
+                        <div class="erro"><?= htmlspecialchars($erros['imagem']) ?></div>
                     <?php endif; ?>
                 </div>
 
