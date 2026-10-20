@@ -6,6 +6,7 @@ require __DIR__ . '/../app/core/Autoload.php';
 require __DIR__ . '/../app/config/Config.php';
 
 use app\core\Controller;
+use app\models\Administrador;
 use app\models\Atividade;
 use app\models\Empresa;
 use app\models\Exercicio;
@@ -25,6 +26,7 @@ $exercicio = new Exercicio(1, 'Conjunto', '[{"enunciado":"Questão?","alternativ
 $item = new Item(1, 'ATIVO', 'Tema', 'TEMA', 10, 'assets/imagens/imagemTEMA.png');
 $funcionario = new Funcionario(1, 'Funcionário', new DateTimeImmutable('2000-01-01'), '12345678901', 'func@example.com', '', '45999999999', $empresa, 100, 80, 1, 'ATIVO', 1);
 $gestor = new Gestor(2, 'Gestor', new DateTimeImmutable('1990-01-01'), '10987654321', 'gestor@example.com', '', '45999999998', $empresa, 'ATIVO', 1);
+$admin = new Administrador(3, 'Admin', new DateTimeImmutable('1980-01-01'), '11122233344', 'admin@example.com', '', '45999999997', 'ATIVO', 1);
 $_SESSION['usuario_logado'] = $funcionario;
 
 $controller = new Controller();
@@ -56,6 +58,10 @@ $casos = [
     ['funcionario/modulos', ['lista' => [['entidade' => $modulo, 'atividades' => [['entidade' => $atividade, 'liberada' => true]]]], 'resultados' => []]],
     ['funcionario/exercicios', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 1, 'descricao' => 'Conjunto', 'questoes' => json_decode($exercicio->getConteudo(), true)]]]],
     ['usuario/perfil', ['usuario' => $funcionario, 'resumo' => ['concluidas' => 1, 'total' => 2, 'estrelas' => 2, 'desempenho' => 2]]],
+    ['usuario/perfil', ['usuario' => $gestor, 'empresa' => $empresa, 'qtdFuncionarios' => 5, 'qtdModulos' => 2, 'taxaConclusao' => 75.0]],
+    ['usuario/perfil', ['usuario' => $admin, 'qtdEmpresas' => 3, 'qtdGestores' => 4, 'qtdModulos' => 2, 'qtdItens' => 5]],
+    ['usuario/editar', ['usuario' => $funcionario]],
+    ['usuario/editar', ['usuario' => $gestor]],
 ];
 
 foreach ($casos as [$view, $dados]) {

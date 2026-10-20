@@ -1,0 +1,312 @@
+
+
+.pagina-perfil {
+    width: min(1000px, 92%);
+    margin: 30px auto 60px;
+}
+
+.cabecalho-perfil {
+    margin-bottom: 24px;
+}
+
+.cabecalho-perfil h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.cabecalho-perfil .subtitulo {
+    color: #cfcfcf;
+    font-size: 1rem;
+}
+
+/* Alerta de sucesso */
+.alerta-sucesso {
+    background: rgba(31, 173, 84, 0.15);
+    border: 1px solid var(--verde-escuro);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--verde-claro);
+    font-weight: 500;
+    box-shadow: 0 0 15px rgba(31, 173, 84, 0.2);
+}
+
+.alerta-sucesso i {
+    font-size: 1.4rem;
+}
+
+/* Grid de cards do perfil */
+.grid-perfil {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .grid-perfil {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Coluna lateral de subcards */
+.coluna-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Card de perfil principal */
+.card-perfil {
+    background-color: var(--cinza-ultraescuro);
+    border: 1px solid var(--cinza-escuro);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-perfil h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--cinza-escuro);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-perfil h2 i {
+    color: var(--verde-claro);
+}
+
+/* Seção de Avatar / Esquilo */
+.secao-avatar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.avatar-circulo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--roxo-escuro), var(--cinza-ultraescuro));
+    border: 2px solid var(--verde-claro);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(56, 255, 76, 0.2);
+    flex-shrink: 0;
+}
+
+.avatar-circulo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-circulo i {
+    font-size: 2.5rem;
+    color: var(--verde-claro);
+}
+
+.avatar-info h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.avatar-info .badge-cargo {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: rgba(153, 51, 221, 0.25);
+    color: var(--roxo-claro);
+    border: 1px solid var(--roxo);
+}
+
+/* Linhas de informação chave-valor */
+.lista-info {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-info .rotulo {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #9e9e9e;
+    margin-bottom: 3px;
+}
+
+.item-info .valor {
+    font-size: 1.05rem;
+    color: #f1f1f1;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+/* Botões do Perfil */
+.acoes-perfil {
+    margin-top: 10px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.card-perfil .botao {
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+}
+
+/* Barra de progresso customizada */
+.secao-progresso {
+    margin-top: 10px;
+}
+
+.progresso-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.progresso-cabecalho .taxa {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--verde-claro);
+}
+
+.barra-trilha {
+    width: 100%;
+    height: 14px;
+    background: var(--cinza-escurao);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--cinza-escuro);
+}
+
+.barra-trilha-preenchimento {
+    height: 100%;
+    background: linear-gradient(90deg, var(--verde-escurao), var(--verde));
+    box-shadow: 0 0 10px var(--verde);
+    border-radius: 8px;
+    transition: width 0.4s ease;
+}
+
+/* Métricas em minicards */
+.grid-metricas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 14px;
+}
+
+.card-metrica {
+    background: var(--cinza-escurao);
+    border: 1px solid var(--cinza-escuro);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.card-metrica .icone {
+    font-size: 1.8rem;
+    color: var(--verde-claro);
+    margin-bottom: 6px;
+}
+
+.card-metrica .numero {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.card-metrica .legenda {
+    font-size: 0.85rem;
+    color: #b0b0b0;
+    margin-top: 4px;
+}
+
+.pagina-editar-perfil {
+    width: min(720px, 92%);
+    margin: 30px auto 60px;
+}
+
+.aviso-rn18 {
+    background: rgba(153, 51, 221, 0.12);
+    border: 1px solid var(--roxo);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 0.92rem;
+    color: #e0d0f5;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.aviso-rn18 i {
+    font-size: 1.25rem;
+    color: var(--roxo-claro);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.campo-desabilitado {
+    background: #1c1c1c !important;
+    color: #888888 !important;
+    border: 1px dashed #444444 !important;
+    cursor: not-allowed;
+}
+
+.ajuda-campo {
+    font-size: 0.82rem;
+    color: #9e9e9e;
+    margin-top: 4px;
+    display: block;
+}
+
+.grupo-botoes-form {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.grupo-botoes-form .botao {
+    width: auto;
+    padding: 10px 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+

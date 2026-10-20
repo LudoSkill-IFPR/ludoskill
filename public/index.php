@@ -13,6 +13,7 @@ $router->get('/sobreNos', 'HomepageController@sobreNos');
 $router->get('/login', 'HomepageController@login');
 $router->post('/logar', 'AutenticacaoController@logar');
 $router->post('/logout', 'AutenticacaoController@logout');
+$router->get('/logout', 'AutenticacaoController@logout');
 $router->get('/perfil', 'UsuarioController@perfil');
 $router->get('/perfil/editar', 'UsuarioController@editarPerfil');
 $router->post('/perfil/atualizar', 'UsuarioController@atualizarPerfil');
