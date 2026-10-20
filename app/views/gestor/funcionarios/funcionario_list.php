@@ -27,7 +27,6 @@
             </div>
     
             <section class="card">
-                <h2>Lista de Itens</h2>
                 <h2>Lista de Funcionários</h2>
                 <table id="funcionario">
                     <thead>

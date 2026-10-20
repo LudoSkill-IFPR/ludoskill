@@ -43,6 +43,15 @@ class Validador {
         return $erros;
     }
 
+    /**
+     * Valida os dados usados no cadastro e na edição de um exercício.
+     *
+     * Confere a descrição, decodifica o conteúdo JSON e verifica cada questão:
+     * enunciado obrigatório, no mínimo duas alternativas preenchidas, índice da
+     * alternativa correta existente e justificativa obrigatória. Por fim, valida
+     * o identificador da atividade vinculada. Retorna um array associativo em que
+     * cada chave representa o campo com problema; um array vazio indica sucesso.
+     */
     public static function validarExercicio(array $data): array {
         $erros = [];
 

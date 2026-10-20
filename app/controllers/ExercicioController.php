@@ -16,23 +16,46 @@ class ExercicioController extends Controller{
     private AtividadeService $atividadeService;
     private FuncionarioAtividadeService $funcionarioAtividadeService;
 
+    /**
+     * Prepara os serviços usados tanto pelo CRUD administrativo quanto pela realização das atividades.
+     */
     public function __construct() {
         $this->exercicioService = new ExercicioService();
         $this->atividadeService = new AtividadeService();
         $this->funcionarioAtividadeService = new FuncionarioAtividadeService();
     }
 
+    /**
+     * Exibe a listagem administrativa de exercícios.
+     *
+     * Restringe o acesso ao administrador, busca as entidades pelo service e as
+     * envia para a view responsável pela tabela do CRUD.
+     */
     public function listarTodos() {
         $this->adminRequired();
         $data['lista'] = $this->exercicioService->getExercicios();
         $this->view('administrador/exercicios/exercicio_list', $data);
     }
 
+    /**
+     * Abre o formulário de criação de exercício.
+     *
+     * Além de exigir o perfil administrador, carrega todas as atividades para que
+     * o usuário possa escolher a qual delas o novo conjunto de questões pertencerá.
+     */
     public function criar(){
         $this->adminRequired();
         $this->view('administrador/exercicios/exercicio_create', ['atividades' => $this->atividadeService->getAtividades()]);
     }
 
+    /**
+     * Valida e salva um novo exercício enviado pelo formulário.
+     *
+     * Primeiro normaliza a lista dinâmica de questões e a transforma em JSON.
+     * Depois aplica as validações de estrutura e confirma que a atividade existe.
+     * Em caso de erro, reabre o formulário com os dados digitados; caso contrário,
+     * monta as entidades Exercicio e Atividade, salva pelo service e volta à lista.
+     */
     public function salvar(){
         $this->adminRequired();
         $dados = $_POST;
@@ -60,6 +83,13 @@ class ExercicioController extends Controller{
         $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
+    /**
+     * Abre o formulário de edição de um exercício existente.
+     *
+     * Valida o ID recebido pela URL, busca o exercício e redireciona caso ele não
+     * exista. O JSON salvo é decodificado para preencher os campos dinâmicos de
+     * questões, e as atividades são carregadas para preencher o campo de vínculo.
+     */
     public function editar(){
         $this->adminRequired();
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -74,6 +104,12 @@ class ExercicioController extends Controller{
         $this->view('administrador/exercicios/exercicio_edit', $data);
     }
 
+    /**
+     * Exclui um exercício pelo ID enviado em uma requisição POST.
+     *
+     * A ação é exclusiva do administrador. IDs inválidos levam de volta à lista;
+     * IDs válidos são encaminhados ao service e, em seguida, ocorre o redirecionamento.
+     */
     public function excluir(){
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -85,6 +121,14 @@ class ExercicioController extends Controller{
         $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
+    /**
+     * Valida e atualiza um exercício existente.
+     *
+     * Confirma o ID e a existência do registro, normaliza novamente as questões,
+     * gera o JSON e executa as mesmas validações usadas no cadastro. Havendo erro,
+     * preserva os valores do formulário; sem erros, monta a entidade com seu ID e
+     * solicita a atualização ao service.
+     */
     public function atualizar(){
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -115,6 +159,13 @@ class ExercicioController extends Controller{
         $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
+    /**
+     * Prepara uma atividade para ser realizada pelo funcionário.
+     *
+     * Confirma o perfil, o ID da atividade e as regras de liberação. Em seguida,
+     * reúne e decodifica os exercícios, registra no servidor o horário de início e
+     * marca o progresso como iniciado antes de renderizar a tela de respostas.
+     */
     public function acessarAtividade(){
         $this->funcionarioRequired();
         $idAtividade = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -138,6 +189,14 @@ class ExercicioController extends Controller{
         ]);
     }
 
+    /**
+     * Corrige todas as respostas submetidas e registra o resultado da atividade.
+     *
+     * A função valida novamente o acesso e exige uma alternativa válida em cada
+     * questão. Depois calcula percentual de acertos, tempo, estrelas e bolotas,
+     * envia esses dados ao service de progresso e apresenta o feedback completo
+     * ao funcionário, incluindo as justificativas armazenadas no JSON.
+     */
     public function responderAtividade(){
         $this->funcionarioRequired();
         $idAtividade = filter_input(INPUT_POST, 'id_atividade', FILTER_VALIDATE_INT);
@@ -217,6 +276,12 @@ class ExercicioController extends Controller{
         ]);
     }
 
+    /**
+     * Monta a estrutura de exercícios consumida pela view do funcionário.
+     *
+     * Busca os objetos vinculados à atividade e converte o conteúdo JSON de cada
+     * um em um array de questões, preservando ID e descrição do conjunto.
+     */
     private function montarExerciciosDaAtividade(int $idAtividade): array {
         $exercicios = [];
         foreach ($this->exercicioService->getExerciciosByAtividade($idAtividade) as $registro) {
@@ -229,6 +294,13 @@ class ExercicioController extends Controller{
         return $exercicios;
     }
 
+    /**
+     * Padroniza os campos enviados pelo formulário dinâmico antes de gerar o JSON.
+     *
+     * Ignora entradas que não sejam arrays, remove espaços desnecessários, reorganiza
+     * os índices das alternativas e transforma o índice correto em inteiro válido.
+     * A saída possui apenas enunciado, alternativas, alternativa correta e justificativa.
+     */
     private function normalizarQuestoes(array $questoes): array {
         $normalizadas = [];
 
@@ -257,6 +329,12 @@ class ExercicioController extends Controller{
         return $normalizadas;
     }
 
+    /**
+     * Decodifica o JSON salvo no exercício para um array PHP.
+     *
+     * Se o conteúdo não formar uma lista válida, devolve um array vazio para que a
+     * camada de apresentação não tente percorrer um valor incompatível.
+     */
     private function decodificarConteudo(string $conteudo): array {
         $questoes = json_decode($conteudo, true);
         return is_array($questoes) ? $questoes : [];

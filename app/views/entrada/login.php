@@ -50,10 +50,10 @@
 
                 <button class="botao brilho" type="submit">Entrar</button>
             
-                <div class="formgroup">
+                <!-- <div class="formgroup">
                     <input class="lembrar" type="checkbox" name="lembrar">
                     <label class="lembrar" for="lembrar">Lembre de mim</label>
-                </div>
+                </div> -->
             
                 <a href="">Esqueceu a senha?</a>
             

@@ -8,6 +8,13 @@ class Exercicio {
     private string $conteudo;
     private Atividade $atividade;
 
+    /**
+     * Cria uma entidade de exercício com seus dados básicos.
+     *
+     * O conteúdo permanece como uma string JSON, pois é nesse formato que ele é
+     * armazenado na coluna `conteudo`. Quando nenhuma atividade é recebida, cria
+     * um objeto Atividade vazio para manter a propriedade sempre inicializada.
+     */
     public function __construct(
         int $id = 0,
         string $descricao = '',
@@ -21,7 +28,12 @@ class Exercicio {
     }
 
     /**
-     * Se o objeto Atividade não for informado, cria uma Atividade apenas com o id (FK id_atividade).
+     * Converte uma linha associativa retornada pelo banco em um objeto Exercicio.
+     *
+     * Se a atividade completa não for informada, monta uma referência contendo o
+     * ID da chave estrangeira e, quando disponível no JOIN, o nome da atividade.
+     * Também garante que `conteudo` seja uma string JSON, mesmo quando o valor já
+     * tiver sido decodificado antes de chegar ao model.
      */
     public static function arrayParaObjeto(array $exercicio, ?Atividade $atividade = null): self
     {
@@ -32,7 +44,7 @@ class Exercicio {
             (string) ($exercicio['nome_atividade'] ?? '')
         );
 
-        // A coluna JSON chega como string do PDO; se já vier decodificada, volta para JSON.
+        // O PDO normalmente entrega a coluna JSON como string; arrays são codificados novamente.
         $conteudo = $exercicio['conteudo'] ?? '';
         if (!is_string($conteudo)) {
             $conteudo = (string) json_encode($conteudo, JSON_UNESCAPED_UNICODE);
@@ -46,7 +58,7 @@ class Exercicio {
         );
     }
     /**
-     * Get the value of id
+     * Retorna o identificador do exercício na tabela Exercicios.
      */
     public function getId(): int
     {
@@ -54,7 +66,7 @@ class Exercicio {
     }
 
     /**
-     * Set the value of id
+     * Define o identificador do exercício e devolve o próprio objeto para permitir encadeamento.
      */
     public function setId(int $id): self
     {
@@ -64,7 +76,7 @@ class Exercicio {
     }
 
     /**
-     * Get the value of descricao
+     * Retorna a descrição usada para identificar o conjunto de questões.
      */
     public function getDescricao(): string
     {
@@ -72,7 +84,7 @@ class Exercicio {
     }
 
     /**
-     * Set the value of descricao
+     * Define a descrição do conjunto de questões e devolve o próprio objeto.
      */
     public function setDescricao(string $descricao): self
     {
@@ -82,7 +94,7 @@ class Exercicio {
     }
 
     /**
-     * Get the value of conteudo
+     * Retorna o JSON que contém enunciados, alternativas, respostas e justificativas.
      */
     public function getConteudo(): string
     {
@@ -90,7 +102,7 @@ class Exercicio {
     }
 
     /**
-     * Set the value of conteudo
+     * Define a string JSON do exercício e devolve o próprio objeto.
      */
     public function setConteudo(string $conteudo): self
     {
@@ -100,7 +112,7 @@ class Exercicio {
     }
 
     /**
-     * Get the value of atividade
+     * Retorna a atividade à qual este conjunto de questões pertence.
      */
     public function getAtividade(): Atividade
     {
@@ -108,7 +120,7 @@ class Exercicio {
     }
 
     /**
-     * Set the value of atividade
+     * Vincula o exercício a uma atividade e devolve o próprio objeto.
      */
     public function setAtividade(Atividade $atividade): self
     {
