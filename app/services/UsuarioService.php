@@ -17,4 +17,11 @@ class UsuarioService
         $this->repository = new UsuarioRepository();
     }
 
+
+    public function getUsuarioByEmail(string $email): ?Usuario
+    {
+        return $this->repository->getUsuarioByEmail($email);
+    }
+
+
 }

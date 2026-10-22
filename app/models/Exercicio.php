@@ -57,17 +57,12 @@ class Exercicio {
             $atividade
         );
     }
-    /**
-     * Retorna o identificador do exercício na tabela Exercicios.
-     */
+
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Define o identificador do exercício e devolve o próprio objeto para permitir encadeamento.
-     */
     public function setId(int $id): self
     {
         $this->id = $id;
@@ -75,17 +70,11 @@ class Exercicio {
         return $this;
     }
 
-    /**
-     * Retorna a descrição usada para identificar o conjunto de questões.
-     */
     public function getDescricao(): string
     {
         return $this->descricao;
     }
 
-    /**
-     * Define a descrição do conjunto de questões e devolve o próprio objeto.
-     */
     public function setDescricao(string $descricao): self
     {
         $this->descricao = $descricao;
@@ -93,17 +82,11 @@ class Exercicio {
         return $this;
     }
 
-    /**
-     * Retorna o JSON que contém enunciados, alternativas, respostas e justificativas.
-     */
     public function getConteudo(): string
     {
         return $this->conteudo;
     }
 
-    /**
-     * Define a string JSON do exercício e devolve o próprio objeto.
-     */
     public function setConteudo(string $conteudo): self
     {
         $this->conteudo = $conteudo;
@@ -111,17 +94,11 @@ class Exercicio {
         return $this;
     }
 
-    /**
-     * Retorna a atividade à qual este conjunto de questões pertence.
-     */
     public function getAtividade(): Atividade
     {
         return $this->atividade;
     }
 
-    /**
-     * Vincula o exercício a uma atividade e devolve o próprio objeto.
-     */
     public function setAtividade(Atividade $atividade): self
     {
         $this->atividade = $atividade;

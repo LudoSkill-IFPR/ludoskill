@@ -158,4 +158,6 @@ class UsuarioController extends Controller
         $this->redirect(URL_BASE . '/perfil');
     }
 
+    
+
 }

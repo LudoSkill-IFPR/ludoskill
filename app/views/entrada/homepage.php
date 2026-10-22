@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/arruma.css">
+    <link rel="icon" type="x-icon" href="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png">
     
     <title>LudoSkill</title>
 </head>
@@ -18,7 +19,7 @@
             <div class="container">
                 <h1>Qualificação de funcionários por <strong>gamificação</strong></h1>
 
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora, incidunt explicabo consequatur neque eveniet provident fugiat delectus eum eligendi nemo rem ab dolores necessitatibus omnis magnam adipisci minima voluptatem accusantium eaque numquam, corporis dolorem. Expedita ab quam ipsa natus? Veniam cupiditate sequi possimus incidunt. Ut eum odio minima mollitia reprehenderit.</p>
+                <p>E se aprender a consertar celulares pudesse ser tão envolvente quanto passar de fase em um jogo?<br><br>Conheça o LudoSkill, um sistema que transforma a qualificação de funcionários em uma jornada de aprendizado interativa, com desafios, atividades práticas e recompensas. <br>Aqui, cada etapa é uma oportunidade de desenvolver habilidades, testar conhecimentos e conquistar novas etapas rumo à evolução profissional.<br>Seja você um novo técnico querendo aprimorar suas habilidades ou alguém curioso para descobrir uma nova forma de aprender, o LudoSkill tem um desafio para você!<br>Prepare-se para aprender, jogar e evoluir. Sua próxima fase começa aqui!</p>
 
                 <!-- <a class="botao brilho" href="">Orçamentos</a> -->
             </div>

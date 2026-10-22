@@ -55,7 +55,7 @@
                     <label class="lembrar" for="lembrar">Lembre de mim</label>
                 </div> -->
             
-                <a href="">Esqueceu a senha?</a>
+                <a href="<?= URL_BASE ?>/esqueci-senha">Esqueceu a senha?</a> <!--Adicionar redirecionamento pra envio de email de recuperação -->
             
             </form>
         </div>

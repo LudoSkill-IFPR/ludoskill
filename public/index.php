@@ -14,6 +14,8 @@ $router->get('/login', 'HomepageController@login');
 $router->post('/logar', 'AutenticacaoController@logar');
 $router->post('/logout', 'AutenticacaoController@logout');
 $router->get('/logout', 'AutenticacaoController@logout');
+$router->get('/esqueci-senha', 'AutenticacaoController@esqueciSenha');
+$router->post('/recuperar-senha', 'AutenticacaoController@recuperarSenha');
 $router->get('/perfil', 'UsuarioController@perfil');
 $router->get('/perfil/editar', 'UsuarioController@editarPerfil');
 $router->post('/perfil/atualizar', 'UsuarioController@atualizarPerfil');
