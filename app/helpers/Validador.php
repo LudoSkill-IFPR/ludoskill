@@ -422,4 +422,51 @@ class Validador {
 
         return $erros;
     }
+
+    public static function validarSolicitacaoAcesso(array $data): array
+    {
+        $erros = [];
+
+        foreach (['nome_completo' => 'nome completo', 'empresa_nome' => 'nome da empresa'] as $campo => $rotulo) {
+            if (trim((string) ($data[$campo] ?? '')) === '') {
+                $erros[$campo] = "O campo {$rotulo} é obrigatório.";
+            } elseif (strlen((string) $data[$campo]) > 255) {
+                $erros[$campo] = "O campo {$rotulo} deve ter no máximo 255 caracteres.";
+            }
+        }
+
+        $dataNascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', (string) ($data['data_nascimento'] ?? ''));
+        if (!$dataNascimento || $dataNascimento->format('Y-m-d') !== ($data['data_nascimento'] ?? '') || $dataNascimento > new \DateTimeImmutable('today')) {
+            $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
+        }
+
+        if (!preg_match('/^\d{11}$/', (string) ($data['cpf'] ?? ''))) {
+            $erros['cpf'] = 'O CPF deve possuir exatamente 11 dígitos.';
+        }
+        if (!preg_match('/^\d{14}$/', (string) ($data['empresa_cnpj'] ?? ''))) {
+            $erros['empresa_cnpj'] = 'O CNPJ deve possuir exatamente 14 dígitos.';
+        }
+
+        foreach (['email' => 'e-mail do gestor', 'empresa_email' => 'e-mail da empresa'] as $campo => $rotulo) {
+            $valor = trim((string) ($data[$campo] ?? ''));
+            if (!filter_var($valor, FILTER_VALIDATE_EMAIL)) {
+                $erros[$campo] = "Informe um {$rotulo} válido.";
+            } elseif (strlen($valor) > 255) {
+                $erros[$campo] = "O {$rotulo} deve ter no máximo 255 caracteres.";
+            }
+        }
+
+        $telefone = trim((string) ($data['numero_telefone'] ?? ''));
+        if ($telefone === '') {
+            $erros['numero_telefone'] = 'O número de telefone é obrigatório.';
+        } elseif (strlen($telefone) > 20) {
+            $erros['numero_telefone'] = 'O número de telefone deve ter no máximo 20 caracteres.';
+        }
+
+        if (strlen((string) ($data['mensagem'] ?? '')) > 1000) {
+            $erros['mensagem'] = 'A mensagem deve ter no máximo 1000 caracteres.';
+        }
+
+        return $erros;
+    }
 }

@@ -13,9 +13,12 @@ $router->get('/sobreNos', 'HomepageController@sobreNos');
 $router->get('/login', 'HomepageController@login');
 $router->post('/logar', 'AutenticacaoController@logar');
 $router->post('/logout', 'AutenticacaoController@logout');
-$router->get('/logout', 'AutenticacaoController@logout');
 $router->get('/esqueci-senha', 'AutenticacaoController@esqueciSenha');
 $router->post('/recuperar-senha', 'AutenticacaoController@recuperarSenha');
+$router->get('/gerar-nova-senha', 'AutenticacaoController@gerarNovaSenha');
+$router->post('/redefinir-senha', 'AutenticacaoController@redefinirSenha');
+$router->get('/solicitar-acesso', 'SolicitacaoAcessoController@criar');
+$router->post('/solicitar-acesso/enviar', 'SolicitacaoAcessoController@salvar');
 $router->get('/perfil', 'UsuarioController@perfil');
 $router->get('/perfil/editar', 'UsuarioController@editarPerfil');
 $router->post('/perfil/atualizar', 'UsuarioController@atualizarPerfil');
@@ -57,6 +60,11 @@ $router->post('/administrador/gestores/atualizar', 'GestorController@atualizar')
 $router->post('/administrador/gestores/desativar', 'GestorController@desativar');
 $router->post('/administrador/gestores/ativar', 'GestorController@ativar');
 $router->post('/administrador/gestores/excluir', 'GestorController@excluir');
+
+//solicitações de acesso de gestores
+$router->get('/administrador/solicitacoes-acesso', 'SolicitacaoAcessoController@listar');
+$router->post('/administrador/solicitacoes-acesso/aprovar', 'SolicitacaoAcessoController@aprovar');
+$router->post('/administrador/solicitacoes-acesso/recusar', 'SolicitacaoAcessoController@recusar');
 
 //atividades
 $router->get('/administrador/atividades', 'AtividadeController@listarTodos');

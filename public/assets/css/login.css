@@ -63,3 +63,36 @@ label.lembrar{
 h1{
     margin-bottom: 30px;
 }
+
+.texto-apoio{
+    width: 90%;
+    margin: -15px 0 15px;
+    text-align: center;
+}
+
+.alerta{
+    width: 90%;
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.alerta.erro,
+#erro{
+    color: #fff;
+    background: rgba(227, 42, 51, 0.72);
+}
+
+.alerta.sucesso{
+    color: #fff;
+    background: rgba(9, 112, 75, 0.82);
+}
+
+.recuperacao-invalida{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+}

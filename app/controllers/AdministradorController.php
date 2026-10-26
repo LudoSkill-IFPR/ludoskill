@@ -8,6 +8,7 @@ use app\services\GestorService;
 use app\services\ModuloService;
 use app\services\EmpresaService;
 use app\services\ItemService;
+use app\services\SolicitacaoAcessoService;
 
 class AdministradorController extends UsuarioController
 {
@@ -19,11 +20,13 @@ class AdministradorController extends UsuarioController
         $moduloService = new ModuloService();
         $empresaService = new EmpresaService();
         $itemService = new ItemService();
+        $solicitacaoService = new SolicitacaoAcessoService();
 
         $quantidadeGestores = $gestorService->countGestores();
         $quantidadeModulos = $moduloService->countModulos();
         $quantidadeEmpresas = $empresaService->countEmpresas();
         $quantidadeItens = $itemService->countItens();
+        $quantidadeSolicitacoes = $solicitacaoService->countPendentes();
         $empresasComQuantidadeUsuarios = $empresaService->getEmpresasComQuantidadeUsuarios();
 
         $this->view('administrador/inicial', [
@@ -31,7 +34,8 @@ class AdministradorController extends UsuarioController
             'quantidadeGestores' => $quantidadeGestores,
             'quantidadeModulos' => $quantidadeModulos,
             'quantidadeEmpresas' => $quantidadeEmpresas,
-            'quantidadeItens' => $quantidadeItens
+            'quantidadeItens' => $quantidadeItens,
+            'quantidadeSolicitacoes' => $quantidadeSolicitacoes
         ]);
     }
 }

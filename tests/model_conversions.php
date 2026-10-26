@@ -13,6 +13,7 @@ use app\models\Inventario;
 use app\models\Item;
 use app\models\Modulo;
 use app\models\Usuario;
+use app\models\SolicitacaoAcesso;
 
 $usuario = [
     'id_usuario' => 1,
@@ -37,6 +38,16 @@ $casos = [
     Item::arrayParaObjeto(['id_item' => 1, 'estado' => "\x01", 'nome' => 'Item', 'tipo' => 'TEMA', 'preco' => 10]),
     Inventario::arrayParaObjeto(['id_inventario' => 1, 'id_funcionario' => 1, 'id_item' => 1, 'estado' => "\x01", 'nome' => 'Item', 'tipo' => 'TEMA', 'preco' => 10, 'em_uso' => "\x01"]),
     FuncionarioAtividade::arrayParaObjeto(['id_funcionario_atividade' => 1, 'id_funcionario' => 1, 'id_atividade' => 1, 'estado' => 'INICIADO']),
+    SolicitacaoAcesso::arrayParaObjeto([
+        'id_solicitacao' => 1,
+        'nome_completo' => 'Gestor solicitado',
+        'data_nascimento' => '1990-01-01',
+        'CPF' => '99988877766',
+        'email' => 'solicitante@example.com',
+        'empresa_nome' => 'Empresa solicitante',
+        'empresa_cnpj' => '12345678000199',
+        'empresa_email' => 'empresa@example.com',
+    ]),
 ];
 
 foreach ($casos as $objeto) {

@@ -45,6 +45,11 @@
                     <h3><i class="bi bi-tags-fill"></i><a href="<?= URL_BASE ?>/administrador/itens/">Itens cadastrados</a></h3>
                     <p><?= $quantidadeItens ?></p>
                 </div>
+
+                <div class="card">
+                    <h3><i class="bi bi-envelope-paper-fill"></i><a href="<?= URL_BASE ?>/administrador/solicitacoes-acesso"> Solicitações de acesso</a></h3>
+                    <p><?= $quantidadeSolicitacoes ?></p>
+                </div>
             </section>
 
             <section class="grafico">

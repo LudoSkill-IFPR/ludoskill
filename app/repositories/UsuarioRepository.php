@@ -82,4 +82,12 @@ class UsuarioRepository{
         return $stm->execute($dados);
     }
 
+    public function updateSenha(int $idUsuario, string $senhaHash): bool
+    {
+        $stm = $this->connection->prepare(
+            'UPDATE Usuarios SET senha_hash = :senha WHERE id_usuario = :id'
+        );
+        return $stm->execute(['senha' => $senhaHash, 'id' => $idUsuario]);
+    }
+
 }

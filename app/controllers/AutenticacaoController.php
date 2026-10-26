@@ -81,107 +81,126 @@ class AutenticacaoController extends Controller
 
     public function esqueciSenha()
     {
-
         $this->view('entrada/esqueciSenha');
     }
 
     public function recuperarSenha()
     {
-
         $email = trim($_POST['email'] ?? '');
 
-        if (empty($email)) {
-            $data['erro'] = 'Por favor, insira um endereço de e-mail.';
-            $this->view('entrada/esqueciSenha', $data);
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->view('entrada/esqueciSenha', [
+                'erro' => 'Informe um endereço de e-mail válido.',
+                'email' => $email,
+            ]);
             return;
         }
 
         $usuario = $this->usuarioService->getUsuarioByEmail($email);
+        if ($usuario) {
+            $token = bin2hex(random_bytes(32));
+            $_SESSION['recuperacoes_senha'][$token] = [
+                'id_usuario' => $usuario->getId(),
+                'email' => $usuario->getEmail(),
+                'expira_em' => time() + 1800,
+            ];
 
-        if (!$usuario) {
-            $data['erro'] = 'Não encontramos um usuário com esse e-mail.';
-            $this->view('entrada/esqueciSenha', $data);
-            return;
+            $link = APP_URL . '/gerar-nova-senha?token=' . rawurlencode($token);
+            $nome = htmlspecialchars($usuario->getNomeCompleto(), ENT_QUOTES, 'UTF-8');
+            $linkSeguro = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
+            $mensagem = "<h2>Recuperação de senha</h2>"
+                . "<p>Olá, {$nome}.</p>"
+                . '<p>Recebemos uma solicitação para redefinir sua senha no LudoSkill.</p>'
+                . "<p><a href=\"{$linkSeguro}\">Criar uma nova senha</a></p>"
+                . '<p>O link expira em 30 minutos. Se você não fez essa solicitação, ignore este e-mail.</p>';
+
+            if (!$this->sendMailHelper->sendMail($usuario->getEmail(), 'Recuperação de senha - LudoSkill', $mensagem)) {
+                unset($_SESSION['recuperacoes_senha'][$token]);
+                $this->view('entrada/esqueciSenha', [
+                    'erro' => 'Não foi possível enviar o e-mail agora. Tente novamente mais tarde.',
+                    'email' => $email,
+                ]);
+                return;
+            }
         }
 
-        // Aqui você pode implementar a lógica para enviar um e-mail de recuperação de senha.
-        // Por exemplo, gerar um token, salvar no banco e enviar o link para o usuário
-        $hash = md5(date('d/m/Y H:i:s') . $usuario->getEmail());
-
-        $mensagem = 'Clique no link para redefinir sua senha: <a href="' . URL_BASE . '/gerar-nova-senha?hash=' . $hash . '">Redefinir Senha</a>';
-
-        $this->sendMailHelper->sendMail($email, 'Recuperação de Senha', $mensagem);
-
-
-        $_SESSION[$hash]['email'] = $usuario->getEmail();
-        $_SESSION[$hash]['hash'] = $hash;
-
-
-        
-
-
-        $data['sucesso'] = 'Um e-mail de recuperação de senha foi enviado para ' . htmlspecialchars($email) . '.';
-        $this->view('entrada/esqueciSenha', $data);
-
-
+        $this->view('entrada/esqueciSenha', [
+            'sucesso' => 'Se o e-mail estiver cadastrado, você receberá um link de recuperação válido por 30 minutos.',
+        ]);
     }
 
-    public function gerarNovaSenha(){
-        
-        $hash = $_GET['hash'] ?? '';
+    public function gerarNovaSenha()
+    {
+        $token = (string) ($_GET['token'] ?? '');
+        $recuperacao = $this->recuperacaoValida($token);
 
-        if (empty($hash)) {
-            $data['erro'] = 'Link inválido ou expirado.';
-            $this->view('entrada/gerarNovaSenha', $data);
+        if (!$recuperacao) {
+            $this->view('entrada/gerarNovaSenha', ['erro' => 'Este link é inválido ou expirou.']);
             return;
         }
 
-        if (!isset($_SESSION[$hash])) {
-            $data['erro'] = 'Link inválido ou expirado.';
-            $this->view('entrada/gerarNovaSenha', $data);
-            return;
-        }
-
-        if ($_SESSION[$hash]['hash'] !== $hash) {
-            $data['erro'] = 'Link inválido ou expirado.';
-            $this->view('entrada/gerarNovaSenha', $data);
-            return;
-        }
-
-        $this->view('entrada/gerarNovaSenha', ['email' => $_SESSION[$hash]['email']]);
-
-
+        $this->view('entrada/gerarNovaSenha', [
+            'token' => $token,
+            'email' => $recuperacao['email'],
+        ]);
     }
 
     public function redefinirSenha()
     {
-        $email = $_POST['email'] ?? '';
-        $novaSenha = $_POST['nova_senha'] ?? '';
-        $confirmarSenha = $_POST['confirmar_senha'] ?? '';
+        $token = (string) ($_POST['token'] ?? '');
+        $novaSenha = (string) ($_POST['nova_senha'] ?? '');
+        $confirmarSenha = (string) ($_POST['confirmar_senha'] ?? '');
+        $recuperacao = $this->recuperacaoValida($token);
 
+        if (!$recuperacao) {
+            $this->view('entrada/gerarNovaSenha', ['erro' => 'Este link é inválido ou expirou.']);
+            return;
+        }
 
         if ($novaSenha !== $confirmarSenha) {
-            $data['erro'] = 'As senhas não coincidem.';
-            $this->view('entrada/gerarNovaSenha', ['email' => $_SESSION[$hash]['email'], 'erro' => $data['erro']]);
+            $this->view('entrada/gerarNovaSenha', [
+                'token' => $token,
+                'email' => $recuperacao['email'],
+                'erro' => 'As senhas não coincidem.',
+            ]);
             return;
         }
 
         if (strlen($novaSenha) < 8) {
-            $data['erro'] = 'A senha deve ter pelo menos 8 caracteres.';
-            $this->view('entrada/gerarNovaSenha', ['email' => $_SESSION[$hash]['email'], 'erro' => $data['erro']]);
+            $this->view('entrada/gerarNovaSenha', [
+                'token' => $token,
+                'email' => $recuperacao['email'],
+                'erro' => 'A senha deve ter pelo menos 8 caracteres.',
+            ]);
             return;
         }
 
+        if (!$this->autenticacaoService->redefinirSenha((int) $recuperacao['id_usuario'], $novaSenha)) {
+            $this->view('entrada/gerarNovaSenha', [
+                'token' => $token,
+                'email' => $recuperacao['email'],
+                'erro' => 'Não foi possível redefinir a senha. Tente novamente.',
+            ]);
+            return;
+        }
 
-
-        // Atualiza a senha do usuário
-        $this->autenticacaoService->redefinirSenhaByEmail($email, password_hash($novaSenha, PASSWORD_DEFAULT));
-
-
-        // Remove o hash da sessão após a redefinição da senha
-        unset($_SESSION[$hash]);
-
+        unset($_SESSION['recuperacoes_senha'][$token]);
         $_SESSION['mensagem_sucesso'] = 'Sua senha foi redefinida com sucesso!';
         $this->redirect(URL_BASE . '/login');
+    }
+
+    private function recuperacaoValida(string $token): ?array
+    {
+        if ($token === '' || !preg_match('/^[a-f0-9]{64}$/', $token)) {
+            return null;
+        }
+
+        $recuperacao = $_SESSION['recuperacoes_senha'][$token] ?? null;
+        if (!is_array($recuperacao) || (int) ($recuperacao['expira_em'] ?? 0) < time()) {
+            unset($_SESSION['recuperacoes_senha'][$token]);
+            return null;
+        }
+
+        return $recuperacao;
     }
 }

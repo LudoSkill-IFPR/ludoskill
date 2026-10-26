@@ -20,7 +20,18 @@ if (DEV_ENVIRONMENT == true) {
 define('APP_NAME', 'LudoSkill');
 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
 $scriptDir = preg_replace('#/public$#', '', $scriptDir);
+$scriptDir = in_array($scriptDir, ['.', '/'], true) ? '' : $scriptDir;
 define('URL_BASE', $scriptDir === '/' ? '' : rtrim($scriptDir, '/'));
+
+$urlConfigurada = getenv('APP_URL');
+if ($urlConfigurada !== false && trim($urlConfigurada) !== '') {
+    define('APP_URL', rtrim($urlConfigurada, '/'));
+} else {
+    $httpsAtivo = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $protocolo = $httpsAtivo ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define('APP_URL', $protocolo . '://' . $host . URL_BASE);
+}
 
 define('UPLOAD_PATH', __DIR__ . '/../../public/assets/uploads');
 

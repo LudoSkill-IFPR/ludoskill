@@ -14,6 +14,7 @@ use app\models\Funcionario;
 use app\models\Gestor;
 use app\models\Item;
 use app\models\Modulo;
+use app\models\SolicitacaoAcesso;
 
 set_error_handler(static function (int $severity, string $message, string $file, int $line): never {
     throw new ErrorException($message, 0, $severity, $file, $line);
@@ -27,6 +28,7 @@ $item = new Item(1, 'ATIVO', 'Tema', 'TEMA', 10, 'assets/imagens/imagemTEMA.png'
 $funcionario = new Funcionario(1, 'Funcionário', new DateTimeImmutable('2000-01-01'), '12345678901', 'func@example.com', '', '45999999999', $empresa, 100, 80, 1, 'ATIVO', 1);
 $gestor = new Gestor(2, 'Gestor', new DateTimeImmutable('1990-01-01'), '10987654321', 'gestor@example.com', '', '45999999998', $empresa, 'ATIVO', 1);
 $admin = new Administrador(3, 'Admin', new DateTimeImmutable('1980-01-01'), '11122233344', 'admin@example.com', '', '45999999997', 'ATIVO', 1);
+$solicitacao = new SolicitacaoAcesso(1, 'Solicitante', new DateTimeImmutable('1990-01-01'), '99988877766', 'solicitante@example.com', '45999999996', 'Empresa', '12345678000199', 'empresa@example.com');
 $_SESSION['usuario_logado'] = $funcionario;
 
 $controller = new Controller();
@@ -49,6 +51,10 @@ $casos = [
     ['administrador/itens/item_list', ['lista' => [$item]]],
     ['administrador/itens/item_create', ['item' => ['nome' => 'Item', 'estado' => '1'], 'erros' => ['tipo' => 'Inválido']]],
     ['administrador/itens/item_edit', ['item' => $item]],
+    ['administrador/solicitacoes/solicitacao_list', ['lista' => [$solicitacao], 'mensagem' => null, 'tipoMensagem' => 'sucesso']],
+    ['entrada/esqueciSenha', ['erro' => 'E-mail inválido']],
+    ['entrada/gerarNovaSenha', ['token' => str_repeat('a', 64), 'email' => 'pessoa@example.com']],
+    ['entrada/solicitarAcesso', ['solicitacao' => ['nome_completo' => 'Solicitante'], 'erros' => ['email' => 'Inválido']]],
     ['gestor/funcionarios/funcionario_list', ['lista' => [$funcionario]]],
     ['gestor/funcionarios/funcionario_create', ['funcionario' => ['nome_completo' => 'Funcionário'], 'erros' => ['email' => 'Inválido']]],
     ['gestor/funcionarios/funcionario_edit', ['funcionario' => $funcionario]],

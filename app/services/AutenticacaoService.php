@@ -61,16 +61,9 @@ class AutenticacaoService
         session_destroy();
     }
 
-    public function redefinirSenhaByEmail(string $email, string $novaSenha): bool
+    public function redefinirSenha(int $idUsuario, string $novaSenha): bool
     {
-        $usuario = $this->usuarioRepository->getUsuarioByEmail($email);
-
-        if (!$usuario) {
-            $this->ultimoErro = 'E-mail não encontrado.';
-            return false;
-        }
-
         $senhaHash = password_hash($novaSenha, PASSWORD_DEFAULT);
-        return $this->usuarioRepository->updateSenha($usuario->getId(), $senhaHash);
+        return $this->usuarioRepository->updateSenha($idUsuario, $senhaHash);
     }
 }

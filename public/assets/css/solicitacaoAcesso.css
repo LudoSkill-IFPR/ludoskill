@@ -1,0 +1,159 @@
+.pagina-solicitacao{
+    display: flex;
+    justify-content: center;
+    padding: 30px 20px 60px;
+}
+
+.formulario-solicitacao{
+    width: min(900px, 100%);
+}
+
+.cabecalho-formulario{
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.cabecalho-formulario h1{
+    margin-bottom: 8px;
+    font-size: clamp(26px, 4vw, 38px);
+}
+
+.formulario-solicitacao fieldset{
+    margin-bottom: 24px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+}
+
+.formulario-solicitacao legend{
+    padding: 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.grade-formulario,
+.dados-solicitacao{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.formgroup label{
+    display: block;
+    margin-bottom: 6px;
+}
+
+.formgroup input,
+.formgroup textarea,
+.form-aprovacao input,
+.form-aprovacao select{
+    width: 100%;
+    padding: 11px 12px;
+    color: #fff;
+    background: rgba(17, 17, 17, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 9px;
+}
+
+.formgroup textarea{
+    min-height: 110px;
+    resize: vertical;
+}
+
+.campo-largo,
+.campo-total{
+    grid-column: 1 / -1;
+}
+
+.erro{
+    display: block;
+    margin-top: 5px;
+    color: #ff9ca1;
+}
+
+.alerta,
+.aviso-administrador{
+    margin: 16px 0;
+    padding: 13px 16px;
+    border-radius: 10px;
+}
+
+.sucesso,
+.aviso-sucesso{
+    background: rgba(9, 112, 75, 0.78);
+}
+
+.aviso-erro{
+    background: rgba(227, 42, 51, 0.72);
+}
+
+.lista-solicitacoes{
+    display: grid;
+    gap: 20px;
+    margin: 24px 0 50px;
+}
+
+.solicitacao-card{
+    width: 100%;
+}
+
+.solicitacao-cabecalho,
+.acoes-solicitacao,
+.form-aprovacao{
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.solicitacao-cabecalho{
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.badge-pendente{ background: #725d13; }
+.badge-aprovada{ background: var(--verde-escurao); }
+.badge-recusada{ background: var(--problema); }
+
+.acoes-solicitacao{
+    justify-content: space-between;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #444;
+}
+
+.form-aprovacao{
+    flex: 1;
+}
+
+.form-aprovacao > div{
+    flex: 1;
+}
+
+.form-aprovacao label{
+    display: block;
+    margin-bottom: 5px;
+}
+
+.resultado-solicitacao{
+    margin-top: 18px;
+    color: #b8ffbd;
+}
+
+@media (max-width: 720px){
+    .grade-formulario,
+    .dados-solicitacao{
+        grid-template-columns: 1fr;
+    }
+
+    .campo-largo,
+    .campo-total{
+        grid-column: auto;
+    }
+
+    .acoes-solicitacao,
+    .form-aprovacao{
+        align-items: stretch;
+        flex-direction: column;
+    }
+}

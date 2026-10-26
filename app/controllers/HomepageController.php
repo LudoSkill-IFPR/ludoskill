@@ -14,6 +14,8 @@ class HomepageController extends Controller{
     }
 
     public function login(){
-        $this->view('entrada/login');
+        $sucesso = $_SESSION['mensagem_sucesso'] ?? null;
+        unset($_SESSION['mensagem_sucesso']);
+        $this->view('entrada/login', ['sucesso' => $sucesso]);
     }
 }

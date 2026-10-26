@@ -21,7 +21,7 @@
 
                 <p>E se aprender a consertar celulares pudesse ser tão envolvente quanto passar de fase em um jogo?<br><br>Conheça o LudoSkill, um sistema que transforma a qualificação de funcionários em uma jornada de aprendizado interativa, com desafios, atividades práticas e recompensas. <br>Aqui, cada etapa é uma oportunidade de desenvolver habilidades, testar conhecimentos e conquistar novas etapas rumo à evolução profissional.<br>Seja você um novo técnico querendo aprimorar suas habilidades ou alguém curioso para descobrir uma nova forma de aprender, o LudoSkill tem um desafio para você!<br>Prepare-se para aprender, jogar e evoluir. Sua próxima fase começa aqui!</p>
 
-                <!-- <a class="botao brilho" href="">Orçamentos</a> -->
+                <a class="botao brilho" href="<?= URL_BASE ?>/solicitar-acesso">Solicitar acesso</a>
             </div>
 
             <div class="container mascote-cena">

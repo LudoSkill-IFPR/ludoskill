@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/geralEntrada.css">
-    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/login.css">
 
     <title>LudoSkill</title>
 </head>
@@ -13,8 +13,8 @@
         <nav>
             <!--volta para a pagina inicial-->
             <a id="homepage" href="<?= URL_BASE ?>" aria-label="Ir para a página inicial">
-                <img id="icone" src="assets/imagens/icone-ludoskill-transparente.png" alt="icone do ludoskill">
-                <img id="logo" src="assets/imagens/logo-ludoskill.png" alt="logo do ludoskill">
+                <img id="icone" src="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png" alt="icone do ludoskill">
+                <img id="logo" src="<?= URL_BASE ?>/assets/imagens/logo-ludoskill.png" alt="logo do ludoskill">
             </a>
 
             <!--decide o tema do site-->
@@ -32,11 +32,14 @@
     <main>
         <div class="card">
             <form action="<?= URL_BASE ?>/logar" method="post">
-                <img id="skillo" src="assets/imagens/icone-ludoskill-transparente.png" alt="">
+                <img id="skillo" src="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png" alt="">
                 <h1>Bem vindo de volta!</h1>
             
                 <?php if (!empty($erro)): ?>
                     <div id="erro" role="alert"><?= htmlspecialchars($erro) ?></div>
+                <?php endif; ?>
+                <?php if (!empty($sucesso)): ?>
+                    <div class="alerta sucesso" role="status"><?= htmlspecialchars($sucesso) ?></div>
                 <?php endif; ?>
             
                 <div class="formgroup">
