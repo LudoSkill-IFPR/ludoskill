@@ -82,10 +82,12 @@ nav{
 }
 
 .dropdown{
-    width: 100px;
+    position: relative;
+    width: 110px;
 }
 
-.dropdown:hover .dropdown-menu{
+.dropdown:hover .dropdown-menu,
+.dropdown:focus-within .dropdown-menu{
     display: block;
 }
 
@@ -97,12 +99,41 @@ nav{
 
     display: none;
     position: absolute;
-    width: inherit;
-    padding: 10px;
+    z-index: 100;
+    top: 100%;
+    right: 0;
+    width: 180px;
+    padding: 8px;
 }
 
-.dropdown-menu a{
-    display: block;
+.dropdown-menu a,
+.dropdown-menu button{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 10px;
+    color: white;
+    font: inherit;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover,
+.dropdown-menu a:focus-visible,
+.dropdown-menu button:focus-visible{
+    color: white;
+    background: var(--verde-escurao);
+    outline: none;
+}
+
+.dropdown-menu form{
+    width: 100%;
+    margin: 0;
 }
 
 main{

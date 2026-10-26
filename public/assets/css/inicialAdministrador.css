@@ -1,17 +1,24 @@
 .infobase{
     width: 100%;
-
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
-    
 }
 
 .infobase .card{
-    width: 300px;
-    height: 100px;
+    width: 100%;
+    min-height: 120px;
+    height: auto;
     margin-top: 20px;
+    overflow: visible;
+}
+
+.infobase .card h3{
+    line-height: 1.35;
+}
+
+.infobase .card p{
+    margin-top: 4px;
 }
 
 .grafico{
@@ -36,4 +43,17 @@
 .card-secundario{
     width: stretch;
     margin-top: 10px;
+}
+
+@media (max-width: 900px){
+    .grafico{
+        height: auto;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    #grafico,
+    #legenda{
+        width: 100%;
+    }
 }
