@@ -4,16 +4,18 @@ namespace app\controllers;
 
 use app\core\Controller;
 use app\models\Funcionario;
+use app\models\Empresa;
 use app\services\FuncionarioService;
 use app\helpers\Validador;
+use app\helpers\SendMailHelper;
 use DateTimeImmutable;
-use app\models\Empresa;
 use app\services\InventarioService;
 use DomainException;
 
 class FuncionarioController extends Controller
 {
     private FuncionarioService $funcionarioService;
+    private SendMailHelper $Mail;
 
     public function inicial()
     {
@@ -34,6 +36,7 @@ class FuncionarioController extends Controller
     public function __construct()
     {
         $this->funcionarioService = new FuncionarioService();
+        $this->Mail = new SendMailHelper();
     }
 
     public function listarTodos()
@@ -49,6 +52,7 @@ class FuncionarioController extends Controller
         $this->gestorRequired();
         $this->getEmpresaIdDoGestor();
         $this->view('gestor/funcionarios/funcionario_create', []);
+
     }
 
     public function salvar()
@@ -90,10 +94,15 @@ class FuncionarioController extends Controller
         );
 
         $this->funcionarioService->saveFuncionario($funcionario);
+
+        $mensagem = "Olá {$dados['nome_completo']},\n\nSeu acesso ao LudoSkill foi criado com sucesso. Você pode fazer login com o e-mail {$dados['email']} e a senha que seu gestor definiu durante o cadastro: {$dados['senha_hash']}\n\nLembre de alterar essa senha assim que fizer o login.\n\nAcesse o sistema em: " . URL_BASE . "\n\nAtenciosamente,\nEquipe LudoSkill";
+
+        $this->Mail->sendMail($dados['email'], 'Acesso ao LudoSkill', $mensagem);
+
         $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
 
-    public function editar()
+    public function editar() //gestor edita funcionario
     {
         $this->gestorRequired();
         $idEmpresa = $this->getEmpresaIdDoGestor();
@@ -109,7 +118,7 @@ class FuncionarioController extends Controller
         $this->view('gestor/funcionarios/funcionario_edit', $data);
     }
 
-    public function funcEditar()
+    public function funcEditar() //editar perfil do funcionario
     {
         $this->funcionarioRequired();
         $id = $_SESSION['usuario_logado']->getId();
