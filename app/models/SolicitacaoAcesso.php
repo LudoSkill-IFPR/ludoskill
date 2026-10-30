@@ -20,8 +20,7 @@ class SolicitacaoAcesso
         private ?\DateTimeImmutable $dataSolicitacao = null,
         private ?\DateTimeImmutable $dataDecisao = null,
         private bool $emailEnviado = false
-    ) {
-    }
+    ) {}
 
     public static function arrayParaObjeto(array $dados): self
     {
@@ -44,19 +43,64 @@ class SolicitacaoAcesso
         );
     }
 
-    public function getId(): int { return $this->id; }
-    public function getNomeCompleto(): string { return $this->nomeCompleto; }
-    public function getDataNascimento(): ?\DateTimeImmutable { return $this->dataNascimento; }
-    public function getCpf(): string { return $this->cpf; }
-    public function getEmail(): string { return $this->email; }
-    public function getNumeroTelefone(): string { return $this->numeroTelefone; }
-    public function getEmpresaNome(): string { return $this->empresaNome; }
-    public function getEmpresaCnpj(): string { return $this->empresaCnpj; }
-    public function getEmpresaEmail(): string { return $this->empresaEmail; }
-    public function getMensagem(): string { return $this->mensagem; }
-    public function getEstado(): string { return $this->estado; }
-    public function getIdGestor(): ?int { return $this->idGestor; }
-    public function getDataSolicitacao(): ?\DateTimeImmutable { return $this->dataSolicitacao; }
-    public function getDataDecisao(): ?\DateTimeImmutable { return $this->dataDecisao; }
-    public function isEmailEnviado(): bool { return $this->emailEnviado; }
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    public function getNomeCompleto(): string
+    {
+        return $this->nomeCompleto;
+    }
+    public function getDataNascimento(): ?\DateTimeImmutable
+    {
+        return $this->dataNascimento;
+    }
+    public function getCpf(): string
+    {
+        return $this->cpf;
+    }
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+    public function getNumeroTelefone(): string
+    {
+        return $this->numeroTelefone;
+    }
+    public function getEmpresaNome(): string
+    {
+        return $this->empresaNome;
+    }
+    public function getEmpresaCnpj(): string
+    {
+        return $this->empresaCnpj;
+    }
+    public function getEmpresaEmail(): string
+    {
+        return $this->empresaEmail;
+    }
+    public function getMensagem(): string
+    {
+        return $this->mensagem;
+    }
+    public function getEstado(): string
+    {
+        return $this->estado;
+    }
+    public function getIdGestor(): ?int
+    {
+        return $this->idGestor;
+    }
+    public function getDataSolicitacao(): ?\DateTimeImmutable
+    {
+        return $this->dataSolicitacao;
+    }
+    public function getDataDecisao(): ?\DateTimeImmutable
+    {
+        return $this->dataDecisao;
+    }
+    public function isEmailEnviado(): bool
+    {
+        return $this->emailEnviado;
+    }
 }
