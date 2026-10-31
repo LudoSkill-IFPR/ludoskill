@@ -193,3 +193,9 @@ O funcionamento é o seguinte:
 7. A atividade passa a contar na taxa de conclusão e libera as próximas atividades. Por não possuir avaliação, ela é desconsiderada no cálculo da média de estrelas.
 
 A conclusão é aceita apenas quando o registro continua sendo do tipo `TEXTO` e não possui exercícios. Essa verificação acontece no controller e novamente dentro da transação do repository.
+
+## 13. Famílias e tamanhos de fonte
+
+A barra do TinyMCE possui os controles `fontfamily` e `fontsize`. O administrador pode escolher entre Arial, Georgia, Times New Roman, Verdana, Tahoma, Trebuchet MS e Courier New, nos tamanhos de 12px a 36px definidos no `TinyMCEHelper`.
+
+O TinyMCE grava essa formatação em elementos `<span>` com estilos. Por isso, o `ConteudoHtmlHelper` permite a tag `<span>` e conserva somente combinações de `font-family` e `font-size` presentes nas listas de valores autorizados. Fontes, tamanhos e demais propriedades CSS que não estejam nessas listas são removidos antes do conteúdo ser salvo e exibido.

@@ -9,9 +9,23 @@ use DOMNode;
 class ConteudoHtmlHelper
 {
     private const TAGS_PERMITIDAS = [
-        'p', 'br', 'h2', 'h3', 'h4', 'strong', 'b', 'em', 'i', 'u', 's',
+        'p', 'br', 'h2', 'h3', 'h4', 'span', 'strong', 'b', 'em', 'i', 'u', 's',
         'ul', 'ol', 'li', 'blockquote', 'a', 'table', 'thead', 'tbody',
         'tr', 'th', 'td', 'hr'
+    ];
+
+    private const FONTES_PERMITIDAS = [
+        'arial,helvetica,sans-serif' => 'Arial, Helvetica, sans-serif',
+        'georgia,serif' => 'Georgia, serif',
+        'timesnewroman,times,serif' => '"Times New Roman", Times, serif',
+        'verdana,geneva,sans-serif' => 'Verdana, Geneva, sans-serif',
+        'tahoma,arial,helvetica,sans-serif' => 'Tahoma, Arial, Helvetica, sans-serif',
+        'trebuchetms,arial,sans-serif' => '"Trebuchet MS", Arial, sans-serif',
+        'couriernew,courier,monospace' => '"Courier New", Courier, monospace',
+    ];
+
+    private const TAMANHOS_FONTE_PERMITIDOS = [
+        '12px', '14px', '16px', '18px', '20px', '24px', '30px', '36px',
     ];
 
     public static function sanitizar(string $html): string
@@ -95,9 +109,10 @@ class ConteudoHtmlHelper
                 $permitido = preg_match('#^(https?://|mailto:|/)#i', $valor) === 1;
             } elseif ($tag === 'a' && $nome === 'title') {
                 $permitido = true;
-            } elseif ($nome === 'style' && in_array($tag, ['p', 'h2', 'h3', 'h4'], true)) {
-                if (preg_match('/(?:^|;)\s*text-align:\s*(left|center|right|justify)\s*(?:;|$)/i', $valor, $resultado)) {
-                    $elemento->setAttribute('style', 'text-align: ' . strtolower($resultado[1]) . ';');
+            } elseif ($nome === 'style') {
+                $estiloSeguro = self::sanitizarEstilo($tag, $valor);
+                if ($estiloSeguro !== '') {
+                    $elemento->setAttribute('style', $estiloSeguro);
                     $permitido = true;
                 }
             } elseif (in_array($tag, ['th', 'td'], true) && in_array($nome, ['colspan', 'rowspan'], true)) {
@@ -110,5 +125,41 @@ class ConteudoHtmlHelper
         if ($tag === 'a' && $elemento->hasAttribute('href')) {
             $elemento->setAttribute('rel', 'noopener noreferrer');
         }
+    }
+
+    private static function sanitizarEstilo(string $tag, string $estilo): string
+    {
+        $declaracoesSeguras = [];
+
+        foreach (explode(';', $estilo) as $declaracao) {
+            if (!str_contains($declaracao, ':')) continue;
+
+            [$propriedade, $valor] = array_map('trim', explode(':', $declaracao, 2));
+            $propriedade = strtolower($propriedade);
+
+            if ($propriedade === 'text-align' && in_array($tag, ['p', 'h2', 'h3', 'h4'], true)) {
+                $alinhamento = strtolower($valor);
+                if (in_array($alinhamento, ['left', 'center', 'right', 'justify'], true)) {
+                    $declaracoesSeguras['text-align'] = 'text-align: ' . $alinhamento . ';';
+                }
+                continue;
+            }
+
+            if (!in_array($tag, ['span', 'p', 'h2', 'h3', 'h4'], true)) continue;
+
+            if ($propriedade === 'font-family') {
+                $chaveFonte = strtolower(preg_replace('/[\s\'\"]+/u', '', $valor) ?? '');
+                if (isset(self::FONTES_PERMITIDAS[$chaveFonte])) {
+                    $declaracoesSeguras['font-family'] = 'font-family: ' . self::FONTES_PERMITIDAS[$chaveFonte] . ';';
+                }
+            } elseif ($propriedade === 'font-size') {
+                $tamanho = strtolower($valor);
+                if (in_array($tamanho, self::TAMANHOS_FONTE_PERMITIDOS, true)) {
+                    $declaracoesSeguras['font-size'] = 'font-size: ' . $tamanho . ';';
+                }
+            }
+        }
+
+        return implode(' ', $declaracoesSeguras);
     }
 }
