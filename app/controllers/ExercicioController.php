@@ -45,7 +45,7 @@ class ExercicioController extends Controller{
      */
     public function criar(){
         $this->adminRequired();
-        $this->view('administrador/exercicios/exercicio_create', ['atividades' => $this->atividadeService->getAtividades()]);
+        $this->view('administrador/exercicios/exercicio_create', ['atividades' => $this->getAtividadesComExercicios()]);
     }
 
     /**
@@ -62,12 +62,19 @@ class ExercicioController extends Controller{
         $questoes = $this->normalizarQuestoes($dados['questoes'] ?? []);
         $dados['conteudo'] = json_encode($questoes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $erros = Validador::validarExercicio($dados);
-        if (empty($erros['atividade_id']) && !$this->atividadeService->getAtividadeById((int) $dados['atividade_id'])) $erros['atividade_id'] = 'A atividade selecionada não existe.';
+        if (empty($erros['atividade_id'])) {
+            $atividadeSelecionada = $this->atividadeService->getAtividadeById((int) $dados['atividade_id']);
+            if (!$atividadeSelecionada) {
+                $erros['atividade_id'] = 'A atividade selecionada não existe.';
+            } elseif ($atividadeSelecionada->getTipoAtividade() === 'TEXTO') {
+                $erros['atividade_id'] = 'Atividades do tipo Texto não podem possuir exercícios.';
+            }
+        }
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['exercicio'] = $dados;
             $data['questoes'] = $questoes;
-            $data['atividades'] = $this->atividadeService->getAtividades();
+            $data['atividades'] = $this->getAtividadesComExercicios();
             $this->view('administrador/exercicios/exercicio_create', $data);
             return;
         }
@@ -100,7 +107,7 @@ class ExercicioController extends Controller{
         $data['exercicio'] = $this->exercicioService->getExercicioById($id);
         if (!$data['exercicio']) $this->redirect(URL_BASE . '/administrador/exercicios');
         $data['questoes'] = $this->decodificarConteudo($data['exercicio']->getConteudo());
-        $data['atividades'] = $this->atividadeService->getAtividades();
+        $data['atividades'] = $this->getAtividadesComExercicios();
         $this->view('administrador/exercicios/exercicio_edit', $data);
     }
 
@@ -137,12 +144,19 @@ class ExercicioController extends Controller{
         $questoes = $this->normalizarQuestoes($dados['questoes'] ?? []);
         $dados['conteudo'] = json_encode($questoes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $erros = Validador::validarExercicio($dados);
-        if (empty($erros['atividade_id']) && !$this->atividadeService->getAtividadeById((int) $dados['atividade_id'])) $erros['atividade_id'] = 'A atividade selecionada não existe.';
+        if (empty($erros['atividade_id'])) {
+            $atividadeSelecionada = $this->atividadeService->getAtividadeById((int) $dados['atividade_id']);
+            if (!$atividadeSelecionada) {
+                $erros['atividade_id'] = 'A atividade selecionada não existe.';
+            } elseif ($atividadeSelecionada->getTipoAtividade() === 'TEXTO') {
+                $erros['atividade_id'] = 'Atividades do tipo Texto não podem possuir exercícios.';
+            }
+        }
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['exercicio'] = $dados;
             $data['questoes'] = $questoes;
-            $data['atividades'] = $this->atividadeService->getAtividades();
+            $data['atividades'] = $this->getAtividadesComExercicios();
             $this->view('administrador/exercicios/exercicio_edit', $data);
             return;
         }
@@ -178,8 +192,14 @@ class ExercicioController extends Controller{
         if (!$atividade || !$this->funcionarioAtividadeService->podeAcessarAtividade($_SESSION['usuario_logado']->getId(), $idAtividade)) {
             $this->redirect(URL_BASE . '/funcionario/modulos');
         }
+        if ($atividade->getTipoAtividade() === 'TEXTO') {
+            $this->redirect(URL_BASE . '/funcionario/atividades/conteudo?id=' . $idAtividade);
+        }
 
         $exercicios = $this->montarExerciciosDaAtividade($idAtividade);
+        if (empty($exercicios)) {
+            $this->redirect(URL_BASE . '/funcionario/atividades/conteudo?id=' . $idAtividade);
+        }
         $_SESSION['atividade_inicio'][$idAtividade] = microtime(true);
         $this->funcionarioAtividadeService->iniciarAtividade($_SESSION['usuario_logado']->getId(), $idAtividade);
 
@@ -207,6 +227,9 @@ class ExercicioController extends Controller{
         $atividade = $this->atividadeService->getAtividadeById($idAtividade);
         if (!$atividade || !$this->funcionarioAtividadeService->podeAcessarAtividade($_SESSION['usuario_logado']->getId(), $idAtividade)) {
             $this->redirect(URL_BASE . '/funcionario/modulos');
+        }
+        if ($atividade->getTipoAtividade() === 'TEXTO') {
+            $this->redirect(URL_BASE . '/funcionario/atividades/conteudo?id=' . $idAtividade);
         }
 
         $exercicios = $this->montarExerciciosDaAtividade($idAtividade);
@@ -292,6 +315,16 @@ class ExercicioController extends Controller{
             ];
         }
         return $exercicios;
+    }
+
+    /**
+     * Lista apenas atividades que aceitam exercícios no formulário administrativo.
+     */
+    private function getAtividadesComExercicios(): array {
+        return array_values(array_filter(
+            $this->atividadeService->getAtividades(),
+            static fn(Atividade $atividade): bool => $atividade->getTipoAtividade() !== 'TEXTO'
+        ));
     }
 
     /**

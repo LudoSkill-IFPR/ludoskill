@@ -38,6 +38,11 @@ class FuncionarioAtividadeService
         $this->repository->iniciarAtividade($idUsuario, $idAtividade);
     }
 
+    public function concluirAtividadeTexto(int $idUsuario, int $idAtividade, float $tempoExecucao): void
+    {
+        $this->repository->concluirAtividadeTexto($idUsuario, $idAtividade, $tempoExecucao);
+    }
+
     public function getResumoByUsuario(int $idUsuario): array { return $this->repository->getResumoByUsuario($idUsuario); }
     public function getProximaAtividade(int $idUsuario): ?\app\models\Atividade { return $this->repository->getProximaAtividade($idUsuario); }
 

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/login.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
 
     <title>LudoSkill</title>
 </head>
@@ -48,20 +50,36 @@
                 </div>
                 <div class="formgroup">
                     <label for="senha">Senha:</label>
-                    <input class="botao" type="password" name="senha" id="senha" placeholder="euAMObolotas123!" autocomplete="current-password" required>
+                    <div class="senha-container">
+                        <input class="botao" type="password" name="senha" id="senha" placeholder="euAMObolotas123!" autocomplete="current-password" required>
+                        <button type="button" id="toggleSenha" aria-label="Mostrar senha"><i class="bi bi-eye"></i></button>
+                    </div>
                 </div>
 
                 <button class="botao brilho" type="submit">Entrar</button>
-            
-                <!-- <div class="formgroup">
-                    <input class="lembrar" type="checkbox" name="lembrar">
-                    <label class="lembrar" for="lembrar">Lembre de mim</label>
-                </div> -->
+
             
                 <a href="<?= URL_BASE ?>/esqueci-senha">Esqueceu a senha?</a> <!--Adicionar redirecionamento pra envio de email de recuperação -->
             
             </form>
         </div>
     </main>
+
+    <script>
+
+        const toggleSenhaButton = document.getElementById('toggleSenha')
+        const senhaInput = document.getElementById('senha')
+
+        toggleSenhaButton.addEventListener('click', function () {
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text'
+                toggleSenhaButton.innerHTML = '<i class="bi bi-eye-slash"></i>'
+            } else {
+                senhaInput.type = 'password'
+                toggleSenhaButton.innerHTML = '<i class="bi bi-eye"></i>'
+            }
+        })
+
+    </script>
 </body>
 </html>

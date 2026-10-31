@@ -73,6 +73,8 @@ $router->get('/administrador/atividades/editar', 'AtividadeController@editar');
 $router->post('/administrador/atividades/salvar', 'AtividadeController@salvar');
 $router->post('/administrador/atividades/atualizar', 'AtividadeController@atualizar');
 $router->post('/administrador/atividades/excluir', 'AtividadeController@excluir');
+$router->get('/funcionario/atividades/conteudo', 'AtividadeController@visualizarFuncionario');
+$router->post('/funcionario/atividades/concluir-texto', 'AtividadeController@concluirTexto');
 
 //exercícios
 $router->get('/administrador/exercicios', 'ExercicioController@listarTodos');

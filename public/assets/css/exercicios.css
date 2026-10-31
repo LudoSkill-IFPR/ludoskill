@@ -184,3 +184,71 @@
 @media (max-width: 650px) {
     .atividade-modulo { align-items: flex-start; flex-direction: column; }
 }
+
+.pagina-conteudo-atividade {
+    width: min(900px, 90%);
+    padding-bottom: 50px;
+}
+
+.pagina-conteudo-atividade #topo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.conteudo-atividade {
+    width: 100%;
+    margin-top: 24px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.conteudo-atividade h2,
+.conteudo-atividade h3,
+.conteudo-atividade h4,
+.conteudo-atividade p,
+.conteudo-atividade ul,
+.conteudo-atividade ol,
+.conteudo-atividade blockquote,
+.conteudo-atividade table {
+    margin-bottom: 16px;
+}
+
+.conteudo-atividade ul,
+.conteudo-atividade ol {
+    padding-left: 28px;
+}
+
+.conteudo-atividade a {
+    color: var(--verde-claro);
+    text-decoration: underline;
+}
+
+.conteudo-atividade blockquote {
+    padding: 12px 16px;
+    border-left: 4px solid var(--verde-escuro);
+    background: var(--cinza-ultraescuro);
+}
+
+.conteudo-atividade table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.conteudo-atividade th,
+.conteudo-atividade td {
+    padding: 10px;
+    border: 1px solid var(--cinza-escuro);
+    text-align: left;
+}
+
+.acoes-conteudo-atividade {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.acoes-conteudo-atividade .botao {
+    width: auto;
+    min-width: 150px;
+}

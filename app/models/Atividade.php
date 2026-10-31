@@ -10,6 +10,7 @@ class Atividade {
     private string $estado;
     private int $ordem;
     private int $tempoLimite;
+    private string $descricao;
 
     public function __construct(
         int $id = 0,
@@ -18,7 +19,8 @@ class Atividade {
         string $nome = '',
         string $estado = 'ATIVO',
         int $ordem = 1,
-        int $tempoLimite = 180
+        int $tempoLimite = 180,
+        string $descricao = ''
     ) {
         $this->id = $id;
         $this->modulo = $modulo ?? new Modulo();
@@ -27,6 +29,7 @@ class Atividade {
         $this->estado = $estado;
         $this->ordem = $ordem;
         $this->tempoLimite = $tempoLimite;
+        $this->descricao = $descricao;
     }
 
     /**
@@ -43,7 +46,8 @@ class Atividade {
             $atividade['nome'] ?? '',
             $atividade['estado'] ?? 'ATIVO',
             (int) ($atividade['ordem'] ?? 1),
-            (int) ($atividade['tempo_limite'] ?? 180)
+            (int) ($atividade['tempo_limite'] ?? 180),
+            (string) ($atividade['descricao'] ?? '')
         );
     }
     
@@ -156,6 +160,17 @@ class Atividade {
     public function setTempoLimite(int $tempoLimite): self
     {
         $this->tempoLimite = $tempoLimite;
+        return $this;
+    }
+
+    public function getDescricao(): string
+    {
+        return $this->descricao;
+    }
+
+    public function setDescricao(string $descricao): self
+    {
+        $this->descricao = $descricao;
         return $this;
     }
 }

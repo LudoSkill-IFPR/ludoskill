@@ -52,7 +52,7 @@
                         <?php if ($proximaAtividade): ?>
                             <h3>Atividade <?= $proximaAtividade->getOrdem() ?></h3>
                             <p><?= htmlspecialchars($proximaAtividade->getNome()) ?></p>
-                            <a href="<?= URL_BASE ?>/funcionario/atividades/exercicios?id=<?= $proximaAtividade->getId() ?>" class="botao brilho">Iniciar</a>
+                            <a href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $proximaAtividade->getId() ?>" class="botao brilho">Iniciar</a>
                         <?php else: ?><p>Você concluiu todas as atividades liberadas.</p><?php endif; ?>
                     </div>
                 </div>

@@ -50,6 +50,23 @@ button{
     width: 90%;
 }
 
+.senha-container {
+    display: flex;
+    flex-direction: row;
+}
+
+#senha {
+    width: 100%;
+    padding-right: 10px; /* Espaço para o ícone */
+}
+
+#toggleSenha {
+    width: 30px;
+    margin: 3px;
+    background: none;
+    color: inherit;
+}
+
 label.lembrar{
     display: inline-block;
     margin-bottom: 30px;

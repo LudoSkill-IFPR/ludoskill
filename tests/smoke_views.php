@@ -22,7 +22,8 @@ set_error_handler(static function (int $severity, string $message, string $file,
 
 $empresa = new Empresa(1, '12345678000199', 'Empresa', 'empresa@example.com');
 $modulo = new Modulo(1, 'Módulo', str_repeat('Descrição ', 4), 0, 'ATIVO');
-$atividade = new Atividade(1, $modulo, 'INTRODUCAO', 'Atividade', 'ATIVO', 1, 180);
+$atividade = new Atividade(1, $modulo, 'INTRODUCAO', 'Atividade', 'ATIVO', 1, 180, '<h2>Introdução</h2><p>Conteúdo da atividade.</p>');
+$atividadeTexto = new Atividade(2, $modulo, 'TEXTO', 'Leitura', 'ATIVO', 2, 180, '<p>Conteúdo somente para leitura.</p>');
 $exercicio = new Exercicio(1, 'Conjunto', '[{"enunciado":"Questão?","alternativas":["A","B"],"alternativa_correta":0,"justificativa":"Justificativa"}]', $atividade);
 $item = new Item(1, 'ATIVO', 'Tema', 'TEMA', 10, 'assets/imagens/imagemTEMA.png');
 $funcionario = new Funcionario(1, 'Funcionário', new DateTimeImmutable('2000-01-01'), '12345678901', 'func@example.com', '', '45999999999', $empresa, 100, 80, 1, 'ATIVO', 1);
@@ -40,7 +41,7 @@ $casos = [
     ['administrador/modulos/modulo_create', ['modulo' => ['nome' => 'Módulo'], 'erros' => ['descricao' => 'Inválida']]],
     ['administrador/modulos/modulo_edit', ['modulo' => $modulo]],
     ['administrador/atividades/atividade_list', ['lista' => [$atividade]]],
-    ['administrador/atividades/atividade_create', ['atividade' => ['nome' => 'Atividade'], 'modulos' => [$modulo], 'erros' => ['ordem' => 'Inválida']]],
+    ['administrador/atividades/atividade_create', ['atividade' => ['nome' => 'Atividade', 'descricao' => '<p>Conteúdo</p>'], 'modulos' => [$modulo], 'erros' => ['ordem' => 'Inválida']]],
     ['administrador/atividades/atividade_edit', ['atividade' => $atividade, 'modulos' => [$modulo]]],
     ['administrador/exercicios/exercicio_list', ['lista' => [$exercicio]]],
     ['administrador/exercicios/exercicio_create', ['exercicio' => ['descricao' => 'Conjunto', 'atividade_id' => 1], 'questoes' => json_decode($exercicio->getConteudo(), true), 'atividades' => [$atividade], 'erros' => ['conteudo' => 'Inválido']]],
@@ -62,6 +63,8 @@ $casos = [
     ['funcionario/inicial', ['funcionario' => $funcionario, 'inventario' => [], 'resumo' => ['desempenho' => 2, 'concluidas' => 1, 'total' => 2], 'proximaAtividade' => $atividade, 'mensagem' => null, 'erro' => null]],
     ['funcionario/loja', ['funcionario' => $funcionario, 'inventario' => [], 'lista' => [$item], 'mensagem' => null, 'erro' => null]],
     ['funcionario/modulos', ['lista' => [['entidade' => $modulo, 'atividades' => [['entidade' => $atividade, 'liberada' => true]]]], 'resultados' => []]],
+    ['funcionario/atividade', ['atividade' => $atividade, 'descricao' => $atividade->getDescricao(), 'temExercicios' => true, 'atividadeTexto' => false, 'concluida' => false]],
+    ['funcionario/atividade', ['atividade' => $atividadeTexto, 'descricao' => $atividadeTexto->getDescricao(), 'temExercicios' => false, 'atividadeTexto' => true, 'concluida' => false]],
     ['funcionario/exercicios', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 1, 'descricao' => 'Conjunto', 'questoes' => json_decode($exercicio->getConteudo(), true)]]]],
     ['usuario/perfil', ['usuario' => $funcionario, 'resumo' => ['concluidas' => 1, 'total' => 2, 'estrelas' => 2, 'desempenho' => 2]]],
     ['usuario/perfil', ['usuario' => $gestor, 'empresa' => $empresa, 'qtdFuncionarios' => 5, 'qtdModulos' => 2, 'taxaConclusao' => 75.0]],

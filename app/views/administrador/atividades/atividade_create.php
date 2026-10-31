@@ -1,9 +1,4 @@
-<?php 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-?>
+<?php use app\helpers\TinyMCEHelper; ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -36,10 +31,17 @@ error_reporting(E_ALL);
                 <?php endforeach; ?>
 
                 <div class="formgroup">
+                    <label for="descricao">Descrição completa:</label>
+                    <textarea id="descricao" name="descricao"><?= htmlspecialchars($atividade['descricao'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+                    <!-- <small>Apresente o conteúdo que será abordado antes dos exercícios.</small> -->
+                    <?php if (isset($erros['descricao'])): ?><div class="erro"><?= htmlspecialchars($erros['descricao']) ?></div><?php endif; ?>
+                </div>
+
+                <div class="formgroup">
                     <label for="tipo_atividade">Tipo de atividade:</label>
                     <select class="card-secundario" id="tipo_atividade" name="tipo_atividade">
                         <option value="">Selecione um tipo</option>
-                        <?php foreach (['INTRODUCAO' => 'Introducao', 'REVISAO' => 'Revisao', 'SIMULACAO' => 'Simulacao'] as $valor => $rotulo): ?>
+                        <?php foreach (['INTRODUCAO' => 'Introdução', 'REVISAO' => 'Revisão', 'SIMULACAO' => 'Simulação', 'TEXTO' => 'Texto'] as $valor => $rotulo): ?>
                             <option value="<?= $valor ?>" <?= ($atividade['tipo_atividade'] ?? '') === $valor ? 'selected' : '' ?>><?= $rotulo ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -75,6 +77,7 @@ error_reporting(E_ALL);
             </form>
         </div>
     </main>
+    <?= TinyMCEHelper::render('#descricao') ?>
 </body>
 
 </html>

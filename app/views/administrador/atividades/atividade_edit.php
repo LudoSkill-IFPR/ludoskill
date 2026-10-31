@@ -1,3 +1,4 @@
+<?php use app\helpers\TinyMCEHelper; ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -29,10 +30,17 @@
                 </div>
 
                 <div class="formgroup">
+                    <label for="descricao">Descrição completa:</label>
+                    <textarea id="descricao" name="descricao"><?= htmlspecialchars($atividade->getDescricao(), ENT_QUOTES, 'UTF-8') ?></textarea>
+                    <!-- <small>Apresente o conteúdo que será abordado antes dos exercícios.</small> -->
+                    <?php if (isset($erros['descricao'])): ?><div class="erro"><?= htmlspecialchars($erros['descricao']) ?></div><?php endif; ?>
+                </div>
+
+                <div class="formgroup">
                     <label for="tipo_atividade">Tipo de atividade:</label>
                     <select class="card-secundario" id="tipo_atividade" name="tipo_atividade">
                         <option value="">Selecione um tipo</option>
-                        <?php foreach (['INTRODUCAO' => 'Introdução', 'REVISAO' => 'Revisão', 'SIMULACAO' => 'Simulação'] as $valor => $rotulo): ?>
+                        <?php foreach (['INTRODUCAO' => 'Introdução', 'REVISAO' => 'Revisão', 'SIMULACAO' => 'Simulação', 'TEXTO' => 'Texto'] as $valor => $rotulo): ?>
                             <option value="<?= $valor ?>" <?= $atividade->getTipoAtividade() === $valor ? 'selected' : '' ?>><?= $rotulo ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -58,5 +66,6 @@
             </form>
         </div>
     </main>
+    <?= TinyMCEHelper::render('#descricao') ?>
 </body>
 </html>

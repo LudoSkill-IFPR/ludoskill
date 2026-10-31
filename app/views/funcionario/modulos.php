@@ -33,13 +33,13 @@
                                         <article class="card-secundario atividade-modulo">
                                             <div>
                                                 <h2><?= htmlspecialchars($atividade->getNome()) ?></h2>
-                                                <p><?= htmlspecialchars($atividade->getTipoAtividade()) ?></p>
+                                                <!-- <p><?= htmlspecialchars($atividade->getTipoAtividade()) ?></p> -->
                                                 <?php if ($resultado): ?>
                                                     <p class="atividade-concluida">Melhor resultado: <?= $resultado->getPontuacaoObtida() ?> pontos · <?= $resultado->getEstrelasObtidas() ?> estrelas · <?= $resultado->getQtdTentativas() ?> tentativa(s)</p>
                                                 <?php endif; ?>
                                             </div>
                                             <?php if ($registroAtividade['liberada']): ?>
-                                                <a class="botao brilho" href="<?= URL_BASE ?>/funcionario/atividades/exercicios?id=<?= $atividade->getId() ?>"><?= $resultado ? 'Refazer exercício' : 'Realizar exercício' ?></a>
+                                                <a class="botao brilho" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>"><?= $resultado ? 'Rever atividade' : 'Ver atividade' ?></a>
                                             <?php else: ?><span class="botao">Bloqueada</span><?php endif; ?>
                                         </article>
                                     <?php endforeach; ?>

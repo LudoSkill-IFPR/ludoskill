@@ -33,7 +33,7 @@ $casos = [
     Gestor::arrayParaObjeto($usuario + ['id_gestor' => 1, 'id_empresa' => 1]),
     Funcionario::arrayParaObjeto($usuario + ['id_funcionario' => 1, 'id_empresa' => 1]),
     Modulo::arrayParaObjeto(['id_modulo' => 1, 'nome' => 'Módulo', 'descricao' => 'Descrição', 'estado' => 'ATIVO']),
-    Atividade::arrayParaObjeto(['id_atividade' => 1, 'id_modulo' => 1, 'tipo_atividade' => 'INTRODUCAO', 'nome' => 'Atividade', 'estado' => 'ATIVO']),
+    Atividade::arrayParaObjeto(['id_atividade' => 1, 'id_modulo' => 1, 'tipo_atividade' => 'INTRODUCAO', 'nome' => 'Atividade', 'descricao' => '<p>Conteúdo da atividade</p>', 'estado' => 'ATIVO']),
     Exercicio::arrayParaObjeto(['id_exercicio' => 1, 'id_atividade' => 1, 'descricao' => 'Exercício', 'conteudo' => '[]']),
     Item::arrayParaObjeto(['id_item' => 1, 'estado' => "\x01", 'nome' => 'Item', 'tipo' => 'TEMA', 'preco' => 10]),
     Inventario::arrayParaObjeto(['id_inventario' => 1, 'id_funcionario' => 1, 'id_item' => 1, 'estado' => "\x01", 'nome' => 'Item', 'tipo' => 'TEMA', 'preco' => 10, 'em_uso' => "\x01"]),

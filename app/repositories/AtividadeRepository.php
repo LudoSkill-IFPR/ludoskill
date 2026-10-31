@@ -48,11 +48,12 @@ class AtividadeRepository{
     }
 
     public function saveAtividade(Atividade $atividade){
-        $sql = "INSERT INTO Atividades (id_modulo, tipo_atividade, nome, estado, ordem, tempo_limite) VALUES (:idModulo, :tipoAtividade, :nome, :estado, :ordem, :tempoLimite)";
+        $sql = "INSERT INTO Atividades (id_modulo, tipo_atividade, nome, descricao, estado, ordem, tempo_limite) VALUES (:idModulo, :tipoAtividade, :nome, :descricao, :estado, :ordem, :tempoLimite)";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('idModulo', $atividade->getModulo()->getId());
         $stm->bindValue('tipoAtividade', $atividade->getTipoAtividade());
         $stm->bindValue('nome', $atividade->getNome());
+        $stm->bindValue('descricao', $atividade->getDescricao());
         $stm->bindValue('estado', $atividade->getEstado());
         $stm->bindValue('ordem', $atividade->getOrdem(), PDO::PARAM_INT);
         $stm->bindValue('tempoLimite', $atividade->getTempoLimite(), PDO::PARAM_INT);
@@ -66,11 +67,12 @@ class AtividadeRepository{
     }
 
     public function updateAtividade(Atividade $atividade){
-        $sql = "UPDATE Atividades SET id_modulo = :idModulo, tipo_atividade = :tipoAtividade, nome = :nome, estado = :estado, ordem = :ordem, tempo_limite = :tempoLimite WHERE id_atividade = :id";
+        $sql = "UPDATE Atividades SET id_modulo = :idModulo, tipo_atividade = :tipoAtividade, nome = :nome, descricao = :descricao, estado = :estado, ordem = :ordem, tempo_limite = :tempoLimite WHERE id_atividade = :id";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('idModulo', $atividade->getModulo()->getId());
         $stm->bindValue('tipoAtividade', $atividade->getTipoAtividade());
         $stm->bindValue('nome', $atividade->getNome());
+        $stm->bindValue('descricao', $atividade->getDescricao());
         $stm->bindValue('estado', $atividade->getEstado());
         $stm->bindValue('ordem', $atividade->getOrdem(), PDO::PARAM_INT);
         $stm->bindValue('tempoLimite', $atividade->getTempoLimite(), PDO::PARAM_INT);

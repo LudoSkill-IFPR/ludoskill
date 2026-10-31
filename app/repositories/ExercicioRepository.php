@@ -63,6 +63,18 @@ class ExercicioRepository {
         return array_map([Exercicio::class, 'arrayParaObjeto'], $stm->fetchAll());
     }
 
+    /**
+     * Verifica de forma econômica se existe ao menos um exercício vinculado à atividade.
+     */
+    public function existeExercicioNaAtividade(int $idAtividade): bool {
+        $stm = $this->connection->prepare(
+            'SELECT 1 FROM Exercicios WHERE id_atividade = :id_atividade LIMIT 1'
+        );
+        $stm->bindValue('id_atividade', $idAtividade, PDO::PARAM_INT);
+        $stm->execute();
+        return $stm->fetchColumn() !== false;
+    }
+
     public function saveExercicio(Exercicio $exercicio){
         $sql = "INSERT INTO Exercicios (id_atividade, descricao, conteudo) VALUES (:id_atividade, :descricao, :conteudo)";
         $stm = $this->connection->prepare($sql);

@@ -397,9 +397,16 @@ class Validador {
             $erros['nome'] = 'O campo nome deve ter no máximo 255 caracteres.';
         }
 
+        $descricaoTexto = ConteudoHtmlHelper::textoPuro((string) ($data['descricao'] ?? ''));
+        if ($descricaoTexto === '') {
+            $erros['descricao'] = 'A descrição completa da atividade é obrigatória.';
+        } elseif (mb_strlen($descricaoTexto) > 100000) {
+            $erros['descricao'] = 'A descrição deve possuir no máximo 100.000 caracteres.';
+        }
+
         if (empty($data['tipo_atividade'])) {
             $erros['tipo_atividade'] = 'O campo tipo de atividade é obrigatório.';
-        } elseif (!in_array($data['tipo_atividade'], ['INTRODUCAO', 'REVISAO', 'SIMULACAO'], true)) {
+        } elseif (!in_array($data['tipo_atividade'], ['INTRODUCAO', 'REVISAO', 'SIMULACAO', 'TEXTO'], true)) {
             $erros['tipo_atividade'] = 'Selecione um tipo de atividade válido.';
         }
 

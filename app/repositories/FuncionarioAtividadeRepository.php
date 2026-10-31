@@ -48,11 +48,12 @@ class FuncionarioAtividadeRepository
     public function getDesempenhoByEmpresa(int $idEmpresa): array
     {
         $sql = "SELECT f.id_funcionario, u.nome_completo,
-                       COALESCE(AVG(CASE WHEN fa.estado = 'CONCLUIDO' THEN fa.estrelas_obtidas END), 0) AS media_estrelas,
+                       COALESCE(AVG(CASE WHEN fa.estado = 'CONCLUIDO' AND a.tipo_atividade <> 'TEXTO' THEN fa.estrelas_obtidas END), 0) AS media_estrelas,
                        COUNT(CASE WHEN fa.estado = 'CONCLUIDO' THEN 1 END) AS atividades_concluidas
                 FROM Funcionarios f
                 INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario
                 LEFT JOIN Funcionario_atividade fa ON fa.id_funcionario = f.id_funcionario
+                LEFT JOIN Atividades a ON a.id_atividade = fa.id_atividade
                 WHERE f.id_empresa = :empresa AND u.estado = 'ATIVO'
                 GROUP BY f.id_funcionario, u.nome_completo
                 ORDER BY media_estrelas DESC, u.nome_completo";
@@ -132,12 +133,78 @@ class FuncionarioAtividadeRepository
         $stm->execute(['funcionario' => $idFuncionario, 'atividade' => $idAtividade]);
     }
 
+    /**
+     * Conclui uma atividade exclusivamente textual sem conceder pontos ou recompensas.
+     */
+    public function concluirAtividadeTexto(int $idUsuario, int $idAtividade, float $tempoExecucao): void
+    {
+        $this->connection->beginTransaction();
+
+        try {
+            $idFuncionario = $this->getFuncionarioIdByUsuario($idUsuario);
+            if ($idFuncionario === null) throw new RuntimeException('Funcionário não encontrado.');
+
+            $stm = $this->connection->prepare(
+                "SELECT a.tipo_atividade,
+                        EXISTS(SELECT 1 FROM Exercicios e WHERE e.id_atividade = a.id_atividade) AS tem_exercicios
+                 FROM Atividades a
+                 WHERE a.id_atividade = :id_atividade
+                 FOR UPDATE"
+            );
+            $stm->execute(['id_atividade' => $idAtividade]);
+            $atividade = $stm->fetch();
+            if (!$atividade || $atividade['tipo_atividade'] !== 'TEXTO' || (bool) $atividade['tem_exercicios']) {
+                throw new RuntimeException('Apenas atividades de texto sem exercícios podem ser concluídas por leitura.');
+            }
+
+            $stm = $this->connection->prepare(
+                'SELECT id_funcionario_atividade, estado
+                 FROM Funcionario_atividade
+                 WHERE id_funcionario = :id_funcionario AND id_atividade = :id_atividade
+                 FOR UPDATE'
+            );
+            $stm->execute([
+                'id_funcionario' => $idFuncionario,
+                'id_atividade' => $idAtividade,
+            ]);
+            $registro = $stm->fetch();
+
+            if ($registro && $registro['estado'] !== 'CONCLUIDO') {
+                $stm = $this->connection->prepare(
+                    "UPDATE Funcionario_atividade
+                     SET estado = 'CONCLUIDO', qtd_tentativas = qtd_tentativas + 1, tempo_execucao = :tempo
+                     WHERE id_funcionario_atividade = :id"
+                );
+                $stm->execute([
+                    'tempo' => $tempoExecucao,
+                    'id' => $registro['id_funcionario_atividade'],
+                ]);
+            } elseif (!$registro) {
+                $stm = $this->connection->prepare(
+                    "INSERT INTO Funcionario_atividade
+                        (id_funcionario, id_atividade, estado, pontuacao_obtida, estrelas_obtidas, bolotas_obtidas, qtd_tentativas, tempo_execucao)
+                     VALUES (:id_funcionario, :id_atividade, 'CONCLUIDO', 0, 0, 0, 1, :tempo)"
+                );
+                $stm->execute([
+                    'id_funcionario' => $idFuncionario,
+                    'id_atividade' => $idAtividade,
+                    'tempo' => $tempoExecucao,
+                ]);
+            }
+
+            $this->connection->commit();
+        } catch (\Throwable $exception) {
+            if ($this->connection->inTransaction()) $this->connection->rollBack();
+            throw $exception;
+        }
+    }
+
     public function getResumoByUsuario(int $idUsuario): array
     {
         $sql = "SELECT COUNT(a.id_atividade) AS total,
                        COUNT(CASE WHEN fa.estado = 'CONCLUIDO' THEN 1 END) AS concluidas,
                        COALESCE(SUM(CASE WHEN fa.estado = 'CONCLUIDO' THEN fa.estrelas_obtidas ELSE 0 END), 0) AS estrelas,
-                       COALESCE(AVG(CASE WHEN fa.estado = 'CONCLUIDO' THEN fa.estrelas_obtidas END), 0) AS desempenho
+                       COALESCE(AVG(CASE WHEN fa.estado = 'CONCLUIDO' AND a.tipo_atividade <> 'TEXTO' THEN fa.estrelas_obtidas END), 0) AS desempenho
                 FROM Atividades a
                 INNER JOIN Modulos m ON m.id_modulo = a.id_modulo AND m.estado = 'ATIVO'
                 LEFT JOIN Funcionarios f ON f.id_usuario = :usuario

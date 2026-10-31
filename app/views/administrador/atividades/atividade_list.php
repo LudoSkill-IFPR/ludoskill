@@ -34,6 +34,7 @@
                             <th>ID</th>
                             <th>Tipo da atividade</th>
                             <th>Nome</th>
+                            <th>Descrição</th>
                             <th>Estado</th>
                             <th>Ordem</th>
                             <th>Tempo limite</th>
@@ -47,6 +48,7 @@
                             <td><?= $atividade->getId() ?></td>
                             <td><?= htmlspecialchars($atividade->getTipoAtividade()) ?></td>
                             <td><?= htmlspecialchars($atividade->getNome()) ?></td>
+                            <td><?= htmlspecialchars(mb_strimwidth(strip_tags($atividade->getDescricao()), 0, 90, '…')) ?></td>
                             <td><?= htmlspecialchars($atividade->getEstado()) ?></td>
                             <td><?= $atividade->getOrdem() ?></td>
                             <td><?= $atividade->getTempoLimite() ?> s</td>
