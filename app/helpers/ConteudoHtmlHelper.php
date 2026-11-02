@@ -28,6 +28,14 @@ class ConteudoHtmlHelper
         '12px', '14px', '16px', '18px', '20px', '24px', '30px', '36px',
     ];
 
+    /*
+      Sanitiza o HTML produzido pelo TinyMCE antes de ele ser salvo ou exibido.
+     
+      O conteúdo é carregado em um DOMDocument dentro de uma div temporária. Em seguida, limparFilhos() percorre toda a árvore para remover elementos, atributos e estilos não autorizados. No final, somente o conteúdo interno da div temporária é convertido novamente para HTML e devolvido.
+     
+      @param string $html HTML original recebido do editor.
+      @return string HTML filtrado e seguro para ser armazenado ou apresentado.
+     */
     public static function sanitizar(string $html): string
     {
         if (trim($html) === '') return '';
@@ -53,6 +61,14 @@ class ConteudoHtmlHelper
         return trim($resultado);
     }
 
+    /*
+      Converte um conteúdo HTML em texto simples para fins de validação.
+     
+      Remove as tags, converte entidades como &amp; e &nbsp; para caracteres comuns e reduz sequências de espaços e quebras de linha a um único espaço. Assim, um HTML visualmente vazio, como <p><br></p>, também é tratado como vazio.
+     
+      @param string $html Conteúdo HTML que será convertido.
+      @return string Texto normalizado, sem tags HTML.
+     */
     public static function textoPuro(string $html): string
     {
         $texto = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -60,6 +76,17 @@ class ConteudoHtmlHelper
         return trim(preg_replace('/\s+/u', ' ', $texto) ?? '');
     }
 
+    /*
+      Percorre recursivamente os filhos de um nó e limpa a estrutura do HTML.
+     
+      Elementos perigosos, como script e iframe, são removidos com todo o seu conteúdo. Tags que não estão na lista permitida são retiradas, mas seus filhos são preservados. Para cada tag aceita, os atributos são filtrados por limparAtributos() e seus nós internos são analisados da mesma maneira.
+      Comentários HTML também são descartados.
+     
+      A variável $proximo é guardada antes de cada remoção para que o percurso continue corretamente mesmo quando a árvore DOM é modificada.
+     
+      @param DOMNode $pai Nó cujos filhos serão examinados.
+      @return void
+     */
     private static function limparFilhos(DOMNode $pai): void
     {
         for ($filho = $pai->firstChild; $filho !== null;) {
@@ -93,6 +120,17 @@ class ConteudoHtmlHelper
         }
     }
 
+    /*
+      Mantém em um elemento somente os atributos considerados seguros.
+     
+      Links aceitam apenas endereços HTTP, HTTPS, mailto ou caminhos internos.
+      O atributo style é reconstruído por sanitizarEstilo(), e células de tabela aceitam colspan e rowspan somente dentro do limite definido. Qualquer outro atributo, incluindo eventos como onclick, é removido. Links válidos recebem rel="noopener noreferrer" para reduzir riscos ao abrir páginas externas.
+     
+      Os nomes dos atributos são copiados antes da remoção porque não é seguro modificar a coleção de atributos enquanto ela está sendo percorrida.
+     
+      @param DOMElement $elemento Elemento cujos atributos serão filtrados.
+      @return void
+     */
     private static function limparAtributos(DOMElement $elemento): void
     {
         $tag = strtolower($elemento->tagName);
@@ -127,6 +165,17 @@ class ConteudoHtmlHelper
         }
     }
 
+    /*
+      Filtra as declarações CSS presentes no atributo style de uma tag.
+     
+      Cada declaração é separada em propriedade e valor. O método permite apenas alinhamentos válidos nos elementos de bloco e fontes ou tamanhos presentes nas listas seguras da classe. As propriedades aprovadas são reconstruídas em um novo atributo style; propriedades desconhecidas são ignoradas.
+     
+      O array usa o nome da propriedade como chave para impedir que uma mesma propriedade seja repetida várias vezes no resultado final.
+     
+      @param string $tag Nome da tag que possui o atributo style.
+      @param string $estilo Conteúdo original do atributo style.
+      @return string CSS filtrado, ou uma string vazia se nada for permitido.
+     */
     private static function sanitizarEstilo(string $tag, string $estilo): string
     {
         $declaracoesSeguras = [];
