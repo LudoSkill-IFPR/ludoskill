@@ -200,12 +200,13 @@ class ExercicioController extends Controller{
         if (empty($exercicios)) {
             $this->redirect(URL_BASE . '/funcionario/atividades/conteudo?id=' . $idAtividade);
         }
-        $_SESSION['atividade_inicio'][$idAtividade] = microtime(true);
+        $_SESSION['atividade_inicio'][$idAtividade] ??= microtime(true);
         $this->funcionarioAtividadeService->iniciarAtividade($_SESSION['usuario_logado']->getId(), $idAtividade);
 
         $this->view('funcionario/exercicios', [
             'atividade' => $atividade,
-            'exercicios' => $exercicios
+            'exercicios' => $exercicios,
+            'tempoRestante' => $this->calcularTempoRestante($atividade, $idAtividade),
         ]);
     }
 
@@ -251,7 +252,8 @@ class ExercicioController extends Controller{
                         'atividade' => $atividade,
                         'exercicios' => $exercicios,
                         'respostas' => $respostas,
-                        'erro' => 'Responda todas as questões antes de finalizar.'
+                        'erro' => 'Responda todas as questões antes de finalizar.',
+                        'tempoRestante' => $this->calcularTempoRestante($atividade, $idAtividade),
                     ]);
                     return;
                 }
@@ -297,6 +299,18 @@ class ExercicioController extends Controller{
                 'tempo' => $tempoExecucao
             ]
         ]);
+    }
+
+    /**
+     * Calcula quantos segundos ainda restam no limite da atividade.
+     *
+     * O início fica armazenado na sessão para que voltar ao conteúdo e abrir os
+     * exercícios novamente não reinicie o cronômetro da tentativa atual.
+     */
+    private function calcularTempoRestante(Atividade $atividade, int $idAtividade): int {
+        $inicio = (float) ($_SESSION['atividade_inicio'][$idAtividade] ?? microtime(true));
+        $tempoDecorrido = microtime(true) - $inicio;
+        return max(0, (int) ceil($atividade->getTempoLimite() - $tempoDecorrido));
     }
 
     /**

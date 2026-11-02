@@ -98,6 +98,51 @@
     gap: 20px;
 }
 
+.cronometro-atividade {
+    width: 100%;
+    margin-top: 20px;
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border: 1px solid var(--verde-escuro);
+}
+
+.cronometro-atividade span,
+.cronometro-atividade small {
+    display: block;
+}
+
+.cronometro-atividade small {
+    margin-top: 4px;
+    color: #cfcfcf;
+}
+
+.cronometro-atividade strong {
+    color: var(--verde-claro);
+    font-size: 30px;
+    font-variant-numeric: tabular-nums;
+}
+
+.cronometro-atividade.timer-alerta {
+    border-color: #ffd166;
+}
+
+.cronometro-atividade.timer-alerta strong {
+    color: #ffd166;
+}
+
+.cronometro-atividade.timer-esgotado {
+    border-color: var(--problema);
+}
+
+.cronometro-atividade.timer-esgotado strong {
+    color: var(--problema);
+}
+
 .conjunto-exercicios {
     width: 100%;
     margin-top: 20px;
@@ -151,6 +196,12 @@
 .alternativa-incorreta-resultado { border: 1px solid var(--problema); }
 .resumo-resultado { width: 100%; margin-top: 20px; }
 .finalizar-atividade { width: auto; margin: 20px 0 40px; }
+.acoes-pos-correcao { display: flex; justify-content: flex-end; margin: 20px 0 40px; }
+.acoes-pos-correcao .botao { width: auto; min-width: 190px; }
+
+@media (max-width: 600px) {
+    .cronometro-atividade { align-items: flex-start; flex-direction: column; }
+}
 
 .lista-atividades-funcionario {
     display: grid;

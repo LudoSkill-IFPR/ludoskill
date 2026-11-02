@@ -12,9 +12,20 @@
     <main>
         <div class="container pagina-exercicios">
             <div id="topo">
-                <a class="botao brilho" href="<?= URL_BASE ?>/funcionario/modulos" onclick="return confirm('Deseja sair? Suas respostas ficarão salvas neste navegador.')">Voltar</a>
+                <a class="botao brilho" id="voltar-conteudo" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>">Voltar ao conteúdo</a>
                 <div><h1><?= htmlspecialchars($atividade->getNome()) ?></h1><p class="mensagem">Responda todas as questões da atividade.</p></div>
             </div>
+
+            <?php if (!isset($resultado)): ?>
+                <?php $segundosRestantes = max(0, (int) $tempoRestante); ?>
+                <section class="card cronometro-atividade" id="cronometro-atividade" role="timer" aria-live="polite">
+                    <div>
+                        <span id="rotulo-timer">Tempo restante</span>
+                        <small id="mensagem-timer">O tempo continua contando ao voltar para o conteúdo.</small>
+                    </div>
+                    <strong id="valor-timer" data-segundos="<?= $segundosRestantes ?>"><?= sprintf('%02d:%02d', intdiv($segundosRestantes, 60), $segundosRestantes % 60) ?></strong>
+                </section>
+            <?php endif; ?>
 
             <?php if (isset($erro)): ?><div class="erro erro-conteudo"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
             <?php if (isset($resultado)): ?>
@@ -68,13 +79,47 @@
                             <?php endforeach; ?>
                         </section>
                     <?php endforeach; ?>
-                    <?php if (!isset($resultado)): ?><button class="botao brilho finalizar-atividade" type="submit">Finalizar atividade</button><?php endif; ?>
+                    <?php if (!isset($resultado)): ?><button class="botao brilho finalizar-atividade" type="submit">Corrigir respostas</button><?php endif; ?>
                 </form>
+                <?php if (isset($resultado)): ?>
+                    <div class="acoes-pos-correcao">
+                        <a class="botao brilho" href="<?= URL_BASE ?>/funcionario/modulos">Concluir exercício</a>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </main>
     <script>
     (() => {
+        const cronometro = document.getElementById('cronometro-atividade');
+        const valorTimer = document.getElementById('valor-timer');
+        if (cronometro && valorTimer) {
+            const rotuloTimer = document.getElementById('rotulo-timer');
+            const mensagemTimer = document.getElementById('mensagem-timer');
+            const segundosIniciais = Math.max(0, Number.parseInt(valorTimer.dataset.segundos || '0', 10));
+            const instanteFinal = Date.now() + (segundosIniciais * 1000);
+            let intervalo;
+
+            const atualizarTimer = () => {
+                const segundos = Math.max(0, Math.ceil((instanteFinal - Date.now()) / 1000));
+                const minutos = Math.floor(segundos / 60);
+                const segundosDoMinuto = segundos % 60;
+                valorTimer.textContent = `${String(minutos).padStart(2, '0')}:${String(segundosDoMinuto).padStart(2, '0')}`;
+
+                cronometro.classList.toggle('timer-alerta', segundos > 0 && segundos <= 60);
+                cronometro.classList.toggle('timer-esgotado', segundos === 0);
+
+                if (segundos === 0) {
+                    rotuloTimer.textContent = 'Tempo esgotado';
+                    mensagemTimer.textContent = 'Você ainda pode enviar as respostas, mas o tempo será considerado no resultado.';
+                    if (intervalo) window.clearInterval(intervalo);
+                }
+            };
+
+            atualizarTimer();
+            if (segundosIniciais > 0) intervalo = window.setInterval(atualizarTimer, 1000);
+        }
+
         const form = document.getElementById('form-atividade');
         if (!form) return;
         const chave = 'ludoskill:atividade:<?= $_SESSION['usuario_logado']->getId() ?>:<?= $atividade->getId() ?>';
@@ -89,6 +134,9 @@
         });
         window.addEventListener('beforeunload', event => {
             if (form.dataset.enviando !== '1') { event.preventDefault(); event.returnValue = ''; }
+        });
+        document.getElementById('voltar-conteudo')?.addEventListener('click', () => {
+            form.dataset.enviando = '1';
         });
         form.addEventListener('submit', () => { form.dataset.enviando = '1'; });
         <?php endif; ?>
