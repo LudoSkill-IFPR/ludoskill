@@ -8,34 +8,44 @@
     border-color: #c5aed0;
 }
 
-main section {
+main{
     display: flex;
-    gap: 20px;
-    font-size: 18px;
-}
-
-main section p {
-    font-size: 25px;
-}
-
-main section .box-maior{
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    flex-direction: column;
-    gap: 10px;
-    margin: 30px;
-}
-
-
-main section .box-menor{
-    /* background-color: aliceblue; */
-    align-items: flex-end;
-    position:relative;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    isolation: isolate;
+
+    width: 100vw;
+}
+
+.container{
+    background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+
+    width: 90%;
+    padding: 30px;
+    margin: 20px 0;
+    border: 2px, solid, white;
+    border-radius: 20px;
+}
+
+section{
+    background-color: rgba(255, 255, 255, 0.25);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px, solid;
+    
+    font-size: 20px;
+}
+
+.flex{
+    display: flex;
+    gap: 40px;
+    
+}
+
+section:not(section:last-child){
+    margin-bottom: 20px;
+}
+
+h1, h2, h3{
+    margin-bottom: 10px;
 }
 
 #logo-ifpr {
@@ -43,7 +53,7 @@ main section .box-menor{
     z-index: 2;
     max-width: 450px;
     transform-origin: 50% 90%;
-    height: auto;
+    height: 200px;
     /* margin-top: 20px; */
     animation: logo-ifpr 5.5s ease-in-out infinite;
 }
@@ -53,7 +63,7 @@ main section .box-menor{
     z-index: 2;
     max-width: 450px;
     transform-origin: 50% 50%;
-    height: auto;
+    height: 200px;
     will-change: transform;
     animation: mascote-ludo 8.2s ease-in-out infinite alternate;
 }
@@ -70,21 +80,21 @@ footer {
 
 @keyframes logo-ifpr{
     0%, 100% {
-        transform: translate(-2px, 40px) rotate(-5deg);
+        transform: translate(-2px, 20px) rotate(-5deg);
     }
 
     25%, 75% {
-        transform: translate(0, 30px) rotate(0deg);
+        transform: translate(0, 10px) rotate(0deg);
     }
 
     50% {
-        transform: translate(2px, 40px) rotate(5deg);
+        transform: translate(2px, 20px) rotate(5deg);
     }
 }
 
 @keyframes mascote-ludo{
     0% {
-        transform: translate(-34px, -28px) rotate(-9deg);
+        transform: translate(-34px, -10px) rotate(-9deg);
     }
 
     22% {
@@ -96,11 +106,11 @@ footer {
     }
 
     72% {
-        transform: translate(30px, 20px) rotate(8deg);
+        transform: translate(30px, 10px) rotate(8deg);
     }
 
     100% {
-        transform: translate(-25px, 38px) rotate(-7deg);
+        transform: translate(-25px, 28px) rotate(-7deg);
     }
 }
 
@@ -109,4 +119,4 @@ footer {
     #mascote-ludo {
         animation: none;
     }
-}
+}   
