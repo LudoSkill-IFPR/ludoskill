@@ -35,7 +35,12 @@
 
                 <div class="card">
                     <h3>Desempenho atual:</h3>
-                    <p><i class="bi bi-star-fill brilhinho"></i><?= number_format((float) $resumo['desempenho'], 1, ',', '.') ?> / 3</p>
+                    <p><i class="bi bi-star-fill brilhinho"></i> <?= number_format((float) $resumo['desempenho'], 1, ',', '.') ?> / 3</p>
+                </div>
+
+                <div class="card">
+                    <h3>Módulos:</h3>
+                    <a href="<?= URL_BASE ?>/funcionario/modulos" class="brilhinho">Ver módulos <i class="bi bi-caret-right-fill"></i></a>
                 </div>
                 
                 <div id="loja" class="card verde">
@@ -59,7 +64,10 @@
 
                 <div id="progresso" class="card">
                     <h2>Seu progresso</h2>
-                    <p><?= (int) $resumo['concluidas'] ?> de <?= (int) $resumo['total'] ?> atividades concluídas</p>
+                    <div class="chart-container">
+                        <canvas id="progressoFuncionario" role="img" aria-label="Gráfico do progresso nas atividades"></canvas>
+                    </div>
+                    <p class="resumo-progresso"><?= (int) $resumo['concluidas'] ?> de <?= (int) $resumo['total'] ?> atividades concluídas</p>
                 </div>
             </section>
 
@@ -88,6 +96,33 @@
 
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script>
+        const totalAtividades = <?= (int) $resumo['total'] ?>;
+        const atividadesConcluidas = <?= (int) $resumo['concluidas'] ?>;
+        const canvasProgresso = document.getElementById('progressoFuncionario');
+        if (canvasProgresso) {
+            new Chart(canvasProgresso, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Concluídas', 'Pendentes'],
+                    datasets: [{
+                        data: [atividadesConcluidas, Math.max(0, totalAtividades - atividadesConcluidas)],
+                        backgroundColor: ['#00c466', '#a900d6'],
+                        borderColor: '#181818',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: { legend: { position: 'bottom', labels: { color: '#ffffff' } } }
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>

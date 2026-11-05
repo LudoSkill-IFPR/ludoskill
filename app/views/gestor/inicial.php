@@ -1,3 +1,9 @@
+<?php
+$nomesFuncionarios = array_column($desempenho ?? [], 'nome_completo');
+$mediasFuncionarios = array_map('floatval', array_column($desempenho ?? [], 'media_estrelas'));
+$atividadesConcluidas = array_map('intval', array_column($desempenho ?? [], 'atividades_concluidas'));
+$jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -41,22 +47,50 @@
                 <div id="grafico" class="card verde">
                     <h2><i class="bi bi-graph-up"></i> Desempenho dos Funcionários</h2>
                     <?php if (empty($desempenho)): ?><p>Nenhum funcionário ativo cadastrado.</p><?php endif; ?>
-                    <?php foreach ($desempenho as $key => $registro): ?>
-                        <div class="funcionario">
-                            <div class="nome">
-                                <?= $key + 1 ?> - <?= htmlspecialchars($registro['nome_completo']) ?>
-                                (<?= number_format((float) $registro['media_estrelas'], 1, ',', '.') ?> estrelas)
-                            </div>
-                            <div class="desempenho">
-                                <div class="progresso" style="width: <?= min(100, ((float) $registro['media_estrelas'] / 3) * 100) ?>%;"></div>
-                            </div>
+                    <?php if (!empty($desempenho)): ?>
+                        <div class="chart-container">
+                            <canvas id="desempenhoFuncionarios" role="img" aria-label="Gráfico de desempenho dos funcionários em ordem decrescente"></canvas>
                         </div>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
             </section>
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script>
+        const canvasDesempenho = document.getElementById('desempenhoFuncionarios');
+        if (canvasDesempenho) {
+            const atividadesConcluidas = <?= json_encode($atividadesConcluidas) ?>;
+            new Chart(canvasDesempenho, {
+                type: 'bar',
+                data: {
+                    labels: <?= json_encode($nomesFuncionarios, $jsonSeguro) ?>,
+                    datasets: [{
+                        label: 'Média de estrelas',
+                        data: <?= json_encode($mediasFuncionarios, JSON_PRESERVE_ZERO_FRACTION) ?>,
+                        backgroundColor: '#00c466',
+                        borderColor: '#64f5ad',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { beginAtZero: true, max: 3, ticks: { color: '#ffffff', stepSize: 1 }, grid: { color: 'rgba(255,255,255,.15)' } },
+                        y: { ticks: { color: '#ffffff' }, grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } },
+                        tooltip: { callbacks: { afterLabel: context => `Atividades concluídas: ${atividadesConcluidas[context.dataIndex]}` } }
+                    }
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>

@@ -423,6 +423,14 @@ class Validador {
             $erros['tempo_limite'] = 'O tempo limite deve ser informado em segundos e ser maior que zero.';
         }
 
+        if (!isset($data['estrelas_recompensa']) || filter_var($data['estrelas_recompensa'], FILTER_VALIDATE_INT) === false || (int) $data['estrelas_recompensa'] < 0 || (int) $data['estrelas_recompensa'] > 3) {
+            $erros['estrelas_recompensa'] = 'A recompensa deve ser um número inteiro entre 0 e 3 estrelas.';
+        }
+
+        if (!isset($data['bolotas_recompensa']) || filter_var($data['bolotas_recompensa'], FILTER_VALIDATE_INT) === false || (int) $data['bolotas_recompensa'] < 0 || (int) $data['bolotas_recompensa'] > 100000) {
+            $erros['bolotas_recompensa'] = 'A recompensa deve ser um número inteiro entre 0 e 100.000 bolotas.';
+        }
+
         if (empty($data['id_modulo']) || filter_var($data['id_modulo'], FILTER_VALIDATE_INT) === false) {
             $erros['id_modulo'] = 'Selecione um módulo válido.';
         }

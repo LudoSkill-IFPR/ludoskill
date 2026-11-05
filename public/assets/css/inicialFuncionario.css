@@ -15,6 +15,8 @@ section{
 
     display: flex;
     justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
     
 }
 
@@ -27,6 +29,7 @@ section{
 .progresso{
     display: flex;
     justify-content: space-between;
+    gap: 20px;
 }
 
 .progresso #fase{
@@ -35,6 +38,17 @@ section{
 
 .progresso #progresso{
     width: 400px;
+}
+
+#progresso .chart-container{
+    position: relative;
+    width: 100%;
+    height: 230px;
+}
+
+.resumo-progresso{
+    margin-top: 12px;
+    text-align: center;
 }
 
 h2, #fase h3, .inventario p{
@@ -58,7 +72,7 @@ h2, #fase h3, .inventario p{
 #inventario{
     list-style-type: none;
     display: flex;
-    flex-diretion: row wrap;
+    flex-flow: row wrap;
     justify-content: space-around;
     align-items: start;
     gap: 20px;
@@ -81,4 +95,16 @@ h2, #fase h3, .inventario p{
 #foto img{
     width: 50px;
     height: 50px;
+}
+
+@media (max-width: 900px){
+    .infobase .card,
+    .progresso #fase,
+    .progresso #progresso{
+        width: 100%;
+    }
+
+    .progresso{
+        flex-direction: column;
+    }
 }

@@ -59,6 +59,8 @@ class AtividadeController extends Controller
         $atividade->setEstado($dados['estado']);
         $atividade->setOrdem((int) $dados['ordem']);
         $atividade->setTempoLimite((int) $dados['tempo_limite']);
+        $atividade->setEstrelasRecompensa((int) $dados['estrelas_recompensa']);
+        $atividade->setBolotasRecompensa((int) $dados['bolotas_recompensa']);
 
         $modulo = (new Modulo())->setId((int) $dados['id_modulo']);
         $atividade->setModulo($modulo);
@@ -117,6 +119,8 @@ class AtividadeController extends Controller
         $atividade->setEstado($dados['estado']);
         $atividade->setOrdem((int) $dados['ordem']);
         $atividade->setTempoLimite((int) $dados['tempo_limite']);
+        $atividade->setEstrelasRecompensa((int) $dados['estrelas_recompensa']);
+        $atividade->setBolotasRecompensa((int) $dados['bolotas_recompensa']);
 
         $modulo = (new Modulo())->setId((int) $dados['id_modulo']);
         $atividade->setModulo($modulo);

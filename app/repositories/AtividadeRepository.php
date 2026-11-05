@@ -48,7 +48,7 @@ class AtividadeRepository{
     }
 
     public function saveAtividade(Atividade $atividade){
-        $sql = "INSERT INTO Atividades (id_modulo, tipo_atividade, nome, descricao, estado, ordem, tempo_limite) VALUES (:idModulo, :tipoAtividade, :nome, :descricao, :estado, :ordem, :tempoLimite)";
+        $sql = "INSERT INTO Atividades (id_modulo, tipo_atividade, nome, descricao, estado, ordem, tempo_limite, estrelas_recompensa, bolotas_recompensa) VALUES (:idModulo, :tipoAtividade, :nome, :descricao, :estado, :ordem, :tempoLimite, :estrelasRecompensa, :bolotasRecompensa)";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('idModulo', $atividade->getModulo()->getId());
         $stm->bindValue('tipoAtividade', $atividade->getTipoAtividade());
@@ -57,6 +57,8 @@ class AtividadeRepository{
         $stm->bindValue('estado', $atividade->getEstado());
         $stm->bindValue('ordem', $atividade->getOrdem(), PDO::PARAM_INT);
         $stm->bindValue('tempoLimite', $atividade->getTempoLimite(), PDO::PARAM_INT);
+        $stm->bindValue('estrelasRecompensa', $atividade->getEstrelasRecompensa(), PDO::PARAM_INT);
+        $stm->bindValue('bolotasRecompensa', $atividade->getBolotasRecompensa(), PDO::PARAM_INT);
         return $stm->execute();
     }
 
@@ -67,7 +69,7 @@ class AtividadeRepository{
     }
 
     public function updateAtividade(Atividade $atividade){
-        $sql = "UPDATE Atividades SET id_modulo = :idModulo, tipo_atividade = :tipoAtividade, nome = :nome, descricao = :descricao, estado = :estado, ordem = :ordem, tempo_limite = :tempoLimite WHERE id_atividade = :id";
+        $sql = "UPDATE Atividades SET id_modulo = :idModulo, tipo_atividade = :tipoAtividade, nome = :nome, descricao = :descricao, estado = :estado, ordem = :ordem, tempo_limite = :tempoLimite, estrelas_recompensa = :estrelasRecompensa, bolotas_recompensa = :bolotasRecompensa WHERE id_atividade = :id";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('idModulo', $atividade->getModulo()->getId());
         $stm->bindValue('tipoAtividade', $atividade->getTipoAtividade());
@@ -76,6 +78,8 @@ class AtividadeRepository{
         $stm->bindValue('estado', $atividade->getEstado());
         $stm->bindValue('ordem', $atividade->getOrdem(), PDO::PARAM_INT);
         $stm->bindValue('tempoLimite', $atividade->getTempoLimite(), PDO::PARAM_INT);
+        $stm->bindValue('estrelasRecompensa', $atividade->getEstrelasRecompensa(), PDO::PARAM_INT);
+        $stm->bindValue('bolotasRecompensa', $atividade->getBolotasRecompensa(), PDO::PARAM_INT);
         $stm->bindValue('id', $atividade->getId());
         return $stm->execute();
     }

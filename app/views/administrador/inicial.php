@@ -1,3 +1,10 @@
+<?php
+$dadosEmpresas = $empresasComQuantidadeUsuarios ?? [];
+$nomesEmpresas = array_column($dadosEmpresas, 'nome');
+$quantidadesGestores = array_map('intval', array_column($dadosEmpresas, 'quantidade_gestores'));
+$quantidadesFuncionarios = array_map('intval', array_column($dadosEmpresas, 'quantidade_funcionarios'));
+$jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -58,33 +65,78 @@
                     <?php if (empty($empresasComQuantidadeUsuarios)): ?>
                         <p>Nenhuma empresa cadastrada.</p>
                     <?php else: ?>
-                        <?php foreach ($empresasComQuantidadeUsuarios as $empresa): ?>
-                            <p class="card-secundario">
-                                <strong><?= htmlspecialchars($empresa['nome']) ?></strong>:
-                                <?= (int) $empresa['quantidade_usuarios'] ?> usuários
-                                (<?= (int) $empresa['quantidade_gestores'] ?> gestores e
-                                <?= (int) $empresa['quantidade_funcionarios'] ?> funcionários)
-                            </p>
-                        <?php endforeach; ?>
+                        <div class="chart-container">
+                            <canvas id="usuariosPorEmpresa" role="img" aria-label="Gráfico da quantidade de gestores e funcionários por empresa"></canvas>
+                        </div>
                     <?php endif; ?>
                 </div>
 
-                <!-- Aqui vai vir uma espécie de legenda para o gráfico -->
                 <div id="legenda" class="card">
                     <h3><i class="bi bi-clipboard-data-fill"></i> Empresas com mais usuários</h3>
-
-                    <ol>
-                        <?php foreach (array_slice($empresasComQuantidadeUsuarios ?? [], 0, 5) as $empresa): ?>
+                    <?php if (empty($dadosEmpresas)): ?>
+                        <p>Nenhuma empresa cadastrada.</p>
+                    <?php else: ?>
+                    <ol class="ranking-top-tres">
+                        <?php foreach (array_slice($dadosEmpresas, 0, 3) as $empresa): ?>
                             <li class="card-secundario">
                                 <?= htmlspecialchars($empresa['nome']) ?>
                                 (<?= (int) $empresa['quantidade_usuarios'] ?>)
                             </li>
                         <?php endforeach; ?>
                     </ol>
+                    <?php if (count($dadosEmpresas) > 3): ?>
+                        <button type="button" id="alternarRanking" class="botao brilho" aria-expanded="false" aria-controls="rankingCompleto">Ver mais</button>
+                        <div id="rankingCompleto" class="ranking-restante" hidden>
+                            <ol start="4">
+                                <?php foreach (array_slice($dadosEmpresas, 3) as $empresa): ?>
+                                    <li class="card-secundario">
+                                        <?= htmlspecialchars($empresa['nome']) ?>
+                                        (<?= (int) $empresa['quantidade_usuarios'] ?>)
+                                    </li>
+                                <?php endforeach; ?>
+                            </ol>
+                        </div>
+                    <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             </section>
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script>
+        const canvasEmpresas = document.getElementById('usuariosPorEmpresa');
+        if (canvasEmpresas) {
+            new Chart(canvasEmpresas, {
+                type: 'bar',
+                data: {
+                    labels: <?= json_encode($nomesEmpresas, $jsonSeguro) ?>,
+                    datasets: [
+                        { label: 'Gestores', data: <?= json_encode($quantidadesGestores) ?>, backgroundColor: '#46d48f' },
+                        { label: 'Funcionários', data: <?= json_encode($quantidadesFuncionarios) ?>, backgroundColor: '#c874df' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, ticks: { color: '#ffffff' }, grid: { display: false } },
+                        y: { stacked: true, beginAtZero: true, ticks: { color: '#ffffff', precision: 0 }, grid: { color: 'rgba(255,255,255,.15)' } }
+                    },
+                    plugins: { legend: { labels: { color: '#ffffff' } } }
+                }
+            });
+        }
+
+        const botaoRanking = document.getElementById('alternarRanking');
+        const rankingCompleto = document.getElementById('rankingCompleto');
+        botaoRanking?.addEventListener('click', () => {
+            const abrir = rankingCompleto.hidden;
+            rankingCompleto.hidden = !abrir;
+            botaoRanking.setAttribute('aria-expanded', String(abrir));
+            botaoRanking.textContent = abrir ? 'Ver menos' : 'Ver mais';
+        });
+    </script>
 
 </body>
 </html>

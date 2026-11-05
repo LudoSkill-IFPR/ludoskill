@@ -35,7 +35,7 @@
         <div class="card">
             <form action="<?= URL_BASE ?>/logar" method="post">
                 <img id="skillo" src="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png" alt="">
-                <h1>Bem vindo de volta!</h1>
+                <h1>Bem vindo(a)!</h1>
             
                 <?php if (!empty($erro)): ?>
                     <div id="erro" role="alert"><?= htmlspecialchars($erro) ?></div>
@@ -59,7 +59,7 @@
                 <button class="botao brilho" type="submit">Entrar</button>
 
             
-                <a href="<?= URL_BASE ?>/esqueci-senha">Esqueceu a senha?</a> <!--Adicionar redirecionamento pra envio de email de recuperação -->
+                <a href="<?= URL_BASE ?>/esqueci-senha" class="senha">Esqueceu a senha?</a> <!--Adicionar redirecionamento pra envio de email de recuperação -->
             
             </form>
         </div>

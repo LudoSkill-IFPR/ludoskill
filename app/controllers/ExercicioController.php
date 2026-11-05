@@ -16,33 +16,19 @@ class ExercicioController extends Controller{
     private AtividadeService $atividadeService;
     private FuncionarioAtividadeService $funcionarioAtividadeService;
 
-    /**
-     * Prepara os serviços usados tanto pelo CRUD administrativo quanto pela realização das atividades.
-     */
     public function __construct() {
         $this->exercicioService = new ExercicioService();
         $this->atividadeService = new AtividadeService();
         $this->funcionarioAtividadeService = new FuncionarioAtividadeService();
     }
 
-    /**
-     * Exibe a listagem administrativa de exercícios.
-     *
-     * Restringe o acesso ao administrador, busca as entidades pelo service e as
-     * envia para a view responsável pela tabela do CRUD.
-     */
     public function listarTodos() {
         $this->adminRequired();
         $data['lista'] = $this->exercicioService->getExercicios();
         $this->view('administrador/exercicios/exercicio_list', $data);
     }
 
-    /**
-     * Abre o formulário de criação de exercício.
-     *
-     * Além de exigir o perfil administrador, carrega todas as atividades para que
-     * o usuário possa escolher a qual delas o novo conjunto de questões pertencerá.
-     */
+
     public function criar(){
         $this->adminRequired();
         $this->view('administrador/exercicios/exercicio_create', ['atividades' => $this->getAtividadesComExercicios()]);
@@ -271,9 +257,11 @@ class ExercicioController extends Controller{
         $inicio = (float) ($_SESSION['atividade_inicio'][$idAtividade] ?? microtime(true));
         $tempoExecucao = max(0.001, microtime(true) - $inicio);
         $erros = $total - $acertos;
-        $estrelas = max(0, 3 - $erros - ($tempoExecucao > $atividade->getTempoLimite() ? 1 : 0));
         $concluida = $pontuacao >= 66;
-        $bolotas = $concluida ? $acertos * 10 : 0;
+        $estrelas = $concluida
+            ? max(0, $atividade->getEstrelasRecompensa() - $erros - ($tempoExecucao > $atividade->getTempoLimite() ? 1 : 0))
+            : 0;
+        $bolotas = $concluida ? $atividade->getBolotasRecompensa() : 0;
         unset($_SESSION['atividade_inicio'][$idAtividade]);
 
         $registro = $this->funcionarioAtividadeService->registrarResultado(
@@ -376,12 +364,8 @@ class ExercicioController extends Controller{
         return $normalizadas;
     }
 
-    /**
-     * Decodifica o JSON salvo no exercício para um array PHP.
-     *
-     * Se o conteúdo não formar uma lista válida, devolve um array vazio para que a
-     * camada de apresentação não tente percorrer um valor incompatível.
-     */
+    //Se o conteúdo não formar uma lista válida, devolve um array vazio para que a camada de apresentação não tente percorrer um valor incompatível.
+
     private function decodificarConteudo(string $conteudo): array {
         $questoes = json_decode($conteudo, true);
         return is_array($questoes) ? $questoes : [];

@@ -66,6 +66,17 @@
                     <?php if (isset($erros['tempo_limite'])): ?><div class="erro"><?= htmlspecialchars($erros['tempo_limite']) ?></div><?php endif; ?>
                 </div>
                 <div class="formgroup">
+                    <label for="estrelas_recompensa">Máximo de estrelas:</label>
+                    <input class="card-secundario" type="number" min="0" max="3" id="estrelas_recompensa" name="estrelas_recompensa" value="<?= htmlspecialchars($atividade['estrelas_recompensa'] ?? '3') ?>">
+                    <small>Uma estrela é descontada por erro e outra se o tempo limite for ultrapassado.</small>
+                    <?php if (isset($erros['estrelas_recompensa'])): ?><div class="erro"><?= htmlspecialchars($erros['estrelas_recompensa']) ?></div><?php endif; ?>
+                </div>
+                <div class="formgroup">
+                    <label for="bolotas_recompensa">Bolotas ao concluir:</label>
+                    <input class="card-secundario" type="number" min="0" max="100000" id="bolotas_recompensa" name="bolotas_recompensa" value="<?= htmlspecialchars($atividade['bolotas_recompensa'] ?? '10') ?>">
+                    <?php if (isset($erros['bolotas_recompensa'])): ?><div class="erro"><?= htmlspecialchars($erros['bolotas_recompensa']) ?></div><?php endif; ?>
+                </div>
+                <div class="formgroup">
                     <label for="id_modulo">Modulo:</label>
                     <select class="card-secundario" id="id_modulo" name="id_modulo">
                         <option value="">Selecione um modulo</option>

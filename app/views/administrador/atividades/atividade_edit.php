@@ -50,6 +50,17 @@
                 <div class="formgroup"><label for="estado">Estado:</label><select class="card-secundario" id="estado" name="estado"><option value="ATIVO" <?= $atividade->getEstado() === 'ATIVO' ? 'selected' : '' ?>>Ativo</option><option value="INATIVO" <?= $atividade->getEstado() === 'INATIVO' ? 'selected' : '' ?>>Inativo</option></select></div>
                 <div class="formgroup"><label for="ordem">Ordem:</label><input class="card-secundario" type="number" min="1" id="ordem" name="ordem" value="<?= $atividade->getOrdem() ?>"><?php if (isset($erros['ordem'])): ?><div class="erro"><?= htmlspecialchars($erros['ordem']) ?></div><?php endif; ?></div>
                 <div class="formgroup"><label for="tempo_limite">Tempo limite (segundos):</label><input class="card-secundario" type="number" min="1" id="tempo_limite" name="tempo_limite" value="<?= $atividade->getTempoLimite() ?>"><?php if (isset($erros['tempo_limite'])): ?><div class="erro"><?= htmlspecialchars($erros['tempo_limite']) ?></div><?php endif; ?></div>
+                <div class="formgroup">
+                    <label for="estrelas_recompensa">Máximo de estrelas:</label>
+                    <input class="card-secundario" type="number" min="0" max="3" id="estrelas_recompensa" name="estrelas_recompensa" value="<?= $atividade->getEstrelasRecompensa() ?>">
+                    <small>Uma estrela é descontada por erro e outra se o tempo limite for ultrapassado.</small>
+                    <?php if (isset($erros['estrelas_recompensa'])): ?><div class="erro"><?= htmlspecialchars($erros['estrelas_recompensa']) ?></div><?php endif; ?>
+                </div>
+                <div class="formgroup">
+                    <label for="bolotas_recompensa">Bolotas ao concluir:</label>
+                    <input class="card-secundario" type="number" min="0" max="100000" id="bolotas_recompensa" name="bolotas_recompensa" value="<?= $atividade->getBolotasRecompensa() ?>">
+                    <?php if (isset($erros['bolotas_recompensa'])): ?><div class="erro"><?= htmlspecialchars($erros['bolotas_recompensa']) ?></div><?php endif; ?>
+                </div>
 
                 <div class="formgroup">
                     <label for="id_modulo">Módulo:</label>

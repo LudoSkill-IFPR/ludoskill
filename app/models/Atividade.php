@@ -11,6 +11,8 @@ class Atividade {
     private int $ordem;
     private int $tempoLimite;
     private string $descricao;
+    private int $estrelasRecompensa;
+    private int $bolotasRecompensa;
 
     public function __construct(
         int $id = 0,
@@ -20,7 +22,9 @@ class Atividade {
         string $estado = 'ATIVO',
         int $ordem = 1,
         int $tempoLimite = 180,
-        string $descricao = ''
+        string $descricao = '',
+        int $estrelasRecompensa = 3,
+        int $bolotasRecompensa = 10
     ) {
         $this->id = $id;
         $this->modulo = $modulo ?? new Modulo();
@@ -30,6 +34,8 @@ class Atividade {
         $this->ordem = $ordem;
         $this->tempoLimite = $tempoLimite;
         $this->descricao = $descricao;
+        $this->estrelasRecompensa = $estrelasRecompensa;
+        $this->bolotasRecompensa = $bolotasRecompensa;
     }
 
     /**
@@ -47,7 +53,9 @@ class Atividade {
             $atividade['estado'] ?? 'ATIVO',
             (int) ($atividade['ordem'] ?? 1),
             (int) ($atividade['tempo_limite'] ?? 180),
-            (string) ($atividade['descricao'] ?? '')
+            (string) ($atividade['descricao'] ?? ''),
+            (int) ($atividade['estrelas_recompensa'] ?? 3),
+            (int) ($atividade['bolotas_recompensa'] ?? 10)
         );
     }
     
@@ -171,6 +179,28 @@ class Atividade {
     public function setDescricao(string $descricao): self
     {
         $this->descricao = $descricao;
+        return $this;
+    }
+
+    public function getEstrelasRecompensa(): int
+    {
+        return $this->estrelasRecompensa;
+    }
+
+    public function setEstrelasRecompensa(int $estrelasRecompensa): self
+    {
+        $this->estrelasRecompensa = $estrelasRecompensa;
+        return $this;
+    }
+
+    public function getBolotasRecompensa(): int
+    {
+        return $this->bolotasRecompensa;
+    }
+
+    public function setBolotasRecompensa(int $bolotasRecompensa): self
+    {
+        $this->bolotasRecompensa = $bolotasRecompensa;
         return $this;
     }
 }

@@ -38,6 +38,8 @@
                             <th>Estado</th>
                             <th>Ordem</th>
                             <th>Tempo limite</th>
+                            <th>Estrelas</th>
+                            <th>Bolotas</th>
                             <th>Acoes</th>
                         </tr>
                     </thead>
@@ -52,6 +54,8 @@
                             <td><?= htmlspecialchars($atividade->getEstado()) ?></td>
                             <td><?= $atividade->getOrdem() ?></td>
                             <td><?= $atividade->getTempoLimite() ?> s</td>
+                            <td><?= $atividade->getEstrelasRecompensa() ?></td>
+                            <td><?= $atividade->getBolotasRecompensa() ?></td>
                             <td id="acao">
                                 <a href="<?= URL_BASE ?>/administrador/atividades/editar?id=<?= $atividade->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
                                 <form action="<?= URL_BASE ?>/administrador/atividades/excluir" method="post" onsubmit="return confirm('Deseja desativar esta atividade?')">

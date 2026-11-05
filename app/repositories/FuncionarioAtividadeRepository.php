@@ -134,7 +134,7 @@ class FuncionarioAtividadeRepository
     }
 
     /**
-     * Conclui uma atividade exclusivamente textual sem conceder pontos ou recompensas.
+     * Conclui uma atividade exclusivamente textual e concede sua recompensa uma única vez.
      */
     public function concluirAtividadeTexto(int $idUsuario, int $idAtividade, float $tempoExecucao): void
     {
@@ -145,7 +145,7 @@ class FuncionarioAtividadeRepository
             if ($idFuncionario === null) throw new RuntimeException('Funcionário não encontrado.');
 
             $stm = $this->connection->prepare(
-                "SELECT a.tipo_atividade,
+                "SELECT a.tipo_atividade, a.tempo_limite, a.estrelas_recompensa, a.bolotas_recompensa,
                         EXISTS(SELECT 1 FROM Exercicios e WHERE e.id_atividade = a.id_atividade) AS tem_exercicios
                  FROM Atividades a
                  WHERE a.id_atividade = :id_atividade
@@ -156,6 +156,13 @@ class FuncionarioAtividadeRepository
             if (!$atividade || $atividade['tipo_atividade'] !== 'TEXTO' || (bool) $atividade['tem_exercicios']) {
                 throw new RuntimeException('Apenas atividades de texto sem exercícios podem ser concluídas por leitura.');
             }
+
+            $estrelas = max(
+                0,
+                (int) $atividade['estrelas_recompensa'] - ($tempoExecucao > (int) $atividade['tempo_limite'] ? 1 : 0)
+            );
+            $bolotas = (int) $atividade['bolotas_recompensa'];
+            $concluiuAgora = false;
 
             $stm = $this->connection->prepare(
                 'SELECT id_funcionario_atividade, estado
@@ -172,23 +179,43 @@ class FuncionarioAtividadeRepository
             if ($registro && $registro['estado'] !== 'CONCLUIDO') {
                 $stm = $this->connection->prepare(
                     "UPDATE Funcionario_atividade
-                     SET estado = 'CONCLUIDO', qtd_tentativas = qtd_tentativas + 1, tempo_execucao = :tempo
+                     SET estado = 'CONCLUIDO', estrelas_obtidas = :estrelas,
+                         bolotas_obtidas = :bolotas, qtd_tentativas = qtd_tentativas + 1,
+                         tempo_execucao = :tempo
                      WHERE id_funcionario_atividade = :id"
                 );
                 $stm->execute([
+                    'estrelas' => $estrelas,
+                    'bolotas' => $bolotas,
                     'tempo' => $tempoExecucao,
                     'id' => $registro['id_funcionario_atividade'],
                 ]);
+                $concluiuAgora = true;
             } elseif (!$registro) {
                 $stm = $this->connection->prepare(
                     "INSERT INTO Funcionario_atividade
                         (id_funcionario, id_atividade, estado, pontuacao_obtida, estrelas_obtidas, bolotas_obtidas, qtd_tentativas, tempo_execucao)
-                     VALUES (:id_funcionario, :id_atividade, 'CONCLUIDO', 0, 0, 0, 1, :tempo)"
+                     VALUES (:id_funcionario, :id_atividade, 'CONCLUIDO', 0, :estrelas, :bolotas, 1, :tempo)"
                 );
                 $stm->execute([
                     'id_funcionario' => $idFuncionario,
                     'id_atividade' => $idAtividade,
+                    'estrelas' => $estrelas,
+                    'bolotas' => $bolotas,
                     'tempo' => $tempoExecucao,
+                ]);
+                $concluiuAgora = true;
+            }
+
+            if ($concluiuAgora && $bolotas > 0) {
+                $stm = $this->connection->prepare(
+                    'UPDATE Funcionarios
+                     SET bolotas_totais = bolotas_totais + :bolotas
+                     WHERE id_funcionario = :id_funcionario'
+                );
+                $stm->execute([
+                    'bolotas' => $bolotas,
+                    'id_funcionario' => $idFuncionario,
                 ]);
             }
 
