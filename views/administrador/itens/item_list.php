@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
+    
+    <title>LudoSkill - Listar Itens</title>
+</head>
+
+<body>
+    <header>
+        <?php include_once(__DIR__ . "/../../includes/menuAdministrador.html"); ?>
+    </header>
+
+    <main>
+        <div class="container">
+            <div id="topo">
+                <a href="<?= URL_BASE ?>/administrador/inicial" class="botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
+                <a href="<?= URL_BASE ?>/administrador/itens/cadastrar" class="botao brilho"><i class="bi bi-plus"></i> Novo Item</a>
+
+                <div>
+                    <h1>Listagem de Itens</h1>
+                    <p class="mensagem">Visualize as recompensas.</p>
+                </div>
+            </div>
+    
+            <section class="card">
+                <h2>Lista de Itens</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Imagem</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php foreach (($lista ?? []) as $item): ?>
+                            <?php
+                                $imagem = $item->getImagem();
+                                $imagemUrl = !empty($imagem)
+                                    ? URL_BASE . '/' . ltrim($imagem, '/')
+                                    : '';
+                        ?>
+                        <tr>
+                            <td><?= $item->getId() ?></td>
+                            <td><?= htmlspecialchars($item->getNome()) ?></td>
+                            <td><?= $item->getPreco() ?></td>
+                            <td class="imagem">
+                                 <?php if (!empty($imagemUrl)): ?>
+                                    <img src="<?= htmlspecialchars($imagemUrl) ?>" alt="<?= htmlspecialchars($item->getNome()) ?>" style="max-width: 100px; max-height: 100px;">
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ($item->getEstado() === 'ATIVO'): ?>
+                                    <span class="badge badge-ativo">Ativo</span>
+                                <?php else: ?>
+                                    <span class="badge badge-inativo">Inativo</span>
+                                <?php endif; ?>
+                            </td>
+
+                            <td id="acao">
+                                <a href="<?= URL_BASE ?>/administrador/itens/editar?id=<?= $item->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
+                                
+                        
+                                <?php if ($item->getEstado() === 'ATIVO'): ?>
+                                    <form action="<?= URL_BASE ?>/administrador/itens/desativar" method="post" onsubmit="return confirm('Deseja desativar este item?')">
+                                        <input type="hidden" name="id" value="<?= $item->getId() ?>">
+                                        <button type="submit" class="botao brilhinho botao-desativar"><i class="bi bi-eye-slash"></i> Desativar</button>
+                                    </form>
+                                <?php else: ?>
+                                    <form action="<?= URL_BASE ?>/administrador/itens/ativar" method="post" onsubmit="return confirm('Deseja reativar este item?')">
+                                        <input type="hidden" name="id" value="<?= $item->getId() ?>">
+                                        <button type="submit" class="botao brilho botao-ativar"><i class="bi bi-eye"></i> Ativar</button>
+                                    </form>
+                                <?php endif; ?>
+
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+
+                </table>
+            </section>
+
+        </div>
+    </main>
+</body>
+</html>
