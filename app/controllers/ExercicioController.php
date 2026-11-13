@@ -34,19 +34,28 @@ class ExercicioController extends Controller{
         $this->view('administrador/exercicios/exercicio_create', ['atividades' => $this->getAtividadesComExercicios()]);
     }
 
-    /**
-     * Valida e salva um novo exercício enviado pelo formulário.
-     *
-     * Primeiro normaliza a lista dinâmica de questões e a transforma em JSON.
-     * Depois aplica as validações de estrutura e confirma que a atividade existe.
-     * Em caso de erro, reabre o formulário com os dados digitados; caso contrário,
-     * monta as entidades Exercicio e Atividade, salva pelo service e volta à lista.
-     */
+    //Valida e salva um novo exercício enviado pelo formulário.
+    //Normaliza questões ou etapas de simulação e gera o JSON com o tipo no nível principal.
+    //Depois aplica as validações de estrutura e confirma que a atividade existe.
+    //Em caso de erro, reabre o formulário com os dados digitados; caso contrário, monta as entidades Exercicio e Atividade, salva pelo service e volta à lista.
+
     public function salvar(){
         $this->adminRequired();
         $dados = $_POST;
-        $questoes = $this->normalizarQuestoes($dados['questoes'] ?? []);
-        $dados['conteudo'] = json_encode($questoes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $dados['tipo'] = $this->normalizarTipo((string) ($dados['tipo'] ?? 'exercicio'));
+        $conteudo = $dados['tipo'] === 'simulacao'
+            ? [
+                'tipo' => 'simulacao',
+                'etapas' => $this->normalizarEtapas($dados['etapas'] ?? []),
+                'ferramentas' => $this->normalizarFerramentas($dados['ferramentas'] ?? []),
+                'peca_quebrada' => (string) ($dados['peca_quebrada'] ?? ''),
+                'componentes' => ['bateria', 'camera', 'chip'],
+            ]
+            : [
+                'tipo' => 'exercicio',
+                'questoes' => $this->normalizarQuestoes($dados['questoes'] ?? []),
+            ];
+        $dados['conteudo'] = json_encode($conteudo, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $erros = Validador::validarExercicio($dados);
         if (empty($erros['atividade_id'])) {
             $atividadeSelecionada = $this->atividadeService->getAtividadeById((int) $dados['atividade_id']);
@@ -54,12 +63,15 @@ class ExercicioController extends Controller{
                 $erros['atividade_id'] = 'A atividade selecionada não existe.';
             } elseif ($atividadeSelecionada->getTipoAtividade() === 'TEXTO') {
                 $erros['atividade_id'] = 'Atividades do tipo Texto não podem possuir exercícios.';
+            } elseif (!$this->tipoCompativelComAtividade((int) $dados['atividade_id'], $dados['tipo'])) {
+                $erros['atividade_id'] = 'Uma atividade não pode misturar exercícios de questões e simulações.';
             }
         }
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['exercicio'] = $dados;
-            $data['questoes'] = $questoes;
+            $data['tipo'] = $dados['tipo'];
+            $data['conteudoExercicio'] = $conteudo;
             $data['atividades'] = $this->getAtividadesComExercicios();
             $this->view('administrador/exercicios/exercicio_create', $data);
             return;
@@ -76,13 +88,10 @@ class ExercicioController extends Controller{
         $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
-    /**
-     * Abre o formulário de edição de um exercício existente.
-     *
-     * Valida o ID recebido pela URL, busca o exercício e redireciona caso ele não
-     * exista. O JSON salvo é decodificado para preencher os campos dinâmicos de
-     * questões, e as atividades são carregadas para preencher o campo de vínculo.
-     */
+
+    //Abre o formulário de edição de um exercício existente.
+    //Valida o ID, decodifica o JSON conforme o tipo e preenche o formulário de edição correspondente.
+
     public function editar(){
         $this->adminRequired();
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -92,17 +101,17 @@ class ExercicioController extends Controller{
 
         $data['exercicio'] = $this->exercicioService->getExercicioById($id);
         if (!$data['exercicio']) $this->redirect(URL_BASE . '/administrador/exercicios');
-        $data['questoes'] = $this->decodificarConteudo($data['exercicio']->getConteudo());
+        $data['conteudoExercicio'] = $this->decodificarConteudo($data['exercicio']->getConteudo());
+        $data['tipo'] = $data['conteudoExercicio']['tipo'];
         $data['atividades'] = $this->getAtividadesComExercicios();
         $this->view('administrador/exercicios/exercicio_edit', $data);
     }
 
-    /**
-     * Exclui um exercício pelo ID enviado em uma requisição POST.
-     *
-     * A ação é exclusiva do administrador. IDs inválidos levam de volta à lista;
-     * IDs válidos são encaminhados ao service e, em seguida, ocorre o redirecionamento.
-     */
+
+    //Exclui um exercício pelo ID enviado em uma requisição POST.
+    //A ação é exclusiva do administrador. IDs inválidos levam de volta à lista;
+    //IDs válidos são encaminhados ao service e, em seguida, ocorre o redirecionamento.
+
     public function excluir(){
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -114,21 +123,27 @@ class ExercicioController extends Controller{
         $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
-    /**
-     * Valida e atualiza um exercício existente.
-     *
-     * Confirma o ID e a existência do registro, normaliza novamente as questões,
-     * gera o JSON e executa as mesmas validações usadas no cadastro. Havendo erro,
-     * preserva os valores do formulário; sem erros, monta a entidade com seu ID e
-     * solicita a atualização ao service.
-     */
+    //Valida e atualiza um exercício existente.
+    //Confirma o ID, normaliza o conteúdo conforme o tipo e executa as mesmas validações do cadastro.
     public function atualizar(){
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
         if (!$id || !$this->exercicioService->getExercicioById($id)) $this->redirect(URL_BASE . '/administrador/exercicios');
         $dados = $_POST;
-        $questoes = $this->normalizarQuestoes($dados['questoes'] ?? []);
-        $dados['conteudo'] = json_encode($questoes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $dados['tipo'] = $this->normalizarTipo((string) ($dados['tipo'] ?? 'exercicio'));
+        $conteudo = $dados['tipo'] === 'simulacao'
+            ? [
+                'tipo' => 'simulacao',
+                'etapas' => $this->normalizarEtapas($dados['etapas'] ?? []),
+                'ferramentas' => $this->normalizarFerramentas($dados['ferramentas'] ?? []),
+                'peca_quebrada' => (string) ($dados['peca_quebrada'] ?? ''),
+                'componentes' => ['bateria', 'camera', 'chip'],
+            ]
+            : [
+                'tipo' => 'exercicio',
+                'questoes' => $this->normalizarQuestoes($dados['questoes'] ?? []),
+            ];
+        $dados['conteudo'] = json_encode($conteudo, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $erros = Validador::validarExercicio($dados);
         if (empty($erros['atividade_id'])) {
             $atividadeSelecionada = $this->atividadeService->getAtividadeById((int) $dados['atividade_id']);
@@ -136,12 +151,15 @@ class ExercicioController extends Controller{
                 $erros['atividade_id'] = 'A atividade selecionada não existe.';
             } elseif ($atividadeSelecionada->getTipoAtividade() === 'TEXTO') {
                 $erros['atividade_id'] = 'Atividades do tipo Texto não podem possuir exercícios.';
+            } elseif (!$this->tipoCompativelComAtividade((int) $dados['atividade_id'], $dados['tipo'], $id)) {
+                $erros['atividade_id'] = 'Uma atividade não pode misturar exercícios de questões e simulações.';
             }
         }
         if (!empty($erros)) {
             $data['erros'] = $erros;
             $data['exercicio'] = $dados;
-            $data['questoes'] = $questoes;
+            $data['tipo'] = $dados['tipo'];
+            $data['conteudoExercicio'] = $conteudo;
             $data['atividades'] = $this->getAtividadesComExercicios();
             $this->view('administrador/exercicios/exercicio_edit', $data);
             return;
@@ -159,13 +177,9 @@ class ExercicioController extends Controller{
         $this->redirect(URL_BASE . '/administrador/exercicios');
     }
 
-    /**
-     * Prepara uma atividade para ser realizada pelo funcionário.
-     *
-     * Confirma o perfil, o ID da atividade e as regras de liberação. Em seguida,
-     * reúne e decodifica os exercícios, registra no servidor o horário de início e
-     * marca o progresso como iniciado antes de renderizar a tela de respostas.
-     */
+
+    //Prepara uma atividade para ser realizada pelo funcionário.
+    //Confirma o perfil, o ID da atividade e as regras de liberação. Em seguida, reúne e decodifica os exercícios, registra no servidor o horário de início e marca o progresso como iniciado antes de renderizar a tela de respostas.
     public function acessarAtividade(){
         $this->funcionarioRequired();
         $idAtividade = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -189,21 +203,17 @@ class ExercicioController extends Controller{
         $_SESSION['atividade_inicio'][$idAtividade] ??= microtime(true);
         $this->funcionarioAtividadeService->iniciarAtividade($_SESSION['usuario_logado']->getId(), $idAtividade);
 
-        $this->view('funcionario/exercicios', [
+        $this->view($this->getViewRealizacao($exercicios), [
             'atividade' => $atividade,
             'exercicios' => $exercicios,
             'tempoRestante' => $this->calcularTempoRestante($atividade, $idAtividade),
         ]);
     }
 
-    /**
-     * Corrige todas as respostas submetidas e registra o resultado da atividade.
-     *
-     * A função valida novamente o acesso e exige uma alternativa válida em cada
-     * questão. Depois calcula percentual de acertos, tempo, estrelas e bolotas,
-     * envia esses dados ao service de progresso e apresenta o feedback completo
-     * ao funcionário, incluindo as justificativas armazenadas no JSON.
-     */
+
+    //Corrige todas as respostas submetidas e registra o resultado da atividade.
+    //Corrige alternativas em exercícios ou a ordem das ações práticas em simulações e registra o resultado.
+
     public function responderAtividade(){
         $this->funcionarioRequired();
         $idAtividade = filter_input(INPUT_POST, 'id_atividade', FILTER_VALIDATE_INT);
@@ -221,29 +231,72 @@ class ExercicioController extends Controller{
 
         $exercicios = $this->montarExerciciosDaAtividade($idAtividade);
         $respostas = is_array($_POST['respostas'] ?? null) ? $_POST['respostas'] : [];
+        $respostasSimulacao = is_array($_POST['respostas_simulacao'] ?? null) ? $_POST['respostas_simulacao'] : [];
         $total = 0;
         $acertos = 0;
 
         foreach ($exercicios as $exercicio) {
-            foreach ($exercicio['questoes'] as $indice => $questao) {
+            $idExercicio = (string) $exercicio['id_exercicio'];
+            if ($exercicio['tipo'] === 'simulacao') {
+                $resposta = $respostasSimulacao[$idExercicio] ?? null;
+                $acoes = is_array($resposta)
+                    ? json_decode((string) ($resposta['acoes'] ?? ''), true)
+                    : null;
+                $sequencia = array_column($exercicio['conteudo']['sequencia'] ?? [], 'acao');
+                if (!is_array($acoes) || $acoes === [] || $sequencia === []) {
+                    $this->view($this->getViewRealizacao($exercicios), [
+                        'atividade' => $atividade,
+                        'exercicios' => $exercicios,
+                        'respostas' => $respostas,
+                        'respostasSimulacao' => $respostasSimulacao,
+                        'erro' => 'Conclua todas as ações da simulação antes de finalizar.',
+                        'tempoRestante' => $this->calcularTempoRestante($atividade, $idAtividade),
+                    ]);
+                    return;
+                }
+
+                $indiceEsperado = 0;
+                foreach ($acoes as $acao) {
+                    $total++;
+                    if (is_string($acao) && ($sequencia[$indiceEsperado] ?? null) === $acao) {
+                        $acertos++;
+                        $indiceEsperado++;
+                    }
+                }
+                $total += count($sequencia) - $indiceEsperado;
+                if ($indiceEsperado !== count($sequencia)) {
+                    $this->view($this->getViewRealizacao($exercicios), [
+                        'atividade' => $atividade,
+                        'exercicios' => $exercicios,
+                        'respostas' => $respostas,
+                        'respostasSimulacao' => $respostasSimulacao,
+                        'erro' => 'A sequência de manutenção ainda não foi concluída.',
+                        'tempoRestante' => $this->calcularTempoRestante($atividade, $idAtividade),
+                    ]);
+                    return;
+                }
+                continue;
+            }
+
+            foreach ($exercicio['conteudo']['questoes'] as $indice => $item) {
                 $total++;
-                $idExercicio = (string) $exercicio['id_exercicio'];
                 $resposta = filter_var(
                     $respostas[$idExercicio][$indice] ?? null,
                     FILTER_VALIDATE_INT,
                     ['options' => ['min_range' => 0]]
                 );
-                if ($resposta === false || !array_key_exists($resposta, $questao['alternativas'] ?? [])) {
-                    $this->view('funcionario/exercicios', [
+                if ($resposta === false || !array_key_exists($resposta, $item['alternativas'] ?? [])) {
+                    $this->view($this->getViewRealizacao($exercicios), [
                         'atividade' => $atividade,
                         'exercicios' => $exercicios,
                         'respostas' => $respostas,
+                        'respostasSimulacao' => $respostasSimulacao,
                         'erro' => 'Responda todas as questões antes de finalizar.',
                         'tempoRestante' => $this->calcularTempoRestante($atividade, $idAtividade),
                     ]);
                     return;
                 }
-                if ((int) $resposta === (int) ($questao['alternativa_correta'] ?? -1)) {
+                if ((int) $resposta === (int) ($item['alternativa_correta'] ?? -1)) {
                     $acertos++;
                 }
             }
@@ -273,10 +326,11 @@ class ExercicioController extends Controller{
             $tempoExecucao
         );
 
-        $this->view('funcionario/exercicios', [
+        $this->view($this->getViewRealizacao($exercicios), [
             'atividade' => $atividade,
             'exercicios' => $exercicios,
             'respostas' => $respostas,
+            'respostasSimulacao' => $respostasSimulacao,
             'resultado' => [
                 'acertos' => $acertos,
                 'total' => $total,
@@ -289,39 +343,38 @@ class ExercicioController extends Controller{
         ]);
     }
 
-    /**
-     * Calcula quantos segundos ainda restam no limite da atividade.
-     *
-     * O início fica armazenado na sessão para que voltar ao conteúdo e abrir os
-     * exercícios novamente não reinicie o cronômetro da tentativa atual.
-     */
+    //Calcula quantos segundos ainda restam no limite da atividade.
+    //O início fica armazenado na sessão para que voltar ao conteúdo e abrir os exercícios novamente não reinicie o cronômetro da tentativa atual.
+
     private function calcularTempoRestante(Atividade $atividade, int $idAtividade): int {
         $inicio = (float) ($_SESSION['atividade_inicio'][$idAtividade] ?? microtime(true));
         $tempoDecorrido = microtime(true) - $inicio;
         return max(0, (int) ceil($atividade->getTempoLimite() - $tempoDecorrido));
     }
 
-    /**
-     * Monta a estrutura de exercícios consumida pela view do funcionário.
-     *
-     * Busca os objetos vinculados à atividade e converte o conteúdo JSON de cada
-     * um em um array de questões, preservando ID e descrição do conjunto.
-     */
+
+    //Monta a estrutura de exercícios consumida pela view do funcionário.
+    //Busca os registros da atividade e converte cada JSON para a estrutura de exercício ou simulação.
+
     private function montarExerciciosDaAtividade(int $idAtividade): array {
         $exercicios = [];
         foreach ($this->exercicioService->getExerciciosByAtividade($idAtividade) as $registro) {
+            $conteudo = $this->decodificarConteudo($registro->getConteudo());
+            if ($conteudo['tipo'] === 'simulacao') {
+                $conteudo['sequencia'] = $this->montarSequenciaSimulacao($conteudo);
+            }
             $exercicios[] = [
                 'id_exercicio' => $registro->getId(),
                 'descricao' => $registro->getDescricao(),
-                'questoes' => $this->decodificarConteudo($registro->getConteudo())
+                'tipo' => $conteudo['tipo'],
+                'conteudo' => $conteudo,
             ];
         }
         return $exercicios;
     }
 
-    /**
-     * Lista apenas atividades que aceitam exercícios no formulário administrativo.
-     */
+    //Lista apenas atividades que aceitam exercícios no formulário administrativo.
+
     private function getAtividadesComExercicios(): array {
         return array_values(array_filter(
             $this->atividadeService->getAtividades(),
@@ -329,13 +382,11 @@ class ExercicioController extends Controller{
         ));
     }
 
-    /**
-     * Padroniza os campos enviados pelo formulário dinâmico antes de gerar o JSON.
-     *
-     * Ignora entradas que não sejam arrays, remove espaços desnecessários, reorganiza
-     * os índices das alternativas e transforma o índice correto em inteiro válido.
-     * A saída possui apenas enunciado, alternativas, alternativa correta e justificativa.
-     */
+
+    //Padroniza os campos enviados pelo formulário dinâmico antes de gerar o JSON.
+    //Ignora entradas que não sejam arrays, remove espaços desnecessários, reorganiza os índices das alternativas e transforma o índice correto em inteiro válido.
+    //A saída possui apenas enunciado, alternativas, alternativa correta e justificativa.
+
     private function normalizarQuestoes(array $questoes): array {
         $normalizadas = [];
 
@@ -364,11 +415,145 @@ class ExercicioController extends Controller{
         return $normalizadas;
     }
 
+    private function normalizarEtapas(array $etapas): array {
+        $normalizadas = [];
+
+        foreach ($etapas as $etapa) {
+            if (!is_array($etapa)) continue;
+            $normalizadas[] = ['descricao' => trim((string) ($etapa['descricao'] ?? ''))];
+        }
+
+        return $normalizadas;
+    }
+
+    private function normalizarFerramentas(array $ferramentas): array {
+        $permitidas = ['chave_fenda', 'pinca', 'pino_ejetor', 'luvas', 'aquecedor', 'palheta', 'adesivo'];
+        $recebidas = array_filter($ferramentas, 'is_string');
+        return array_values(array_unique(array_intersect($permitidas, $recebidas)));
+    }
+
+    private function normalizarTipo(string $tipo): string {
+        return match (strtolower(trim($tipo))) {
+            'q', 'questao', 'exercicio' => 'exercicio',
+            's', 'simulacao' => 'simulacao',
+            default => strtolower(trim($tipo)),
+        };
+    }
+
+    //Recupera a peça defeituosa de JSONs antigos, nos quais ela ficava dentro de uma etapa.
+    private function getPecaQuebradaLegada(array $etapas): string {
+        foreach ($etapas as $etapa) {
+            $pecas = is_array($etapa['pecas_quebradas'] ?? null) ? $etapa['pecas_quebradas'] : [];
+            foreach ($pecas as $peca) {
+                if (in_array($peca, ['bateria', 'camera', 'chip'], true)) return $peca;
+            }
+        }
+        return '';
+    }
+
+    //Monta o roteiro técnico usado pelo JavaScript e novamente conferido pelo PHP na correção.
+    private function montarSequenciaSimulacao(array $conteudo): array {
+        $peca = (string) ($conteudo['peca_quebrada'] ?? '');
+        $ferramentas = $conteudo['ferramentas'] ?? [];
+        $sequencia = [];
+        $adicionarFerramenta = static function (array &$acoes, string $ferramenta, string $rotulo) use ($ferramentas): void {
+            if (in_array($ferramenta, $ferramentas, true)) {
+                $acoes[] = ['acao' => 'ferramenta:' . $ferramenta, 'instrucao' => 'Use ' . $rotulo . '.'];
+            }
+        };
+
+        $adicionarFerramenta($sequencia, 'luvas', 'as luvas de proteção');
+        $adicionarFerramenta($sequencia, 'aquecedor', 'o soprador térmico para amolecer a cola da tampa');
+        $adicionarFerramenta($sequencia, 'palheta', 'a palheta para soltar a tampa');
+        $sequencia[] = ['acao' => 'remover:tampa', 'instrucao' => 'Remova a tampa traseira.'];
+        $adicionarFerramenta($sequencia, 'chave_fenda', 'a chave de fenda nos parafusos da proteção');
+        $sequencia[] = ['acao' => 'remover:protecao', 'instrucao' => 'Remova a proteção interna.'];
+
+        if ($peca === 'chip') {
+            $adicionarFerramenta($sequencia, 'pino_ejetor', 'o pino ejetor para liberar o chip');
+        } else {
+            $adicionarFerramenta($sequencia, 'pinca', 'a pinça para retirar o componente com segurança');
+        }
+        $sequencia[] = ['acao' => 'remover:' . $peca, 'instrucao' => 'Retire a peça com defeito.'];
+        if ($peca === 'bateria') {
+            $adicionarFerramenta($sequencia, 'adesivo', 'o adesivo para fixar a bateria nova');
+        }
+        $sequencia[] = ['acao' => 'instalar:' . $peca, 'instrucao' => 'Instale a peça nova.'];
+        $sequencia[] = ['acao' => 'instalar:protecao', 'instrucao' => 'Recoloque a proteção interna.'];
+        $adicionarFerramenta($sequencia, 'chave_fenda', 'a chave de fenda para prender novamente a proteção');
+        $sequencia[] = ['acao' => 'instalar:tampa', 'instrucao' => 'Recoloque a tampa traseira.'];
+        return $sequencia;
+    }
+
+    private function getViewRealizacao(array $exercicios): string {
+        if ($exercicios !== [] && array_reduce(
+            $exercicios,
+            static fn(bool $somenteSimulacoes, array $exercicio): bool => $somenteSimulacoes && $exercicio['tipo'] === 'simulacao',
+            true
+        )) {
+            return 'funcionario/simulacao';
+        }
+        return 'funcionario/exercicios';
+    }
+
+    private function tipoCompativelComAtividade(int $idAtividade, string $tipo, ?int $idIgnorado = null): bool {
+        foreach ($this->exercicioService->getExerciciosByAtividade($idAtividade) as $exercicio) {
+            if ($idIgnorado !== null && $exercicio->getId() === $idIgnorado) continue;
+            $conteudo = $this->decodificarConteudo($exercicio->getConteudo());
+            if ($conteudo['tipo'] !== $tipo) return false;
+        }
+        return true;
+    }
+
     //Se o conteúdo não formar uma lista válida, devolve um array vazio para que a camada de apresentação não tente percorrer um valor incompatível.
 
     private function decodificarConteudo(string $conteudo): array {
-        $questoes = json_decode($conteudo, true);
-        return is_array($questoes) ? $questoes : [];
+        $dados = json_decode($conteudo, true);
+        if (!is_array($dados)) return ['tipo' => 'exercicio', 'questoes' => []];
+
+        if (!array_is_list($dados)) {
+            $tipo = $this->normalizarTipo((string) ($dados['tipo'] ?? 'exercicio'));
+            if ($tipo === 'simulacao') {
+                $etapas = is_array($dados['etapas'] ?? null) ? array_values($dados['etapas']) : [];
+                $pecaQuebrada = (string) ($dados['peca_quebrada'] ?? $this->getPecaQuebradaLegada($etapas));
+                return [
+                    'tipo' => 'simulacao',
+                    'etapas' => array_map(
+                        static fn($etapa): array => ['descricao' => is_array($etapa) ? (string) ($etapa['descricao'] ?? '') : ''],
+                        $etapas
+                    ),
+                    'ferramentas' => $this->normalizarFerramentas(is_array($dados['ferramentas'] ?? null) ? $dados['ferramentas'] : []),
+                    'peca_quebrada' => $pecaQuebrada,
+                    'componentes' => array_values(array_intersect(
+                        ['bateria', 'camera', 'chip'],
+                        is_array($dados['componentes'] ?? null) ? $dados['componentes'] : ['bateria', 'camera', 'chip']
+                    )),
+                ];
+            }
+            return [
+                'tipo' => 'exercicio',
+                'questoes' => is_array($dados['questoes'] ?? null) ? array_values($dados['questoes']) : [],
+            ];
+        }
+
+        $tipoLegado = (($dados[0]['tipo'] ?? 'q') === 's') ? 'simulacao' : 'exercicio';
+        if ($tipoLegado === 'simulacao') {
+            return [
+                'tipo' => 'simulacao',
+                'etapas' => array_map(
+                    static fn($item, int $indice): array => [
+                        'descricao' => is_array($item) ? ($item['descricao'] ?? '') : '',
+                    ],
+                    $dados,
+                    array_keys($dados)
+                ),
+                'ferramentas' => ['luvas', 'aquecedor', 'palheta', 'chave_fenda', 'pinca', 'adesivo'],
+                'peca_quebrada' => $this->getPecaQuebradaLegada($dados),
+                'componentes' => ['bateria', 'camera', 'chip'],
+            ];
+        }
+
+        return ['tipo' => 'exercicio', 'questoes' => $dados];
     }
 
 }

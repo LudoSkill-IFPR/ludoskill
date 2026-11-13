@@ -8,13 +8,8 @@ class Exercicio {
     private string $conteudo;
     private Atividade $atividade;
 
-    /**
-     * Cria uma entidade de exercício com seus dados básicos.
-     *
-     * O conteúdo permanece como uma string JSON, pois é nesse formato que ele é
-     * armazenado na coluna `conteudo`. Quando nenhuma atividade é recebida, cria
-     * um objeto Atividade vazio para manter a propriedade sempre inicializada.
-     */
+    //O conteúdo permanece como uma string JSON, pois é nesse formato que ele é armazenado na coluna `conteudo`. Quando nenhuma atividade é recebida, cria um objeto Atividade vazio para manter a propriedade sempre inicializada.
+
     public function __construct(
         int $id = 0,
         string $descricao = '',
@@ -27,14 +22,6 @@ class Exercicio {
         $this->atividade = $atividade ?? new Atividade();
     }
 
-    /**
-     * Converte uma linha associativa retornada pelo banco em um objeto Exercicio.
-     *
-     * Se a atividade completa não for informada, monta uma referência contendo o
-     * ID da chave estrangeira e, quando disponível no JOIN, o nome da atividade.
-     * Também garante que `conteudo` seja uma string JSON, mesmo quando o valor já
-     * tiver sido decodificado antes de chegar ao model.
-     */
     public static function arrayParaObjeto(array $exercicio, ?Atividade $atividade = null): self
     {
         $atividade ??= new Atividade(

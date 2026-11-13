@@ -13,7 +13,7 @@
         <div class="container pagina-exercicios">
             <div id="topo">
                 <a class="botao brilho" id="voltar-conteudo" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>">Voltar ao conteúdo</a>
-                <div><h1><?= htmlspecialchars($atividade->getNome()) ?></h1><p class="mensagem">Responda todas as questões da atividade.</p></div>
+                <div><h1><?= htmlspecialchars($atividade->getNome()) ?></h1><p class="mensagem">Resolva todos os exercícios da atividade.</p></div>
             </div>
 
             <?php if (!isset($resultado)): ?>
@@ -46,18 +46,18 @@
                     <?php foreach ($exercicios as $exercicio): ?>
                         <section class="card conjunto-exercicios">
                             <h2><?= htmlspecialchars($exercicio['descricao']) ?></h2>
-                            <?php foreach ($exercicio['questoes'] as $indiceExercicio => $questao): ?>
+                            <?php foreach (($exercicio['conteudo']['questoes'] ?? []) as $indiceExercicio => $item): ?>
                                 <?php
                                 $numeroGlobal++;
                                 $idExercicio = (string) $exercicio['id_exercicio'];
                                 $selecionada = $respostas[$idExercicio][$indiceExercicio] ?? null;
-                                $correta = (int) ($questao['alternativa_correta'] ?? -1);
+                                $correta = (int) ($item['alternativa_correta'] ?? -1);
                                 ?>
                                 <fieldset class="card-secundario exercicio-funcionario">
                                     <legend>Questão <?= $numeroGlobal ?></legend>
-                                    <p><?= nl2br(htmlspecialchars($questao['enunciado'] ?? '')) ?></p>
+                                    <p><?= nl2br(htmlspecialchars($item['enunciado'] ?? '')) ?></p>
                                     <div class="opcoes-exercicio">
-                                        <?php foreach (($questao['alternativas'] ?? []) as $indice => $alternativa): ?>
+                                        <?php foreach (($item['alternativas'] ?? []) as $indice => $alternativa): ?>
                                             <?php
                                             $classes = 'opcao-exercicio';
                                             if (isset($resultado) && $indice === $correta) $classes .= ' alternativa-correta-resultado';
@@ -72,7 +72,7 @@
                                     <?php if (isset($resultado)): ?>
                                         <div class="resultado-exercicio <?= (int) $selecionada === $correta ? 'resposta-correta' : 'resposta-incorreta' ?>">
                                             <strong><?= (int) $selecionada === $correta ? 'Resposta correta!' : 'Resposta incorreta.' ?></strong>
-                                            <p><?= nl2br(htmlspecialchars($questao['justificativa'] ?? '')) ?></p>
+                                            <p><?= nl2br(htmlspecialchars($item['justificativa'] ?? '')) ?></p>
                                         </div>
                                     <?php endif; ?>
                                 </fieldset>
@@ -125,10 +125,11 @@
         const chave = 'ludoskill:atividade:<?= $_SESSION['usuario_logado']->getId() ?>:<?= $atividade->getId() ?>';
         <?php if (isset($resultado)): ?>localStorage.removeItem(chave);<?php else: ?>
         const salvas = JSON.parse(localStorage.getItem(chave) || '{}');
-        form.querySelectorAll('input[type="radio"]').forEach(input => {
-            if (salvas[input.name] === input.value) input.checked = true;
+        form.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+            if (input.type === 'checkbox') input.checked = salvas[input.name] === '1';
+            else if (salvas[input.name] === input.value) input.checked = true;
             input.addEventListener('change', () => {
-                salvas[input.name] = input.value;
+                salvas[input.name] = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
                 localStorage.setItem(chave, JSON.stringify(salvas));
             });
         });

@@ -46,14 +46,17 @@ class Validador {
     /**
      * Valida os dados usados no cadastro e na edição de um exercício.
      *
-     * Confere a descrição, decodifica o conteúdo JSON e verifica cada questão:
-     * enunciado obrigatório, no mínimo duas alternativas preenchidas, índice da
-     * alternativa correta existente e justificativa obrigatória. Por fim, valida
-     * o identificador da atividade vinculada. Retorna um array associativo em que
-     * cada chave representa o campo com problema; um array vazio indica sucesso.
+     * Confere a descrição e o tipo declarado no JSON. Exercícios exigem questões
+     * completas; simulações exigem etapas, ferramentas e ao menos um componente
+     * quebrado. Por fim, valida o identificador da atividade vinculada.
      */
     public static function validarExercicio(array $data): array {
         $erros = [];
+
+        $tipo = (string) ($data['tipo'] ?? '');
+        if (!in_array($tipo, ['exercicio', 'simulacao'], true)) {
+            $erros['tipo'] = 'Selecione um tipo de exercício válido.';
+        }
 
         if (empty($data['descricao'])) {
             $erros['descricao'] = 'O campo descrição é obrigatório.';
@@ -64,14 +67,62 @@ class Validador {
         if (empty($data['conteudo'])) {
             $erros['conteudo'] = 'O campo conteúdo é obrigatório.';
         } else {
-            $questoes = json_decode($data['conteudo'], true);
+            $conteudo = json_decode($data['conteudo'], true);
 
-            if (!is_array($questoes) || json_last_error() !== JSON_ERROR_NONE) {
+            if (!is_array($conteudo) || json_last_error() !== JSON_ERROR_NONE || array_is_list($conteudo)) {
                 $erros['conteudo'] = 'O conteúdo deve ser um JSON válido.';
-            } elseif ($questoes === []) {
-                $erros['conteudo'] = 'Cadastre pelo menos uma questão.';
+            } elseif (($conteudo['tipo'] ?? '') !== $tipo) {
+                $erros['conteudo'] = 'O tipo informado não corresponde ao tipo do conteúdo.';
+            } elseif ($tipo === 'simulacao') {
+                $etapas = $conteudo['etapas'] ?? [];
+                $ferramentas = $conteudo['ferramentas'] ?? [];
+                $pecaQuebrada = (string) ($conteudo['peca_quebrada'] ?? '');
+                $pecasPermitidas = ['bateria', 'camera', 'chip'];
+                $ferramentasPermitidas = ['chave_fenda', 'pinca', 'pino_ejetor', 'luvas', 'aquecedor', 'palheta', 'adesivo'];
+
+                if (!is_array($etapas) || $etapas === []) {
+                    $erros['conteudo'] = 'Cadastre pelo menos uma etapa da simulação.';
+                } elseif (!in_array($pecaQuebrada, $pecasPermitidas, true)) {
+                    $erros['conteudo'] = 'Selecione a peça com defeito na simulação.';
+                } elseif (!is_array($ferramentas) || $ferramentas === [] || array_diff($ferramentas, $ferramentasPermitidas)) {
+                    $erros['conteudo'] = 'Selecione pelo menos uma ferramenta válida para a simulação.';
+                }
+
+                foreach (is_array($etapas) ? $etapas : [] as $indice => $etapa) {
+                    if (isset($erros['conteudo'])) break;
+                    $numero = $indice + 1;
+                    if (trim((string) ($etapa['descricao'] ?? '')) === '') {
+                        $erros['conteudo'] = "Informe a descrição da etapa {$numero}.";
+                        break;
+                    }
+                }
+
+                $necessarias = ['luvas', 'aquecedor', 'palheta', 'chave_fenda'];
+                if ($pecaQuebrada === 'chip') {
+                    $necessarias[] = 'pino_ejetor';
+                } else {
+                    $necessarias[] = 'pinca';
+                }
+                if ($pecaQuebrada === 'bateria') $necessarias[] = 'adesivo';
+                $faltantes = array_diff($necessarias, is_array($ferramentas) ? $ferramentas : []);
+                if (!isset($erros['conteudo']) && $faltantes !== []) {
+                    $nomes = [
+                        'luvas' => 'luvas', 'aquecedor' => 'soprador térmico', 'palheta' => 'palheta plástica',
+                        'chave_fenda' => 'chave de fenda', 'pinca' => 'pinça', 'pino_ejetor' => 'pino ejetor',
+                        'adesivo' => 'adesivo para bateria',
+                    ];
+                    $erros['conteudo'] = 'Inclua as ferramentas necessárias: ' . implode(', ', array_map(
+                        static fn(string $ferramenta): string => $nomes[$ferramenta],
+                        $faltantes
+                    )) . '.';
+                }
             } else {
-                foreach ($questoes as $indice => $exercicio) {
+                $questoes = $conteudo['questoes'] ?? [];
+                if (!is_array($questoes) || $questoes === []) {
+                    $erros['conteudo'] = 'Cadastre pelo menos uma questão.';
+                }
+                foreach (is_array($questoes) ? $questoes : [] as $indice => $exercicio) {
+                    if (isset($erros['conteudo'])) break;
                     $numero = $indice + 1;
                     $alternativas = $exercicio['alternativas'] ?? [];
                     $correta = $exercicio['alternativa_correta'] ?? null;

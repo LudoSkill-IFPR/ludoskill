@@ -10,7 +10,7 @@
     border-radius: 8px;
 }
 
-#lista-questoes {
+#lista-itens {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -21,7 +21,13 @@
     border: 1px solid var(--cinza-escuro);
 }
 
+.bloco-simulacao {
+    margin: 0;
+    border: 1px solid var(--cinza-escuro);
+}
+
 .cabecalho-exercicio,
+.cabecalho-simulacao,
 .acoes-formulario,
 .linha-alternativa {
     display: flex;
@@ -34,9 +40,47 @@
     margin-bottom: 12px;
 }
 
+.cabecalho-simulacao {
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
 .cabecalho-exercicio legend {
     font-size: 20px;
     font-weight: bold;
+}
+
+.cabecalho-simulacao legend,
+.grupo-pecas legend {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.grupo-pecas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin-top: 16px;
+}
+
+.grupo-pecas legend {
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.grupo-pecas label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+}
+
+.grupo-pecas input {
+    width: auto;
+}
+
+.configuracao-simulacao[hidden] {
+    display: none;
 }
 
 .linha-alternativa {
@@ -54,12 +98,18 @@
 }
 
 .remover-exercicio,
+.remover-simulacao,
 .remover-alternativa {
     width: auto;
     background: var(--problema);
 }
 
 .remover-exercicio:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.remover-simulacao:disabled {
     cursor: not-allowed;
     opacity: 0.5;
 }
@@ -158,6 +208,15 @@
     display: grid;
     gap: 10px;
     margin: 18px 0;
+}
+
+.instrucao-simulacao {
+    margin-top: 18px;
+    font-weight: 600;
+}
+
+.opcoes-simulacao {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
 .opcao-exercicio {

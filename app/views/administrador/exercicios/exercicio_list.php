@@ -20,15 +20,26 @@
                 <p>Nenhum exercício encontrado.</p>
             <?php else: ?>
                 <table>
-                    <thead><tr><th>ID</th><th>Descrição</th><th>Atividade</th><th>Questões</th><th>Ações</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Tipo</th><th>Descrição</th><th>Atividade</th><th>Itens</th><th>Ações</th></tr></thead>
                     <tbody>
                         <?php foreach ($lista as $exercicio): ?>
-                            <?php $conteudo = json_decode($exercicio->getConteudo(), true); ?>
+                            <?php
+                            $conteudo = json_decode($exercicio->getConteudo(), true);
+                            $conteudo = is_array($conteudo) ? $conteudo : [];
+                            $tipoJson = array_is_list($conteudo)
+                                ? ((($conteudo[0]['tipo'] ?? 'q') === 's') ? 'simulacao' : 'exercicio')
+                                : ($conteudo['tipo'] ?? 'exercicio');
+                            $tipo = in_array($tipoJson, ['s', 'simulacao'], true) ? 'Simulação' : 'Exercício';
+                            $quantidadeItens = $tipo === 'Simulação'
+                                ? count($conteudo['etapas'] ?? (array_is_list($conteudo) ? $conteudo : []))
+                                : count($conteudo['questoes'] ?? (array_is_list($conteudo) ? $conteudo : []));
+                            ?>
                             <tr>
                                 <td><?= $exercicio->getId() ?></td>
+                                <td><?= $tipo ?></td>
                                 <td><?= htmlspecialchars($exercicio->getDescricao()) ?></td>
                                 <td><?= htmlspecialchars($exercicio->getAtividade()->getNome()) ?></td>
-                                <td><?= is_array($conteudo) ? count($conteudo) : 0 ?></td>
+                                <td><?= $quantidadeItens ?></td>
                                 <td><div id="acao">
                                     <a class="botao brilho" href="<?= URL_BASE ?>/administrador/exercicios/editar?id=<?= $exercicio->getId() ?>">Editar</a>
                                     <form method="post" action="<?= URL_BASE ?>/administrador/exercicios/excluir" onsubmit="return confirm('Deseja excluir este exercício?')">

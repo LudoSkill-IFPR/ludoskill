@@ -24,7 +24,20 @@ $empresa = new Empresa(1, '12345678000199', 'Empresa', 'empresa@example.com');
 $modulo = new Modulo(1, 'Módulo', str_repeat('Descrição ', 4), 0, 'ATIVO');
 $atividade = new Atividade(1, $modulo, 'INTRODUCAO', 'Atividade', 'ATIVO', 1, 180, '<h2>Introdução</h2><p>Conteúdo da atividade.</p>');
 $atividadeTexto = new Atividade(2, $modulo, 'TEXTO', 'Leitura', 'ATIVO', 2, 180, '<p>Conteúdo somente para leitura.</p>');
-$exercicio = new Exercicio(1, 'Conjunto', '[{"enunciado":"Questão?","alternativas":["A","B"],"alternativa_correta":0,"justificativa":"Justificativa"}]', $atividade);
+$conteudoQuestao = ['tipo' => 'exercicio', 'questoes' => [['enunciado' => 'Questão?', 'alternativas' => ['A', 'B'], 'alternativa_correta' => 0, 'justificativa' => 'Justificativa']]];
+$conteudoSimulacao = [
+    'tipo' => 'simulacao',
+    'etapas' => [['descricao' => 'Aqueça e remova a tampa traseira.']],
+    'ferramentas' => ['luvas', 'aquecedor', 'palheta', 'chave_fenda', 'pinca', 'adesivo'],
+    'peca_quebrada' => 'bateria',
+    'componentes' => ['bateria', 'camera', 'chip'],
+    'sequencia' => [
+        ['acao' => 'ferramenta:luvas', 'instrucao' => 'Use as luvas.'],
+        ['acao' => 'remover:tampa', 'instrucao' => 'Remova a tampa.'],
+    ],
+];
+$exercicio = new Exercicio(1, 'Conjunto', json_encode($conteudoQuestao), $atividade);
+$exercicioSimulacao = new Exercicio(2, 'Diagnóstico', json_encode($conteudoSimulacao), $atividade);
 $item = new Item(1, 'ATIVO', 'Tema', 'TEMA', 10, 'assets/imagens/imagemTEMA.png');
 $funcionario = new Funcionario(1, 'Funcionário', new DateTimeImmutable('2000-01-01'), '12345678901', 'func@example.com', '', '45999999999', $empresa, 100, 80, 1, 'ATIVO', 1);
 $gestor = new Gestor(2, 'Gestor', new DateTimeImmutable('1990-01-01'), '10987654321', 'gestor@example.com', '', '45999999998', $empresa, 'ATIVO', 1);
@@ -44,8 +57,9 @@ $casos = [
     ['administrador/atividades/atividade_create', ['atividade' => ['nome' => 'Atividade', 'descricao' => '<p>Conteúdo</p>'], 'modulos' => [$modulo], 'erros' => ['ordem' => 'Inválida']]],
     ['administrador/atividades/atividade_edit', ['atividade' => $atividade, 'modulos' => [$modulo]]],
     ['administrador/exercicios/exercicio_list', ['lista' => [$exercicio]]],
-    ['administrador/exercicios/exercicio_create', ['exercicio' => ['descricao' => 'Conjunto', 'atividade_id' => 1], 'questoes' => json_decode($exercicio->getConteudo(), true), 'atividades' => [$atividade], 'erros' => ['conteudo' => 'Inválido']]],
-    ['administrador/exercicios/exercicio_edit', ['exercicio' => $exercicio, 'questoes' => json_decode($exercicio->getConteudo(), true), 'atividades' => [$atividade]]],
+    ['administrador/exercicios/exercicio_create', ['exercicio' => ['descricao' => 'Conjunto', 'atividade_id' => 1], 'conteudoExercicio' => $conteudoQuestao, 'atividades' => [$atividade], 'erros' => ['conteudo' => 'Inválido']]],
+    ['administrador/exercicios/exercicio_edit', ['exercicio' => $exercicio, 'tipo' => 'exercicio', 'conteudoExercicio' => $conteudoQuestao, 'atividades' => [$atividade]]],
+    ['administrador/exercicios/exercicio_edit', ['exercicio' => $exercicioSimulacao, 'tipo' => 'simulacao', 'conteudoExercicio' => $conteudoSimulacao, 'atividades' => [$atividade]]],
     ['administrador/gestores/gestor_list', ['lista' => [$gestor]]],
     ['administrador/gestores/gestor_create', ['gestor' => ['nome_completo' => 'Gestor'], 'empresas' => [$empresa], 'erros' => ['email' => 'Inválido']]],
     ['administrador/gestores/gestor_edit', ['gestor' => $gestor, 'empresas' => [$empresa]]],
@@ -65,8 +79,10 @@ $casos = [
     ['funcionario/modulos', ['lista' => [['entidade' => $modulo, 'atividades' => [['entidade' => $atividade, 'liberada' => true]]]], 'resultados' => []]],
     ['funcionario/atividade', ['atividade' => $atividade, 'descricao' => $atividade->getDescricao(), 'temExercicios' => true, 'atividadeTexto' => false, 'concluida' => false]],
     ['funcionario/atividade', ['atividade' => $atividadeTexto, 'descricao' => $atividadeTexto->getDescricao(), 'temExercicios' => false, 'atividadeTexto' => true, 'concluida' => false]],
-    ['funcionario/exercicios', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 1, 'descricao' => 'Conjunto', 'questoes' => json_decode($exercicio->getConteudo(), true)]], 'tempoRestante' => 120]],
-    ['funcionario/exercicios', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 1, 'descricao' => 'Conjunto', 'questoes' => json_decode($exercicio->getConteudo(), true)]], 'respostas' => ['1' => [0]], 'resultado' => ['acertos' => 1, 'total' => 1, 'pontuacao' => 100, 'estrelas' => 3, 'bolotas' => 10, 'tentativas' => 1, 'tempo' => 30.0]]],
+    ['funcionario/exercicios', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 1, 'descricao' => 'Conjunto', 'tipo' => 'exercicio', 'conteudo' => $conteudoQuestao]], 'tempoRestante' => 120]],
+    ['funcionario/exercicios', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 1, 'descricao' => 'Conjunto', 'tipo' => 'exercicio', 'conteudo' => $conteudoQuestao]], 'respostas' => ['1' => [0]], 'resultado' => ['acertos' => 1, 'total' => 1, 'pontuacao' => 100, 'estrelas' => 3, 'bolotas' => 10, 'tentativas' => 1, 'tempo' => 30.0]]],
+    ['funcionario/simulacao', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 2, 'descricao' => 'Diagnóstico', 'tipo' => 'simulacao', 'conteudo' => $conteudoSimulacao]], 'respostasSimulacao' => [], 'tempoRestante' => 120]],
+    ['funcionario/simulacao', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 2, 'descricao' => 'Troca de bateria', 'tipo' => 'simulacao', 'conteudo' => $conteudoSimulacao]], 'respostasSimulacao' => ['2' => ['acoes' => '["ferramenta:luvas","remover:tampa"]']], 'resultado' => ['acertos' => 2, 'total' => 2, 'pontuacao' => 100, 'estrelas' => 3, 'bolotas' => 10, 'tentativas' => 1, 'tempo' => 30.0]]],
     ['usuario/perfil', ['usuario' => $funcionario, 'resumo' => ['concluidas' => 1, 'total' => 2, 'estrelas' => 2, 'desempenho' => 2]]],
     ['usuario/perfil', ['usuario' => $gestor, 'empresa' => $empresa, 'qtdFuncionarios' => 5, 'qtdModulos' => 2, 'taxaConclusao' => 75.0]],
     ['usuario/perfil', ['usuario' => $admin, 'qtdEmpresas' => 3, 'qtdGestores' => 4, 'qtdModulos' => 2, 'qtdItens' => 5]],
