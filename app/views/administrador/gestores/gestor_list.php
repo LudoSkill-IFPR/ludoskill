@@ -13,7 +13,7 @@
     <header><?php include __DIR__ . '/../../includes/menuAdministrador.html'; ?></header>
     <main>
         <div class="container">
-            <div id="topo"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/inicial">Voltar</a><a class="botao brilho" href="<?= URL_BASE ?>/administrador/gestores/cadastrar">Novo gestor</a></div>
+            <div id="topo"><a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/inicial"><i class="bi bi-arrow-left"></i> Voltar</a><a class="botao brilho" href="<?= URL_BASE ?>/administrador/gestores/cadastrar">Novo gestor</a></div>
             <h1>Gestores</h1>
             <?php if (empty($lista)): ?><p>Nenhum gestor cadastrado.</p><?php else: ?><table>
                     <thead>

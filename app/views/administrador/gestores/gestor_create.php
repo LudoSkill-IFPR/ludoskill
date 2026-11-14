@@ -13,7 +13,7 @@
     <header><?php include __DIR__ . '/../../includes/menuAdministrador.html'; ?></header>
     <main>
         <div class="container">
-            <div id="topo"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/gestores">Voltar</a>
+            <div id="topo"><a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/gestores"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Cadastro de Gestor</h1>
                     <p class="mensagem">Cadastre um gestor e vincule-o a uma empresa.</p>
@@ -23,13 +23,13 @@
                 <?php foreach (['nome_completo' => ['Nome completo', 'text'], 'data_nascimento' => ['Data de nascimento', 'date'], 'cpf' => ['CPF', 'text'], 'email' => ['E-mail', 'email'], 'senha' => ['Senha', 'password'], 'numero_telefone' => ['Número de telefone', 'text']] as $campo => [$rotulo, $tipo]): ?>
                     <div class="formgroup">
                         <label for="<?= $campo ?>"><?= $rotulo ?>:</label>
-                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" <?= $tipo === 'password' ? 'minlength="8"' : '' ?> value="<?= $tipo !== 'password' ? htmlspecialchars($gestor[$campo] ?? '') : '' ?>">
+                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" required <?= $tipo === 'password' ? 'minlength="8"' : '' ?> value="<?= $tipo !== 'password' ? htmlspecialchars($gestor[$campo] ?? '') : '' ?>">
                         <?php if (isset($erros[$campo])): ?><div class="erro"><?= htmlspecialchars($erros[$campo]) ?></div><?php endif; ?>
                     </div>
                 <?php endforeach; ?>
                 <div class="formgroup">
                     <label for="id_empresa">Empresa:</label>
-                    <select class="card-secundario" id="id_empresa" name="id_empresa">
+                    <select class="card-secundario" id="id_empresa" name="id_empresa" required>
                         <option value="">Selecione uma empresa</option>
                         <?php foreach ($empresas as $empresa): ?><option value="<?= $empresa->getId() ?>" <?= (string) ($gestor['id_empresa'] ?? '') === (string) $empresa->getId() ? 'selected' : '' ?>><?= htmlspecialchars($empresa->getNome()) ?></option><?php endforeach; ?>
                     </select>

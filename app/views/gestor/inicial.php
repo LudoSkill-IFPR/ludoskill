@@ -2,6 +2,7 @@
 $nomesFuncionarios = array_column($desempenho ?? [], 'nome_completo');
 $mediasFuncionarios = array_map('floatval', array_column($desempenho ?? [], 'media_estrelas'));
 $atividadesConcluidas = array_map('intval', array_column($desempenho ?? [], 'atividades_concluidas'));
+$alturaGraficoFuncionarios = max(360, count($desempenho ?? []) * 54);
 $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 ?>
 <!DOCTYPE html>
@@ -48,8 +49,10 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                     <h2><i class="bi bi-graph-up"></i> Desempenho dos Funcionários</h2>
                     <?php if (empty($desempenho)): ?><p>Nenhum funcionário ativo cadastrado.</p><?php endif; ?>
                     <?php if (!empty($desempenho)): ?>
-                        <div class="chart-container">
-                            <canvas id="desempenhoFuncionarios" role="img" aria-label="Gráfico de desempenho dos funcionários em ordem decrescente"></canvas>
+                        <div class="chart-scroll-vertical" tabindex="0" aria-label="Área rolável do gráfico">
+                            <div class="chart-container" style="height: <?= $alturaGraficoFuncionarios ?>px">
+                                <canvas id="desempenhoFuncionarios" role="img" aria-label="Gráfico de desempenho dos funcionários em ordem decrescente"></canvas>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -63,7 +66,12 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
         const canvasDesempenho = document.getElementById('desempenhoFuncionarios');
         if (canvasDesempenho) {
             const atividadesConcluidas = <?= json_encode($atividadesConcluidas) ?>;
-            new Chart(canvasDesempenho, {
+            const cores = () => {
+                const estilos = getComputedStyle(document.documentElement);
+                return { texto: estilos.getPropertyValue('--texto-principal').trim() || '#fff', grade: estilos.getPropertyValue('--borda-interface').trim() || 'rgba(255,255,255,.15)' };
+            };
+            const paleta = cores();
+            const graficoDesempenho = new Chart(canvasDesempenho, {
                 type: 'bar',
                 data: {
                     labels: <?= json_encode($nomesFuncionarios, $jsonSeguro) ?>,
@@ -80,14 +88,22 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { beginAtZero: true, max: 3, ticks: { color: '#ffffff', stepSize: 1 }, grid: { color: 'rgba(255,255,255,.15)' } },
-                        y: { ticks: { color: '#ffffff' }, grid: { display: false } }
+                        x: { beginAtZero: true, max: 3, ticks: { color: paleta.texto, stepSize: 1, font: { size: 13, weight: '600' } }, grid: { color: paleta.grade } },
+                        y: { ticks: { color: paleta.texto, autoSkip: false, font: { size: 13, weight: '600' }, padding: 8 }, grid: { display: false } }
                     },
                     plugins: {
-                        legend: { labels: { color: '#ffffff' } },
+                        legend: { labels: { color: paleta.texto, font: { size: 14, weight: '600' }, usePointStyle: true } },
                         tooltip: { callbacks: { afterLabel: context => `Atividades concluídas: ${atividadesConcluidas[context.dataIndex]}` } }
                     }
                 }
+            });
+            window.addEventListener('ludoskill:tema-alterado', () => {
+                const nova = cores();
+                graficoDesempenho.options.scales.x.ticks.color = nova.texto;
+                graficoDesempenho.options.scales.x.grid.color = nova.grade;
+                graficoDesempenho.options.scales.y.ticks.color = nova.texto;
+                graficoDesempenho.options.plugins.legend.labels.color = nova.texto;
+                graficoDesempenho.update();
             });
         }
     </script>

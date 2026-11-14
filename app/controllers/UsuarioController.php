@@ -13,6 +13,7 @@ use app\services\GestorService;
 use app\services\ModuloService;
 use app\services\EmpresaService;
 use app\services\ItemService;
+use app\helpers\Validador;
 
 class UsuarioController extends Controller
 {
@@ -90,10 +91,8 @@ class UsuarioController extends Controller
         // Validação da data de nascimento
         $dataStr = trim($dados['data_nascimento'] ?? '');
         $data = DateTimeImmutable::createFromFormat('!Y-m-d', $dataStr);
-        if (!$data || $data->format('Y-m-d') !== $dataStr) {
+        if (!Validador::dataNascimentoValida($dataStr)) {
             $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
-        } elseif ($data > new DateTimeImmutable('today')) {
-            $erros['data_nascimento'] = 'A data de nascimento não pode ser futura.';
         }
 
         // Validação do e-mail
@@ -105,11 +104,11 @@ class UsuarioController extends Controller
         }
 
         // Validação do telefone
-        $telefone = trim($dados['numero_telefone'] ?? '');
+        $telefone = preg_replace('/\D/', '', (string) ($dados['numero_telefone'] ?? ''));
         if ($telefone === '') {
             $erros['numero_telefone'] = 'O número de telefone é obrigatório.';
-        } elseif (strlen($telefone) > 20) {
-            $erros['numero_telefone'] = 'O telefone deve possuir no máximo 20 caracteres.';
+        } elseif (!Validador::telefoneValido($telefone)) {
+            $erros['numero_telefone'] = 'Informe um telefone brasileiro válido com DDD.';
         }
 
         // Validação opcional da senha

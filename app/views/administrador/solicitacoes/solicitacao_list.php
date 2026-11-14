@@ -15,10 +15,10 @@
     <main>
         <div class="container">
             <div id="topo">
-                <a class="botao brilho" href="<?= URL_BASE ?>/administrador/inicial">Voltar</a>
+                <a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/inicial"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Solicitações de acesso</h1>
-                    <p class="mensagem">Analise os dados antes de criar o acesso do gestor.</p>
+                    <p class="mensagem">Analise os dados. Ao aprovar, o sistema cria e envia uma senha temporária automaticamente.</p>
                 </div>
             </div>
 
@@ -62,10 +62,6 @@
                                                 <option value="AVANCADO">Avançado</option>
                                                 <option value="CORPORATIVO">Corporativo</option>
                                             </select>
-                                        </div>
-                                        <div>
-                                            <label for="senha-<?= $item->getId() ?>">Senha inicial:</label>
-                                            <input id="senha-<?= $item->getId() ?>" name="senha" type="password" minlength="8" autocomplete="new-password" required>
                                         </div>
                                         <button class="botao brilho" type="submit">Aprovar e enviar</button>
                                     </form>

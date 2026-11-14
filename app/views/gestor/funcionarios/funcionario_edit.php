@@ -15,7 +15,7 @@
     <main>
         <div class="container">
             <div id="topo">
-                <a href="<?= URL_BASE ?>/gestor/funcionarios" class="botao brilho">Voltar</a>
+                <a href="<?= URL_BASE ?>/gestor/funcionarios" class="botao-voltar botao brilho"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Editar Funcionário</h1>
                     <p class="mensagem">Atualize os dados do funcionário.</p>

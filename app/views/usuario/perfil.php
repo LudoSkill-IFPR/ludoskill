@@ -324,7 +324,7 @@
                     default => URL_BASE . '/funcionario/inicial'
                 };
                 ?>
-                <a class="botao" href="<?= $rotaVoltar ?>"><i class="bi bi-arrow-left"></i> Voltar à tela inicial</a>
+                <a class="botao-voltar botao brilho" href="<?= $rotaVoltar ?>"><i class="bi bi-arrow-left"></i> Voltar à tela inicial</a>
             </div>
 
         </div>

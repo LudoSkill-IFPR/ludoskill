@@ -12,12 +12,12 @@
 .cabecalho-perfil h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--texto-principal);
     margin-bottom: 6px;
 }
 
 .cabecalho-perfil .subtitulo {
-    color: #cfcfcf;
+    color: var(--texto-secundario);
     font-size: 1rem;
 }
 
@@ -63,8 +63,9 @@
 
 /* Card de perfil principal */
 .card-perfil {
-    background-color: var(--cinza-ultraescuro);
-    border: 1px solid var(--cinza-escuro);
+    background-color: var(--superficie-card);
+    border: 1px solid var(--borda-card);
+    box-shadow: var(--sombra-card);
     border-radius: 16px;
     padding: 24px;
     display: flex;
@@ -75,10 +76,10 @@
 .card-perfil h2 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #ffffff;
+    color: var(--texto-principal);
     margin-bottom: 18px;
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--cinza-escuro);
+    border-bottom: 1px solid var(--borda-card);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -126,7 +127,7 @@
 .avatar-info h3 {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--texto-principal);
     margin-bottom: 4px;
 }
 
@@ -159,13 +160,13 @@
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #9e9e9e;
+    color: var(--texto-suave);
     margin-bottom: 3px;
 }
 
 .item-info .valor {
     font-size: 1.05rem;
-    color: #f1f1f1;
+    color: var(--texto-principal);
     font-weight: 500;
     word-break: break-word;
 }
@@ -246,7 +247,7 @@
 .card-metrica .numero {
     font-size: 1.6rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--texto-principal);
 }
 
 .card-metrica .legenda {
@@ -282,15 +283,15 @@
 }
 
 .campo-desabilitado {
-    background: #1c1c1c !important;
-    color: #888888 !important;
-    border: 1px dashed #444444 !important;
+    background: var(--superficie-card-secundario) !important;
+    color: var(--texto-suave) !important;
+    border: 1.5px dashed var(--borda-card) !important;
     cursor: not-allowed;
 }
 
 .ajuda-campo {
     font-size: 0.82rem;
-    color: #9e9e9e;
+    color: var(--texto-suave);
     margin-top: 4px;
     display: block;
 }

@@ -15,7 +15,7 @@
     <header><?php include __DIR__ . '/../../includes/menuAdministrador.html'; ?></header>
     <main>
         <div class="container">
-            <div id="topo"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/atividades">Voltar</a>
+            <div id="topo"><a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/atividades"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Cadastro de Atividade</h1>
                     <p class="mensagem">Cadastre uma atividade e vincule-a a um modulo.</p>

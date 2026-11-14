@@ -21,7 +21,7 @@
 .formulario-solicitacao fieldset{
     margin-bottom: 24px;
     padding: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--borda-interface);
     border-radius: 14px;
 }
 
@@ -49,9 +49,9 @@
 .form-aprovacao select{
     width: 100%;
     padding: 11px 12px;
-    color: #fff;
-    background: rgba(17, 17, 17, 0.62);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--texto-input);
+    background: var(--fundo-input);
+    border: 1.5px solid var(--borda-input);
     border-radius: 9px;
 }
 
@@ -119,7 +119,7 @@
     justify-content: space-between;
     margin-top: 22px;
     padding-top: 18px;
-    border-top: 1px solid #444;
+    border-top: 1px solid var(--borda-interface);
 }
 
 .form-aprovacao{
@@ -139,6 +139,8 @@
     margin-top: 18px;
     color: #b8ffbd;
 }
+
+:root[data-theme="claro"] .resultado-solicitacao{ color: var(--verde-escuro); }
 
 @media (max-width: 720px){
     .grade-formulario,

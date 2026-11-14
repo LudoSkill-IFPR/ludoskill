@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/geralEntrada.css">
-    <link rel="stylesheet" href="assets/css/sobreNos.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/sobreNos.css">
     <title>Sobre Nós - LudoSkill</title>
 </head>
 <body>
@@ -24,14 +24,14 @@
             
                 <div class="imagem">
                     <a href="https://www.ifpr.edu.br/" target="_blank" rel="noopener noreferrer">
-                        <img src="assets/imagens/IFPR.png" alt="Logo do IFPR" id="logo-ifpr">
+                        <img src="<?= URL_BASE ?>/assets/imagens/IFPR.png" alt="Logo do IFPR" id="logo-ifpr">
                     </a>
                 </div>
             </section>
 
             <section class="flex">
                 <div class="imagem">
-                    <img src="assets/imagens/icone-ludoskill-transparente.png" alt="Eskiludo" id="mascote-ludo">
+                    <img src="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png" alt="Eskiludo" id="mascote-ludo">
                 </div>
 
                 <div class="texto">

@@ -3,6 +3,7 @@ $dadosEmpresas = $empresasComQuantidadeUsuarios ?? [];
 $nomesEmpresas = array_column($dadosEmpresas, 'nome');
 $quantidadesGestores = array_map('intval', array_column($dadosEmpresas, 'quantidade_gestores'));
 $quantidadesFuncionarios = array_map('intval', array_column($dadosEmpresas, 'quantidade_funcionarios'));
+$larguraGraficoEmpresas = max(720, count($dadosEmpresas) * 92);
 $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 ?>
 <!DOCTYPE html>
@@ -65,8 +66,10 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                     <?php if (empty($empresasComQuantidadeUsuarios)): ?>
                         <p>Nenhuma empresa cadastrada.</p>
                     <?php else: ?>
-                        <div class="chart-container">
-                            <canvas id="usuariosPorEmpresa" role="img" aria-label="Gráfico da quantidade de gestores e funcionários por empresa"></canvas>
+                        <div class="chart-scroll" tabindex="0" aria-label="Área rolável do gráfico">
+                            <div class="chart-container" style="min-width: <?= $larguraGraficoEmpresas ?>px">
+                                <canvas id="usuariosPorEmpresa" role="img" aria-label="Gráfico da quantidade de gestores e funcionários por empresa"></canvas>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -107,7 +110,12 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     <script>
         const canvasEmpresas = document.getElementById('usuariosPorEmpresa');
         if (canvasEmpresas) {
-            new Chart(canvasEmpresas, {
+            const cores = () => {
+                const estilos = getComputedStyle(document.documentElement);
+                return { texto: estilos.getPropertyValue('--texto-principal').trim() || '#fff', grade: estilos.getPropertyValue('--borda-interface').trim() || 'rgba(255,255,255,.15)' };
+            };
+            const paleta = cores();
+            const graficoEmpresas = new Chart(canvasEmpresas, {
                 type: 'bar',
                 data: {
                     labels: <?= json_encode($nomesEmpresas, $jsonSeguro) ?>,
@@ -120,11 +128,19 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { stacked: true, ticks: { color: '#ffffff' }, grid: { display: false } },
-                        y: { stacked: true, beginAtZero: true, ticks: { color: '#ffffff', precision: 0 }, grid: { color: 'rgba(255,255,255,.15)' } }
+                        x: { stacked: true, ticks: { color: paleta.texto, font: { size: 13, weight: '600' }, maxRotation: 35, minRotation: 0 }, grid: { display: false } },
+                        y: { stacked: true, beginAtZero: true, ticks: { color: paleta.texto, precision: 0, font: { size: 13 } }, grid: { color: paleta.grade } }
                     },
-                    plugins: { legend: { labels: { color: '#ffffff' } } }
+                    plugins: { legend: { labels: { color: paleta.texto, font: { size: 14, weight: '600' }, usePointStyle: true, padding: 18 } } }
                 }
+            });
+            window.addEventListener('ludoskill:tema-alterado', () => {
+                const nova = cores();
+                graficoEmpresas.options.scales.x.ticks.color = nova.texto;
+                graficoEmpresas.options.scales.y.ticks.color = nova.texto;
+                graficoEmpresas.options.scales.y.grid.color = nova.grade;
+                graficoEmpresas.options.plugins.legend.labels.color = nova.texto;
+                graficoEmpresas.update();
             });
         }
 

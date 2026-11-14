@@ -12,7 +12,7 @@
     <main>
         <div class="container">
             <div id="topo">
-                <a class="botao brilho" href="<?= URL_BASE ?>/administrador/inicial">Voltar</a>
+                <a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/inicial"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <a class="botao brilho" href="<?= URL_BASE ?>/administrador/exercicios/cadastrar">Novo exercício</a>
             </div>
             <h1>Exercícios</h1>

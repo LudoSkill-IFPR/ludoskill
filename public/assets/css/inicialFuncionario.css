@@ -24,7 +24,9 @@ section{
     width: 350px;
     height: 100px;
     margin-top: 20px;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
 }
+.infobase .card:hover{ transform: translateY(-3px); border-color: var(--verde-escuro); box-shadow: 0 18px 38px rgba(0,0,0,.25); }
 
 .progresso{
     display: flex;
@@ -107,4 +109,12 @@ h2, #fase h3, .inventario p{
     .progresso{
         flex-direction: column;
     }
+}
+
+@media (max-width: 560px){
+    #fase .card-secundario{ height: auto; min-height: 180px; }
+    #fase .botao{ width: 100%; }
+    #inventario{ justify-content: stretch; }
+    #inventario li, #inventario .card-secundario{ width: 100%; }
+    #inventario img{ width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
 }

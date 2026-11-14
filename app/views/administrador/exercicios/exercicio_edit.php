@@ -13,7 +13,7 @@
     <main>
         <div class="container">
             <div id="topo">
-                <a class="botao brilho" href="<?= URL_BASE ?>/administrador/exercicios">Voltar</a>
+                <a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/exercicios"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Edição de Exercícios</h1>
                     <p class="mensagem">Edite as questões ou as etapas práticas armazenadas no JSON.</p>

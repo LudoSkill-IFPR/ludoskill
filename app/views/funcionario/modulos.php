@@ -13,8 +13,15 @@
     <header><?php include __DIR__ . '/../includes/menuFuncionario.php'; ?></header>
     <main>
         <div class="container pagina-modulos">
-            <h1>Módulos</h1>
-            <p class="mensagem">Clique em um módulo para visualizar suas atividades.</p>
+            <div id="topo">
+                <a href="<?= URL_BASE ?>/funcionario/inicial" class="botao-voltar botao brilho" aria-label="Voltar para a página inicial">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+                <div>
+                    <h1>Módulos</h1>
+                    <p class="mensagem">Clique em um módulo para visualizar suas atividades.</p>
+                </div>
+            </div>
             <section class="lista-modulos">
                 <?php if (empty($lista)): ?>
                     <div class="card">

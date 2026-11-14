@@ -65,6 +65,7 @@ class GestorController extends Controller
     {
         $this->adminRequired();
         $_POST['cpf'] = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
+        $_POST['numero_telefone'] = preg_replace('/\D/', '', $_POST['numero_telefone'] ?? '');
         $erros = Validador::validarGestor($_POST);
         if (empty($erros['id_empresa']) && !$this->empresaService->getEmpresaById((int) $_POST['id_empresa'])) $erros['id_empresa'] = 'A empresa selecionada não existe.';
         if (empty($erros['cpf']) && $this->gestorService->cpfExiste(preg_replace('/\D/', '', $_POST['cpf'] ?? ''))) $erros['cpf'] = 'Já existe um usuário com este CPF.';
@@ -149,6 +150,7 @@ class GestorController extends Controller
             $this->redirect(URL_BASE . '/administrador/gestores');
         }
         $_POST['cpf'] = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
+        $_POST['numero_telefone'] = preg_replace('/\D/', '', $_POST['numero_telefone'] ?? '');
         $erros = Validador::validarGestor($_POST, false);
         if (empty($erros['id_empresa']) && !$this->empresaService->getEmpresaById((int) $_POST['id_empresa'])) $erros['id_empresa'] = 'A empresa selecionada não existe.';
         if (empty($erros['cpf']) && $this->gestorService->cpfExiste(preg_replace('/\D/', '', $_POST['cpf'] ?? ''), $idGestor)) $erros['cpf'] = 'Já existe um usuário com este CPF.';

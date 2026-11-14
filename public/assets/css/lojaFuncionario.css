@@ -31,10 +31,18 @@ h2, h3{
 .topo{
     display: flex;
     justify-content: space-between;
-
+    align-items: center;
+    gap: 16px;
     margin-bottom: 20px;
 }
 
 .card-secundario{
     margin-bottom: 10px;
+}
+
+@media (max-width: 760px){
+    #loja{ align-items: stretch; flex-direction: column; gap: 16px; }
+    #itens{ width: 100%; }
+    #itens li, #itens .card-secundario{ width: 100%; }
+    .topo{ align-items: flex-start; flex-direction: column; gap: 12px; }
 }

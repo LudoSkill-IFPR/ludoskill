@@ -14,7 +14,7 @@
     <header><?php include __DIR__ . '/../../includes/menuAdministrador.html'; ?></header>
     <main>
         <div class="container">
-            <div id="topo"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/gestores">Voltar</a>
+            <div id="topo"><a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/gestores"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <h1>Editar Gestor</h1>
             </div>
             <form class="card" action="<?= URL_BASE ?>/administrador/gestores/atualizar" method="post">
@@ -23,14 +23,14 @@
                     <div class="formgroup">
                         <label for="<?= $campo ?>"><?= $rotulo ?>:</label>
                         <?php $valor = match ($campo) { 'nome_completo' => $gestor->getNomeCompleto(), 'data_nascimento' => $gestor->getDataNascimento()?->format('Y-m-d') ?? '', 'cpf' => $gestor->getCpf(), 'email' => $gestor->getEmail(), 'numero_telefone' => $gestor->getNumeroTelefone() ?? '', default => '' }; ?>
-                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" value="<?= htmlspecialchars($valor) ?>">
+                        <input class="card-secundario" type="<?= $tipo ?>" id="<?= $campo ?>" name="<?= $campo ?>" value="<?= htmlspecialchars($valor) ?>" required>
                         <?php if (isset($erros[$campo])): ?><div class="erro"><?= htmlspecialchars($erros[$campo]) ?></div><?php endif; ?>
                     </div>
                 <?php endforeach; ?>
                 <div class="formgroup"><label for="senha">Nova senha:</label><input class="card-secundario" type="password" id="senha" name="senha" minlength="8"><small>Deixe em branco para manter a senha atual.</small><?php if (isset($erros['senha'])): ?><div class="erro"><?= htmlspecialchars($erros['senha']) ?></div><?php endif; ?></div>
                 <div class="formgroup">
                     <label for="id_empresa">Empresa:</label>
-                    <select class="card-secundario" id="id_empresa" name="id_empresa">
+                    <select class="card-secundario" id="id_empresa" name="id_empresa" required>
                         <option value="">Selecione uma empresa</option>
                         <?php foreach ($empresas as $empresa): ?><option value="<?= $empresa->getId() ?>" <?= $gestor->getEmpresa()->getId() === $empresa->getId() ? 'selected' : '' ?>><?= htmlspecialchars($empresa->getNome()) ?></option><?php endforeach; ?>
                     </select>

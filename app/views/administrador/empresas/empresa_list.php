@@ -10,7 +10,7 @@
 <body>
     <header><?php include __DIR__ . '/../../includes/menuAdministrador.html'; ?></header>
     <main><div class="container">
-        <div id="topo"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/inicial">Voltar</a><a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas/cadastrar">Nova empresa</a><div><h1>Listagem de Empresas</h1><p class="mensagem">Visualize as empresas cadastradas.</p></div></div>
+        <div id="topo"><a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/inicial"><i class="bi bi-arrow-left"></i> Voltar</a><a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas/cadastrar">Nova empresa</a><div><h1>Listagem de Empresas</h1><p class="mensagem">Visualize as empresas cadastradas.</p></div></div>
         <?php if (!empty($erro)): ?><div class="erro"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
         <section class="card"><h2>Lista de Empresas</h2>
             <?php if (empty($lista)): ?><p>Nenhuma empresa cadastrada.</p><?php else: ?>

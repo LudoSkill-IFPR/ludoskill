@@ -3,6 +3,10 @@
         <img id="icone" src="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png" alt="Ícone do LudoSkill">
         <img id="logo" src="<?= URL_BASE ?>/assets/imagens/logo-ludoskill.png" alt="Logo do LudoSkill">
     </a>
+    <div class="controle-tema-interno">
+        <label for="tema-gestor">Tema</label>
+        <select id="tema-gestor" class="seletor" data-seletor-tema><option value="padrao">Padrão</option><option value="escuro">Escuro</option><option value="claro">Claro</option></select>
+    </div>
     <ul id="navegacao">
         <li class="dropdown">
             <a class="botao brilho" href="#"><i class="bi bi-person-circle"></i> Perfil</a>
@@ -14,3 +18,4 @@
         </li>
     </ul>
 </nav>
+<script src="<?= URL_BASE ?>/assets/javascript/temas.js" data-home-url="<?= URL_BASE ?>/"></script>

@@ -28,6 +28,7 @@ class SolicitacaoAcessoController extends Controller
     {
         $dados = $_POST;
         $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf'] ?? '');
+        $dados['numero_telefone'] = preg_replace('/\D/', '', $dados['numero_telefone'] ?? '');
         $dados['empresa_cnpj'] = preg_replace('/\D/', '', $dados['empresa_cnpj'] ?? '');
         $dados['email'] = strtolower(trim((string) ($dados['email'] ?? '')));
         $dados['empresa_email'] = strtolower(trim((string) ($dados['empresa_email'] ?? '')));
@@ -79,15 +80,15 @@ class SolicitacaoAcessoController extends Controller
     {
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-        $senha = (string) ($_POST['senha'] ?? '');
         $plano = (string) ($_POST['plano'] ?? 'BASICO');
 
-        if (!$id || strlen($senha) < 8 || !in_array($plano, ['BASICO', 'INTERMEDIARIO', 'AVANCADO', 'CORPORATIVO'], true)) {
-            $this->definirMensagem('Informe uma senha de pelo menos 8 caracteres e um plano válido.', 'erro');
+        if (!$id || !in_array($plano, ['BASICO', 'INTERMEDIARIO', 'AVANCADO', 'CORPORATIVO'], true)) {
+            $this->definirMensagem('Selecione uma solicitação e um plano válido.', 'erro');
             $this->redirect(URL_BASE . '/administrador/solicitacoes-acesso');
         }
 
         try {
+            $senha = $this->gerarSenhaTemporaria();
             $acesso = $this->service->aprovar($id, $senha, $plano);
             $nome = htmlspecialchars($acesso['nome'], ENT_QUOTES, 'UTF-8');
             $email = htmlspecialchars($acesso['email'], ENT_QUOTES, 'UTF-8');
@@ -132,5 +133,20 @@ class SolicitacaoAcessoController extends Controller
     {
         $_SESSION['mensagem_solicitacao'] = $mensagem;
         $_SESSION['tipo_mensagem_solicitacao'] = $tipo;
+    }
+
+    /** Gera uma senha temporária forte sem depender de dados pessoais do gestor. */
+    private function gerarSenhaTemporaria(int $tamanho = 12): string
+    {
+        $grupos = ['ABCDEFGHJKLMNPQRSTUVWXYZ', 'abcdefghijkmnopqrstuvwxyz', '23456789', '!@#$%&*?'];
+        $caracteres = [];
+        foreach ($grupos as $grupo) $caracteres[] = $grupo[random_int(0, strlen($grupo) - 1)];
+        $todos = implode('', $grupos);
+        while (count($caracteres) < $tamanho) $caracteres[] = $todos[random_int(0, strlen($todos) - 1)];
+        for ($i = count($caracteres) - 1; $i > 0; $i--) {
+            $j = random_int(0, $i);
+            [$caracteres[$i], $caracteres[$j]] = [$caracteres[$j], $caracteres[$i]];
+        }
+        return implode('', $caracteres);
     }
 }

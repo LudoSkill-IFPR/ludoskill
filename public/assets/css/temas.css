@@ -1,0 +1,296 @@
+/* ==========================================================================
+   LUDOSKILL - SISTEMA DE TEMAS E CORES
+   
+   Este arquivo centraliza as cores e o visual do LudoSkill.
+   Para alterar as cores do site, basta modificar as variáveis abaixo!
+   
+   - TEMA PADRÃO: :root (Cores originais roxo e verde)
+   - TEMA ESCURO: :root[data-theme="escuro"] (Modo noturno de alto contraste)
+   - TEMA CLARO:  :root[data-theme="claro"]  (Modo claro suave e legível)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TEMA PADRÃO (Assinatura LudoSkill: Roxo e Verde)
+   -------------------------------------------------------------------------- */
+:root {
+    /* Paleta de Verdes */
+    --verde: #38ff4c;
+    --verde-escuro: #1fad54;
+    --verde-claro: #9bff95;
+    --verde-escurao: #09704b;
+    --verde-legal: #8fe4b8;
+
+    /* Paleta de Roxos */
+    --roxo: #9933dd;
+    --roxo-claro: #c156ed;
+    --roxo-escuro: #631da8;
+    --roxo-escurao: #37116d;
+
+    /* Escala de Cinzas e Superfícies */
+    --cinza-escuro: #333333;
+    --cinza-escurao: #222222;
+    --cinza-ultraescuro: #111111;
+
+    /* Status e Alertas */
+    --problema: #e32a33;
+    --sucesso: #1fad54;
+
+    /* Fundos e Cards */
+    --fundo-pagina: radial-gradient(ellipse at 85% 95%, #7a22c5 0%, #1e0d36 45%, #0d0617 100%);
+    --fundo-entrada: radial-gradient(circle at right bottom, #9933dd, #8fe4b8 55%);
+    --superficie: #171122;
+    --superficie-secundaria: #241a35;
+    --superficie-card: rgba(23, 17, 34, 0.88);
+    --superficie-card-secundario: rgba(36, 26, 53, 0.75);
+
+    /* Bordas e Sombras */
+    --borda-interface: rgba(255, 255, 255, 0.22);
+    --borda-card: rgba(255, 255, 255, 0.22);
+    --sombra-card: 0 12px 36px rgba(0, 0, 0, 0.4);
+
+    /* Textos */
+    --texto-principal: #ffffff;
+    --texto-secundario: #ebdff5;
+    --texto-suave: #baa9cb;
+
+    /* Formulários e Inputs */
+    --fundo-input: rgba(55, 17, 109, 0.5);
+    --borda-input: rgba(255, 255, 255, 0.28);
+    --texto-input: #ffffff;
+    --texto-placeholder: rgba(255, 255, 255, 0.65);
+
+    /* Seletor de Tema */
+    --fundo-seletor: #37116d;
+    --borda-seletor: rgba(255, 255, 255, 0.3);
+    --texto-seletor: #ffffff;
+
+    /* Botão Voltar (Superior Esquerdo) */
+    --botao-voltar-fundo: rgba(55, 17, 109, 0.85);
+    --botao-voltar-texto: #ffffff;
+    --botao-voltar-borda: rgba(255, 255, 255, 0.32);
+    --botao-voltar-hover-fundo: linear-gradient(135deg, #1fad54, #09704b);
+    --botao-voltar-hover-borda: #38ff4c;
+
+    /* Mascote */
+    --filtro-mascote: none;
+    --badge-logo-fundo: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   2. TEMA ESCURO (Noturno / Alto Contraste)
+   Fundo profundo, cards nítidos com contorno lilás suave, textos claros
+   -------------------------------------------------------------------------- */
+:root[data-theme="escuro"] {
+    /* Ajustes pontuais na paleta */
+    --verde: #38ff4c;
+    --verde-escuro: #1fad54;
+    --verde-claro: #9bff95;
+    --verde-escurao: #09704b;
+
+    --roxo: #a855f7;
+    --roxo-claro: #c084fc;
+    --roxo-escuro: #7e22ce;
+    --roxo-escurao: #3b0764;
+
+    --cinza-escuro: #2b2238;
+    --cinza-escurao: #1c1527;
+    --cinza-ultraescuro: #0e0915;
+
+    /* Fundos e Cards */
+    --fundo-pagina: radial-gradient(ellipse at 85% 95%, #2a0b45 0%, #0d0714 55%, #050308 100%);
+    --fundo-entrada: radial-gradient(ellipse at 85% 95%, #350f55 0%, #10081a 55%, #050308 100%);
+    --superficie: #140f1d;
+    --superficie-secundaria: #1f172e;
+    --superficie-card: #15101f;
+    --superficie-card-secundario: #1f182c;
+
+    /* Bordas e Sombras */
+    --borda-interface: rgba(168, 85, 247, 0.32);
+    --borda-card: rgba(168, 85, 247, 0.32);
+    --sombra-card: 0 14px 40px rgba(0, 0, 0, 0.7);
+
+    /* Textos de Alto Contraste */
+    --texto-principal: #f8f7fc;
+    --texto-secundario: #d4cae0;
+    --texto-suave: #9f91b0;
+
+    /* Formulários e Inputs */
+    --fundo-input: #1a1226;
+    --borda-input: rgba(168, 85, 247, 0.45);
+    --texto-input: #f8f7fc;
+    --texto-placeholder: rgba(255, 255, 255, 0.45);
+
+    /* Seletor de Tema */
+    --fundo-seletor: #221636;
+    --borda-seletor: rgba(168, 85, 247, 0.5);
+    --texto-seletor: #f8f7fc;
+
+    /* Botão Voltar (Superior Esquerdo) */
+    --botao-voltar-fundo: #221536;
+    --botao-voltar-texto: #f8f7fc;
+    --botao-voltar-borda: rgba(168, 85, 247, 0.45);
+    --botao-voltar-hover-fundo: linear-gradient(135deg, #1fad54, #09704b);
+    --botao-voltar-hover-borda: #38ff4c;
+
+    /* Mascote */
+    --filtro-mascote: drop-shadow(0 0 14px rgba(168, 85, 247, 0.35));
+    --badge-logo-fundo: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   3. TEMA CLARO (Limpo, Elegante e Totalmente Legível)
+   Fundo suave, cards brancos nítidos, textos escuros de alto contraste
+   -------------------------------------------------------------------------- */
+:root[data-theme="claro"] {
+    /* Cores ajustadas para contraste no claro */
+    --verde: #087a3c;
+    --verde-escuro: #0b6b3c;
+    --verde-claro: #15803d;
+    --verde-escurao: #06492d;
+    --verde-legal: #d1fae5;
+
+    --roxo: #7a2db3;
+    --roxo-claro: #9333ea;
+    --roxo-escuro: #581c87;
+    --roxo-escurao: #3b0764;
+
+    --cinza-escuro: #ded5e6;
+    --cinza-escurao: #eee7f4;
+    --cinza-ultraescuro: #ffffff;
+
+    /* Fundos e Cards */
+    --fundo-pagina: linear-gradient(135deg, #f5effb 0%, #e7f6ee 50%, #f0eaf7 100%);
+    --fundo-entrada: linear-gradient(135deg, #f5effb 0%, #e7f6ee 50%, #f0eaf7 100%);
+    --superficie: #ffffff;
+    --superficie-secundaria: #f8f5fc;
+    --superficie-card: #ffffff;
+    --superficie-card-secundario: #f8f5fc;
+
+    /* Bordas e Sombras */
+    --borda-interface: #d8cedf;
+    --borda-card: #d8cedf;
+    --sombra-card: 0 8px 24px rgba(55, 17, 109, 0.08);
+
+    /* Textos Escuros de Alta Legibilidade */
+    --texto-principal: #1c1328;
+    --texto-secundario: #483c54;
+    --texto-suave: #6e627b;
+
+    /* Formulários e Inputs */
+    --fundo-input: #ffffff;
+    --borda-input: #c6b9d2;
+    --texto-input: #1c1328;
+    --texto-placeholder: #8c7e99;
+
+    /* Seletor de Tema */
+    --fundo-seletor: #ffffff;
+    --borda-seletor: #baa9cb;
+    --texto-seletor: #1c1328;
+
+    /* Botão Voltar (Superior Esquerdo) */
+    --botao-voltar-fundo: #ffffff;
+    --botao-voltar-texto: #37116d;
+    --botao-voltar-borda: #baa9cb;
+    --botao-voltar-hover-fundo: linear-gradient(135deg, #0b6b3c, #06492d);
+    --botao-voltar-hover-borda: #087a3c;
+
+    /* Destaque no logo e mascote no modo claro */
+    --filtro-mascote: drop-shadow(0 6px 14px rgba(99, 29, 168, 0.28));
+    --badge-logo-fundo: linear-gradient(135deg, #37116d, #25094d);
+}
+
+/* ==========================================================================
+   4. COMPONENTE PADRONIZADO: BOTÃO VOLTAR (SUPERIOR ESQUERDO)
+   Este estilo garante que o botão nunca fique esticado, deformado ou pequeno.
+   ========================================================================== */
+.botao-voltar,
+.botao-voltar-global,
+#topo a.botao:has(.bi-arrow-left),
+#topo a.botao:first-child:has(.bi-arrow-left) {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: auto !important;
+    min-width: 96px !important;
+    max-width: fit-content !important;
+    height: 38px !important;
+    padding: 0 16px !important;
+    margin: 0 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    color: var(--botao-voltar-texto) !important;
+    background: var(--botao-voltar-fundo) !important;
+    border: 1.5px solid var(--botao-voltar-borda) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    transition: all 0.2s ease !important;
+}
+
+.botao-voltar:hover,
+.botao-voltar-global:hover,
+#topo a.botao:has(.bi-arrow-left):hover {
+    color: #ffffff !important;
+    background: var(--botao-voltar-hover-fundo) !important;
+    border-color: var(--botao-voltar-hover-borda) !important;
+    box-shadow: 0 0 14px rgba(31, 173, 84, 0.45) !important;
+    transform: translateY(-1px) !important;
+}
+
+.botao-voltar i,
+.botao-voltar-global i {
+    font-size: 16px !important;
+    line-height: 1 !important;
+}
+
+/* Barra de topo para telas sem nav que precisam do voltar no canto superior esquerdo */
+.barra-topo-voltar {
+    width: 100%;
+    padding: 16px clamp(16px, 4vw, 40px);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* ==========================================================================
+   5. REGRAS GERAIS DE COMPATIBILIDADE DOS TEMAS
+   ========================================================================== */
+
+/* No tema claro, dá destaque ao logo LudoSkill para garantir 100% de legibilidade */
+:root[data-theme="claro"] #homepage {
+    padding: 6px 14px;
+    background: var(--badge-logo-fundo);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(55, 17, 109, 0.18);
+}
+
+:root[data-theme="claro"] #mascote-ludo {
+    filter: var(--filtro-mascote);
+}
+
+:root[data-theme="escuro"] #mascote-ludo {
+    filter: var(--filtro-mascote);
+}
+
+/* Garante que os seletores de tema tenham as cores certas em cada modo */
+select.seletor,
+#seletor-tema,
+#tema-funcionario,
+#tema-gestor,
+#tema-administrador {
+    background-color: var(--fundo-seletor) !important;
+    color: var(--texto-seletor) !important;
+    border: 1.5px solid var(--borda-seletor) !important;
+    border-radius: 9px !important;
+}
+
+select.seletor option {
+    background-color: var(--superficie) !important;
+    color: var(--texto-principal) !important;
+}

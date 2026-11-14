@@ -61,6 +61,7 @@ class FuncionarioController extends Controller
         $idEmpresa = $this->getEmpresaIdDoGestor();
         $dados = $_POST;
         $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf'] ?? '');
+        $dados['numero_telefone'] = preg_replace('/\D/', '', $dados['numero_telefone'] ?? '');
         $dados['id_empresa'] = $idEmpresa;
         $erros = Validador::validarFuncionario($dados);
         if (empty($erros['cpf']) && $this->funcionarioService->cpfExiste($dados['cpf'])) {
@@ -153,6 +154,7 @@ class FuncionarioController extends Controller
         }
         $dados = $_POST;
         $dados['cpf'] = $funcionario->getCpf();
+        $dados['numero_telefone'] = preg_replace('/\D/', '', $dados['numero_telefone'] ?? '');
         $dados['id_empresa'] = $idEmpresa;
         $erros = Validador::validarFuncionario($dados, false);
         if (empty($erros['email']) && $this->funcionarioService->emailExiste($dados['email'], $idFuncionario)) {
@@ -240,6 +242,7 @@ class FuncionarioController extends Controller
         }
         $dados = $_POST;
         $dados['cpf'] = preg_replace('/\D/', '', $dados['cpf'] ?? '');
+        $dados['numero_telefone'] = preg_replace('/\D/', '', $dados['numero_telefone'] ?? '');
         $dados['id_empresa'] = $idEmpresa;
         $erros = Validador::validarFuncionario($dados, false);
         if (empty($erros['cpf']) && $this->funcionarioService->cpfExiste($dados['cpf'], $idFuncionario)) {

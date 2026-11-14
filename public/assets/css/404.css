@@ -1,51 +1,69 @@
-*{
+* {
     margin: 0;
     padding: 0;
     border: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    box-sizing: border-box;
 }
 
-header{
-    height: 20%;
+body {
+    min-height: 100vh;
+    color: var(--texto-principal);
+    background: var(--fundo-pagina) fixed;
+}
+
+.barra-topo-voltar {
+    padding: 16px 24px;
+    width: 100%;
+}
+
+header {
     text-align: center;
+    padding: 20px 0;
 }
 
-h1{
-    font-size: 100px;
+h1 {
+    font-size: clamp(54px, 10vw, 90px);
+    color: var(--texto-principal);
 }
 
-b{
-    color: red;
+b {
+    color: var(--problema);
 }
 
-img{
-    width: 400px;
+img {
+    max-width: 380px;
+    width: 90%;
+    border-radius: 16px;
+    box-shadow: var(--sombra-card);
 }
 
-main{
-    width: calc(100% - 26px);
-    height: calc(80% - 26px);
+main {
+    width: min(1000px, 92%);
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-around;
+    gap: 30px;
+    padding-bottom: 40px;
 }
 
-main div{
-    width: 50%;
+main div {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    gap: 16px;
 }
 
-body{
-    width: 100%;
-    height: 100vh;
+main p {
+    color: var(--texto-secundario);
+    font-size: 16px;
 }
 
-button{
-    background-color: #8100a5;
-    color: white;
-    border-radius: 10px;
-    padding: 10px;
+@media (max-width: 760px) {
+    main {
+        flex-direction: column;
+        text-align: center;
+    }
 }

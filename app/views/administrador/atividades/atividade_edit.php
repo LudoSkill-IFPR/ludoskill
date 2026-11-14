@@ -13,7 +13,7 @@
     <main>
         <div class="container">
             <div id="topo">
-                <a class="botao brilho" href="<?= URL_BASE ?>/administrador/atividades">Voltar</a>
+                <a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/atividades"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Edição de Atividade</h1>
                     <p class="mensagem">Edite uma atividade da trilha de aprendizado.</p>

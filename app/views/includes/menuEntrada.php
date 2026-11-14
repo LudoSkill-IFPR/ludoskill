@@ -1,6 +1,18 @@
+<?php
+$caminhoAtualMenu = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$urlBaseNormalizada = rtrim(defined('URL_BASE') ? URL_BASE : '', '/');
+$caminhoSemBase = preg_replace('#^' . preg_quote($urlBaseNormalizada, '#') . '#', '', $caminhoAtualMenu);
+$ehPaginaInicial = ($caminhoSemBase === '' || $caminhoSemBase === '/' || $caminhoSemBase === '/homepage.php' || $caminhoSemBase === '/index.php');
+?>
 <nav id="menu-entrada" aria-label="Navegação principal">
+    <?php if (!$ehPaginaInicial): ?>
+        <a href="<?= URL_BASE ?>/" class="botao-voltar" aria-label="Voltar para a página inicial">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    <?php endif; ?>
+
     <!--volta para a pagina inicial-->
-    <a id="homepage" href="<?= URL_BASE ?>" aria-label="Ir para a página inicial">
+    <a id="homepage" href="<?= URL_BASE ?>/" aria-label="Ir para a página inicial">
         <img id="icone" src="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png" alt="">
         <img id="logo" src="<?= URL_BASE ?>/assets/imagens/logo-ludoskill.png" alt="LudoSkill">
     </a>
@@ -8,8 +20,8 @@
     <!--decide o tema do site-->
     <div id="controle-tema">
         <label for="seletor-tema">Tema</label>
-        <select name="tema" id="seletor-tema" class="seletor">
-            <option hidden disabled selected value="padrao">Padrão</option>
+        <select name="tema" id="seletor-tema" class="seletor" data-seletor-tema>
+            <option value="padrao">Padrão</option>
             <option value="escuro">Escuro</option>
             <option value="claro">Claro</option>
         </select>
@@ -21,3 +33,4 @@
         <li><a class="botao brilho" href="<?= URL_BASE ?>/login">Login</a></li>
     </ul>
 </nav>
+<script src="<?= URL_BASE ?>/assets/javascript/temas.js" data-home-url="<?= URL_BASE ?>/"></script>

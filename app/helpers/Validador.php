@@ -4,6 +4,43 @@ namespace app\helpers;
 
 class Validador {
 
+    /** Confere os dígitos verificadores e rejeita sequências repetidas de CPF. */
+    public static function cpfValido(string $cpf): bool
+    {
+        $cpf = preg_replace('/\D/', '', $cpf);
+        if (strlen($cpf) !== 11 || preg_match('/^(\d)\1{10}$/', $cpf)) return false;
+
+        for ($digito = 9; $digito < 11; $digito++) {
+            $soma = 0;
+            for ($indice = 0; $indice < $digito; $indice++) {
+                $soma += (int) $cpf[$indice] * (($digito + 1) - $indice);
+            }
+            $verificador = (10 * $soma) % 11;
+            if ($verificador === 10) $verificador = 0;
+            if ((int) $cpf[$digito] !== $verificador) return false;
+        }
+        return true;
+    }
+
+    /** Valida DDD brasileiro e formatos de telefone fixo ou celular. */
+    public static function telefoneValido(string $telefone): bool
+    {
+        $numero = preg_replace('/\D/', '', $telefone);
+        $ddds = [11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,41,42,43,44,45,46,47,48,49,51,53,54,55,61,62,63,64,65,66,67,68,69,71,73,74,75,77,79,81,82,83,84,85,86,87,88,89,91,92,93,94,95,96,97,98,99];
+        if (!in_array((int) substr($numero, 0, 2), $ddds, true)) return false;
+        return preg_match('/^[1-9]{2}[2-5]\d{7}$/', $numero) === 1
+            || preg_match('/^[1-9]{2}9[6-9]\d{7}$/', $numero) === 1;
+    }
+
+    /** Valida uma data real, não futura e dentro de uma faixa humana plausível. */
+    public static function dataNascimentoValida(string $data): bool
+    {
+        $nascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', $data);
+        if (!$nascimento || $nascimento->format('Y-m-d') !== $data) return false;
+        $hoje = new \DateTimeImmutable('today');
+        return $nascimento <= $hoje && $nascimento >= $hoje->modify('-120 years');
+    }
+
     public static function validarModulo(array $data): array {
         $erros = [];
 
@@ -276,8 +313,7 @@ class Validador {
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
         } else {
-            $dataNascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', $data['data_nascimento']);
-            if (!$dataNascimento || $dataNascimento->format('Y-m-d') !== $data['data_nascimento'] || $dataNascimento > new \DateTimeImmutable('today')) {
+            if (!self::dataNascimentoValida((string) $data['data_nascimento'])) {
                 $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
             }
         }
@@ -286,8 +322,8 @@ class Validador {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
-        if (!empty($data['cpf']) && strlen($data['cpf']) > 12) {
-            $erros['cpf'] = 'O campo cpf deve ter no máximo 11 caracteres.';
+        if (!empty($data['cpf']) && !self::cpfValido((string) $data['cpf'])) {
+            $erros['cpf'] = 'Informe um CPF válido.';
         }
 
         if (empty($data['email'])) {
@@ -306,8 +342,8 @@ class Validador {
             $erros['numero_telefone'] = 'O campo número de telefone é obrigatório.';
         }
 
-        if (!empty($data['numero_telefone']) && strlen($data['numero_telefone']) > 20) {
-            $erros['numero_telefone'] = 'O campo número de telefone deve ter no máximo 20 caracteres.';
+        if (!empty($data['numero_telefone']) && !self::telefoneValido((string) $data['numero_telefone'])) {
+            $erros['numero_telefone'] = 'Informe um telefone brasileiro válido com DDD.';
         }
 
         return $erros;
@@ -327,8 +363,7 @@ class Validador {
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
         } else {
-            $dataNascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', $data['data_nascimento']);
-            if (!$dataNascimento || $dataNascimento->format('Y-m-d') !== $data['data_nascimento'] || $dataNascimento > new \DateTimeImmutable('today')) {
+            if (!self::dataNascimentoValida((string) $data['data_nascimento'])) {
                 $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
             }
         }
@@ -337,8 +372,8 @@ class Validador {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
-        if (!empty($data['cpf']) && !preg_match('/^\d{11}$/', $data['cpf'])) {
-            $erros['cpf'] = 'O CPF deve possuir exatamente 11 dígitos.';
+        if (!empty($data['cpf']) && !self::cpfValido((string) $data['cpf'])) {
+            $erros['cpf'] = 'Informe um CPF válido.';
         }
 
         if (empty($data['email'])) {
@@ -363,8 +398,8 @@ class Validador {
             $erros['numero_telefone'] = 'O campo número de telefone é obrigatório.';
         }
 
-        if (!empty($data['numero_telefone']) && strlen($data['numero_telefone']) > 20) {
-            $erros['numero_telefone'] = 'O campo número de telefone deve ter no máximo 20 caracteres.';
+        if (!empty($data['numero_telefone']) && !self::telefoneValido((string) $data['numero_telefone'])) {
+            $erros['numero_telefone'] = 'Informe um telefone brasileiro válido com DDD.';
         }
 
         if (empty($data['id_empresa'])) {
@@ -388,13 +423,8 @@ class Validador {
         if (empty($data['data_nascimento'])) {
             $erros['data_nascimento'] = 'O campo data de nascimento é obrigatório.';
         } else {
-            $dataNascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', $data['data_nascimento']);
-            $dataValida = $dataNascimento && $dataNascimento->format('Y-m-d') === $data['data_nascimento'];
-
-            if (!$dataValida) {
+            if (!self::dataNascimentoValida((string) $data['data_nascimento'])) {
                 $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
-            } elseif ($dataNascimento > new \DateTimeImmutable('today')) {
-                $erros['data_nascimento'] = 'A data de nascimento não pode estar no futuro.';
             }
         }
 
@@ -402,8 +432,8 @@ class Validador {
             $erros['cpf'] = 'O campo cpf é obrigatório.';
         }
 
-        if (!empty($data['cpf']) && !preg_match('/^\d{11}$/', $data['cpf'])) {
-            $erros['cpf'] = 'O CPF deve possuir exatamente 11 dígitos.';
+        if (!empty($data['cpf']) && !self::cpfValido((string) $data['cpf'])) {
+            $erros['cpf'] = 'Informe um CPF válido.';
         }
 
         if (empty($data['email'])) {
@@ -428,8 +458,8 @@ class Validador {
             $erros['numero_telefone'] = 'O campo número de telefone é obrigatório.';
         }
 
-        if (!empty($data['numero_telefone']) && strlen($data['numero_telefone']) > 20) {
-            $erros['numero_telefone'] = 'O campo número de telefone deve ter no máximo 20 caracteres.';
+        if (!empty($data['numero_telefone']) && !self::telefoneValido((string) $data['numero_telefone'])) {
+            $erros['numero_telefone'] = 'Informe um telefone brasileiro válido com DDD.';
         }
 
         if (empty($data['id_empresa'])) {
@@ -501,13 +531,12 @@ class Validador {
             }
         }
 
-        $dataNascimento = \DateTimeImmutable::createFromFormat('!Y-m-d', (string) ($data['data_nascimento'] ?? ''));
-        if (!$dataNascimento || $dataNascimento->format('Y-m-d') !== ($data['data_nascimento'] ?? '') || $dataNascimento > new \DateTimeImmutable('today')) {
+        if (!self::dataNascimentoValida((string) ($data['data_nascimento'] ?? ''))) {
             $erros['data_nascimento'] = 'Informe uma data de nascimento válida.';
         }
 
-        if (!preg_match('/^\d{11}$/', (string) ($data['cpf'] ?? ''))) {
-            $erros['cpf'] = 'O CPF deve possuir exatamente 11 dígitos.';
+        if (!self::cpfValido((string) ($data['cpf'] ?? ''))) {
+            $erros['cpf'] = 'Informe um CPF válido.';
         }
         if (!preg_match('/^\d{14}$/', (string) ($data['empresa_cnpj'] ?? ''))) {
             $erros['empresa_cnpj'] = 'O CNPJ deve possuir exatamente 14 dígitos.';
@@ -525,8 +554,8 @@ class Validador {
         $telefone = trim((string) ($data['numero_telefone'] ?? ''));
         if ($telefone === '') {
             $erros['numero_telefone'] = 'O número de telefone é obrigatório.';
-        } elseif (strlen($telefone) > 20) {
-            $erros['numero_telefone'] = 'O número de telefone deve ter no máximo 20 caracteres.';
+        } elseif (!self::telefoneValido($telefone)) {
+            $erros['numero_telefone'] = 'Informe um telefone brasileiro válido com DDD.';
         }
 
         if (strlen((string) ($data['mensagem'] ?? '')) > 1000) {

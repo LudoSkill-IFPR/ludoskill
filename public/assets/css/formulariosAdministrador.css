@@ -1,5 +1,5 @@
 .container{
-    width: 80%;
+    width: min(1100px, 92%);
 }
 
 #topo{
@@ -29,12 +29,27 @@ label, button{
     font-size: 17px;
 }
 
-button{
+button:not(.botao-voltar):not(.botao){
     width: 100px;
 }
 
-.formgroup label, .formgroup input, #descricao{
+.formgroup label{
     width: 100%;
+    color: var(--texto-principal);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.formgroup input,
+.formgroup select,
+textarea,
+#descricao{
+    width: 100%;
+    background-color: var(--fundo-input);
+    color: var(--texto-input);
+    border: 1.5px solid var(--borda-input);
+    border-radius: 8px;
+    padding: 8px 12px;
 }
 
 .formgroup select{
@@ -45,7 +60,6 @@ button{
 textarea{
     height: 200px;
     display: block;
-
     resize: none;
 }
 
@@ -54,11 +68,23 @@ textarea{
 }
 
 table{
-    background-color: var(--cinza-ultraescuro);
+    width: 100%;
+    background-color: var(--superficie-card);
+    color: var(--texto-secundario);
+}
+
+@media (max-width: 760px){
+    .container{ width: 94%; }
+    #topo{ align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+    #topo .botao{ margin-right: 0; }
+    .formgroup select{ width: 100%; }
+    #acao{ min-width: 210px; gap: 8px; }
+    th, td{ min-width: 130px; padding: 9px; }
+    textarea{ width: 100%; }
 }
 
 table, td, th{
-    border: 1px solid var(--cinza-escurao);
+    border: 1px solid var(--borda-card);
     border-radius: 20px;
     border-spacing: 0;
     border-collapse: separate;

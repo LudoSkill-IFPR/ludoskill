@@ -103,7 +103,8 @@
         const atividadesConcluidas = <?= (int) $resumo['concluidas'] ?>;
         const canvasProgresso = document.getElementById('progressoFuncionario');
         if (canvasProgresso) {
-            new Chart(canvasProgresso, {
+            const corTexto = () => getComputedStyle(document.documentElement).getPropertyValue('--texto-principal').trim() || '#fff';
+            const graficoProgresso = new Chart(canvasProgresso, {
                 type: 'doughnut',
                 data: {
                     labels: ['Concluídas', 'Pendentes'],
@@ -118,8 +119,12 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: '68%',
-                    plugins: { legend: { position: 'bottom', labels: { color: '#ffffff' } } }
+                    plugins: { legend: { position: 'bottom', labels: { color: corTexto(), font: { size: 14, weight: '600' }, usePointStyle: true, padding: 18 } } }
                 }
+            });
+            window.addEventListener('ludoskill:tema-alterado', () => {
+                graficoProgresso.options.plugins.legend.labels.color = corTexto();
+                graficoProgresso.update();
             });
         }
     </script>

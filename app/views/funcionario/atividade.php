@@ -12,7 +12,7 @@
     <main>
         <div class="container pagina-conteudo-atividade">
             <div id="topo">
-                <a class="botao brilho" href="<?= URL_BASE ?>/funcionario/modulos">Voltar</a>
+                <a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/funcionario/modulos" aria-label="Voltar para módulos"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1><?= htmlspecialchars($atividade->getNome()) ?></h1>
                     <!-- <p class="mensagem"><?= htmlspecialchars($atividade->getTipoAtividade()) ?></p> -->

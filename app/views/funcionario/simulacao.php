@@ -11,7 +11,7 @@
     <header><?php include __DIR__ . '/../includes/menuFuncionario.php'; ?></header>
     <main class="pagina-simulacao">
         <div class="topo-simulacao">
-            <a class="botao brilho" id="voltar-conteudo" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>">Voltar ao conteúdo</a>
+            <a class="botao-voltar botao brilho" id="voltar-conteudo" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>"><i class="bi bi-arrow-left"></i> Voltar ao conteúdo</a>
             <div>
                 <span class="rotulo-simulacao">Simulação prática</span>
                 <h1><?= htmlspecialchars($atividade->getNome()) ?></h1>

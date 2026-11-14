@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,17 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/exercicios.css">
     <title>LudoSkill - <?= htmlspecialchars($atividade->getNome()) ?></title>
 </head>
+
 <body>
     <header><?php include __DIR__ . '/../includes/menuFuncionario.php'; ?></header>
     <main>
         <div class="container pagina-exercicios">
             <div id="topo">
-                <a class="botao brilho" id="voltar-conteudo" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>">Voltar ao conteúdo</a>
-                <div><h1><?= htmlspecialchars($atividade->getNome()) ?></h1><p class="mensagem">Resolva todos os exercícios da atividade.</p></div>
+                <a class="botao-voltar botao brilho" id="voltar-conteudo" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>"><i class="bi bi-arrow-left"></i> Voltar ao conteúdo</a>
+                <div>
+                    <h1><?= htmlspecialchars($atividade->getNome()) ?></h1>
+                    <p class="mensagem">Resolva todos os exercícios da atividade.</p>
+                </div>
             </div>
 
             <?php if (!isset($resultado)): ?>
@@ -38,7 +43,9 @@
             <?php endif; ?>
 
             <?php if (empty($exercicios)): ?>
-                <div class="card"><p>Nenhum exercício foi cadastrado nesta atividade.</p></div>
+                <div class="card">
+                    <p>Nenhum exercício foi cadastrado nesta atividade.</p>
+                </div>
             <?php else: ?>
                 <form action="<?= URL_BASE ?>/funcionario/atividades/exercicios/responder" method="post" id="form-atividade">
                     <input type="hidden" name="id_atividade" value="<?= $atividade->getId() ?>">
@@ -90,58 +97,65 @@
         </div>
     </main>
     <script>
-    (() => {
-        const cronometro = document.getElementById('cronometro-atividade');
-        const valorTimer = document.getElementById('valor-timer');
-        if (cronometro && valorTimer) {
-            const rotuloTimer = document.getElementById('rotulo-timer');
-            const mensagemTimer = document.getElementById('mensagem-timer');
-            const segundosIniciais = Math.max(0, Number.parseInt(valorTimer.dataset.segundos || '0', 10));
-            const instanteFinal = Date.now() + (segundosIniciais * 1000);
-            let intervalo;
+        (() => {
+            const cronometro = document.getElementById('cronometro-atividade');
+            const valorTimer = document.getElementById('valor-timer');
+            if (cronometro && valorTimer) {
+                const rotuloTimer = document.getElementById('rotulo-timer');
+                const mensagemTimer = document.getElementById('mensagem-timer');
+                const segundosIniciais = Math.max(0, Number.parseInt(valorTimer.dataset.segundos || '0', 10));
+                const instanteFinal = Date.now() + (segundosIniciais * 1000);
+                let intervalo;
 
-            const atualizarTimer = () => {
-                const segundos = Math.max(0, Math.ceil((instanteFinal - Date.now()) / 1000));
-                const minutos = Math.floor(segundos / 60);
-                const segundosDoMinuto = segundos % 60;
-                valorTimer.textContent = `${String(minutos).padStart(2, '0')}:${String(segundosDoMinuto).padStart(2, '0')}`;
+                const atualizarTimer = () => {
+                    const segundos = Math.max(0, Math.ceil((instanteFinal - Date.now()) / 1000));
+                    const minutos = Math.floor(segundos / 60);
+                    const segundosDoMinuto = segundos % 60;
+                    valorTimer.textContent = `${String(minutos).padStart(2, '0')}:${String(segundosDoMinuto).padStart(2, '0')}`;
 
-                cronometro.classList.toggle('timer-alerta', segundos > 0 && segundos <= 60);
-                cronometro.classList.toggle('timer-esgotado', segundos === 0);
+                    cronometro.classList.toggle('timer-alerta', segundos > 0 && segundos <= 60);
+                    cronometro.classList.toggle('timer-esgotado', segundos === 0);
 
-                if (segundos === 0) {
-                    rotuloTimer.textContent = 'Tempo esgotado';
-                    mensagemTimer.textContent = 'Você ainda pode enviar as respostas, mas o tempo será considerado no resultado.';
-                    if (intervalo) window.clearInterval(intervalo);
-                }
-            };
+                    if (segundos === 0) {
+                        rotuloTimer.textContent = 'Tempo esgotado';
+                        mensagemTimer.textContent = 'Você ainda pode enviar as respostas, mas o tempo será considerado no resultado.';
+                        if (intervalo) window.clearInterval(intervalo);
+                    }
+                };
 
-            atualizarTimer();
-            if (segundosIniciais > 0) intervalo = window.setInterval(atualizarTimer, 1000);
-        }
+                atualizarTimer();
+                if (segundosIniciais > 0) intervalo = window.setInterval(atualizarTimer, 1000);
+            }
 
-        const form = document.getElementById('form-atividade');
-        if (!form) return;
-        const chave = 'ludoskill:atividade:<?= $_SESSION['usuario_logado']->getId() ?>:<?= $atividade->getId() ?>';
-        <?php if (isset($resultado)): ?>localStorage.removeItem(chave);<?php else: ?>
-        const salvas = JSON.parse(localStorage.getItem(chave) || '{}');
-        form.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
-            if (input.type === 'checkbox') input.checked = salvas[input.name] === '1';
-            else if (salvas[input.name] === input.value) input.checked = true;
-            input.addEventListener('change', () => {
-                salvas[input.name] = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
-                localStorage.setItem(chave, JSON.stringify(salvas));
+            const form = document.getElementById('form-atividade');
+            if (!form) return;
+            const chave = 'ludoskill:atividade:<?= $_SESSION['usuario_logado']->getId() ?>:<?= $atividade->getId() ?>';
+            <?php if (isset($resultado)): ?>localStorage.removeItem(chave);
+        <?php else: ?>
+            const salvas = JSON.parse(localStorage.getItem(chave) || '{}');
+            form.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+                if (input.type === 'checkbox') input.checked = salvas[input.name] === '1';
+                else if (salvas[input.name] === input.value) input.checked = true;
+                input.addEventListener('change', () => {
+                    salvas[input.name] = input.type === 'checkbox' ? (input.checked ? '1' : '0') : input.value;
+                    localStorage.setItem(chave, JSON.stringify(salvas));
+                });
             });
-        });
-        window.addEventListener('beforeunload', event => {
-            if (form.dataset.enviando !== '1') { event.preventDefault(); event.returnValue = ''; }
-        });
-        document.getElementById('voltar-conteudo')?.addEventListener('click', () => {
-            form.dataset.enviando = '1';
-        });
-        form.addEventListener('submit', () => { form.dataset.enviando = '1'; });
+            window.addEventListener('beforeunload', event => {
+                if (form.dataset.enviando !== '1') {
+                    event.preventDefault();
+                    event.returnValue = '';
+                }
+            });
+            document.getElementById('voltar-conteudo')?.addEventListener('click', () => {
+                form.dataset.enviando = '1';
+            });
+            form.addEventListener('submit', () => {
+                form.dataset.enviando = '1';
+            });
         <?php endif; ?>
-    })();
+        })();
     </script>
 </body>
+
 </html>

@@ -29,11 +29,10 @@ class Router
     {
         $uri  = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-        // Remove a pasta do projeto (caso esteja rodando em subpasta no Apache)
-        $scriptDir = str_replace('/public', '', dirname($_SERVER['SCRIPT_NAME']));
-
-        if ($scriptDir !== '/' && str_starts_with($uri, $scriptDir)) {
-            $uri = substr($uri, strlen($scriptDir));
+        // Usa a mesma base empregada na geração dos links, inclusive em subpastas do Apache.
+        $base = defined('URL_BASE') ? rtrim(URL_BASE, '/') : '';
+        if ($base !== '' && ($uri === $base || str_starts_with($uri, $base . '/'))) {
+            $uri = substr($uri, strlen($base));
         }
 
         $uri = str_replace('/public', '', $uri);

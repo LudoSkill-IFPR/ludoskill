@@ -20,6 +20,9 @@
     <main>
         <div class="container">
             <div class="topo">
+                <a href="<?= URL_BASE ?>/funcionario/inicial" class="botao-voltar botao brilho" aria-label="Voltar para a página inicial">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
                 <div>
                     <h1>Loja Super-Hiper-Mega-Maneira</h1>
                     <h2 class="mensagem">Para você deixar sua interface e esquilo mais esquilosos</h2>

@@ -23,6 +23,10 @@ class UsuarioRepository{
                 u.*, a.id_administrador, g.id_gestor, g.id_empresa AS gestor_empresa,
                 f.id_funcionario, f.id_empresa AS funcionario_empresa,
                 f.bolotas_totais, f.pontuacao_total, f.nivel,
+                eg.cnpj AS gestor_empresa_cnpj, eg.nome AS gestor_empresa_nome,
+                eg.email AS gestor_empresa_email, eg.plano AS gestor_empresa_plano,
+                ef.cnpj AS funcionario_empresa_cnpj, ef.nome AS funcionario_empresa_nome,
+                ef.email AS funcionario_empresa_email, ef.plano AS funcionario_empresa_plano,
                 CASE
                     WHEN a.id_administrador IS NOT NULL THEN 'admin'
                     WHEN g.id_gestor IS NOT NULL THEN 'gestor'
@@ -34,8 +38,12 @@ class UsuarioRepository{
                 ON a.id_usuario = u.id_usuario
             LEFT JOIN Gestores g 
                 ON g.id_usuario = u.id_usuario
+            LEFT JOIN Empresas eg
+                ON eg.id_empresa = g.id_empresa
             LEFT JOIN Funcionarios f 
                 ON f.id_usuario = u.id_usuario
+            LEFT JOIN Empresas ef
+                ON ef.id_empresa = f.id_empresa
             WHERE u.email = :email
         ";
 
@@ -49,10 +57,25 @@ class UsuarioRepository{
             return null;
         }
 
+        $empresaGestor = new \app\models\Empresa(
+            (int) ($usuario['gestor_empresa'] ?? 0),
+            (string) ($usuario['gestor_empresa_cnpj'] ?? ''),
+            (string) ($usuario['gestor_empresa_nome'] ?? ''),
+            (string) ($usuario['gestor_empresa_email'] ?? ''),
+            (string) ($usuario['gestor_empresa_plano'] ?? 'BASICO')
+        );
+        $empresaFuncionario = new \app\models\Empresa(
+            (int) ($usuario['funcionario_empresa'] ?? 0),
+            (string) ($usuario['funcionario_empresa_cnpj'] ?? ''),
+            (string) ($usuario['funcionario_empresa_nome'] ?? ''),
+            (string) ($usuario['funcionario_empresa_email'] ?? ''),
+            (string) ($usuario['funcionario_empresa_plano'] ?? 'BASICO')
+        );
+
         return match ($usuario['perfil']) {
             'admin' => Administrador::arrayParaObjeto($usuario),
-            'gestor' => Gestor::arrayParaObjeto(array_merge($usuario, ['id_empresa' => $usuario['gestor_empresa']])),
-            'funcionario' => Funcionario::arrayParaObjeto(array_merge($usuario, ['id_empresa' => $usuario['funcionario_empresa']])),
+            'gestor' => Gestor::arrayParaObjeto(array_merge($usuario, ['id_empresa' => $usuario['gestor_empresa']]), $empresaGestor),
+            'funcionario' => Funcionario::arrayParaObjeto(array_merge($usuario, ['id_empresa' => $usuario['funcionario_empresa']]), $empresaFuncionario),
             default => Usuario::arrayParaObjeto($usuario),
         };
     }

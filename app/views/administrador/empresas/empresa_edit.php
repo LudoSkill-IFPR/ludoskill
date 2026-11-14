@@ -10,7 +10,7 @@
 <body>
     <header><?php include __DIR__ . '/../../includes/menuAdministrador.html'; ?></header>
     <main><div class="container">
-        <div id="topo"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas">Voltar</a><div><h1>Edição de Empresa</h1><p class="mensagem">Atualize os dados da empresa.</p></div></div>
+        <div id="topo"><a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/empresas"><i class="bi bi-arrow-left"></i> Voltar</a><div><h1>Edição de Empresa</h1><p class="mensagem">Atualize os dados da empresa.</p></div></div>
         <?php $empresa = $empresa instanceof \app\models\Empresa ? $empresa : \app\models\Empresa::arrayParaObjeto($empresa); ?>
         <form class="card" action="<?= URL_BASE ?>/administrador/empresas/atualizar" method="post">
             <input type="hidden" name="id" value="<?= $empresa->getId() ?>">

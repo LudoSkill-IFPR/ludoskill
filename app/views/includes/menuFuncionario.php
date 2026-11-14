@@ -5,6 +5,10 @@
         <img id="logo" src="<?= URL_BASE ?>/assets/imagens/logo-ludoskill.png" alt="LudoSkill">
     </a>
 
+    <div class="controle-tema-interno">
+        <label for="tema-funcionario">Tema</label>
+        <select id="tema-funcionario" class="seletor" data-seletor-tema><option value="padrao">Padrão</option><option value="escuro">Escuro</option><option value="claro">Claro</option></select>
+    </div>
     <ul id="navegacao">
         <li class="dropdown">
             <a class="botao brilho" href="#"><i class="bi bi-person-circle"></i> Perfil</a>
@@ -18,3 +22,4 @@
         
     </ul>
 </nav>
+<script src="<?= URL_BASE ?>/assets/javascript/temas.js" data-home-url="<?= URL_BASE ?>/"></script>

@@ -1,123 +1,191 @@
-:root{
-    --verde: #38ff4c;
-    --verde-escuro: #1fad54;
-    --verde-claro: #9bff95;
-    --verde-escurao: #09704b;
-
-    --roxo: #9933dd;
-    --roxo-claro: #c156ed;
-    --roxo-escuro: #631da8;
-    --roxo-escurao: #37116d;
-
-    --cinza-escuro: #333333;
-    --cinza-escurao: #222222;
-    --cinza-ultraescuro: #111111;
-}
-
-main{
+main {
     width: 100vw;
-
     display: flex;
     justify-content: center;
+    padding-bottom: 40px;
 }
 
-.card{
-    margin-top: 50px;
-    width: 400px;
+.card {
+    margin-top: 40px;
+    width: min(420px, 92%);
+    background: var(--superficie-card);
+    border: 1px solid var(--borda-card);
+    border-radius: 20px;
+    box-shadow: var(--sombra-card);
 }
 
-form{
+form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.formgroup{
-    margin: 10px 15px;
-    /* border: 10px; */
-    width: 90%;
-}
-
-.formgroup label{
-    margin-bottom: 8px;
-}
-
-.formgroup label:not(.lembrar){
-    display: block;
-}
-.formgroup input:not(.lembrar){
     width: 100%;
 }
 
-button{
+@media (max-width: 560px) {
+    main {
+        min-height: calc(100vh - 150px);
+        padding: 16px;
+    }
+    main .card, form {
+        width: 100%;
+    }
+    input {
+        width: 100%;
+    }
+    form img {
+        height: 90px;
+    }
+}
+
+.formgroup {
+    margin: 10px 15px;
+    width: 90%;
+}
+
+.formgroup label {
+    margin-bottom: 8px;
+    color: var(--texto-principal);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.formgroup label:not(.lembrar) {
+    display: block;
+}
+
+.formgroup input:not(.lembrar) {
+    width: 100%;
+    background-color: var(--fundo-input);
+    color: var(--texto-input);
+    border: 1.5px solid var(--borda-input);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.formgroup input:focus {
+    outline: none;
+    border-color: var(--roxo-claro);
+    box-shadow: 0 0 8px rgba(153, 51, 221, 0.35);
+}
+
+/* O botão de submissão do formulário fica centralizado e com largura adequada */
+form button[type="submit"],
+.card form button.botao {
     margin-top: 20px;
     width: 90%;
+    height: 44px;
+    font-size: 16px;
 }
 
 .senha-container {
     display: flex;
     flex-direction: row;
+    position: relative;
+    width: 100%;
 }
 
 #senha {
     width: 100%;
-    padding-right: 10px; /* Espaço para o ícone */
+    padding-right: 40px; /* Espaço para o ícone */
 }
 
 #toggleSenha {
-    width: 30px;
-    margin: 3px;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
     background: none;
-    color: inherit;
+    border: none;
+    color: var(--texto-suave);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
 }
 
-.senha{
+#toggleSenha:hover {
+    color: var(--texto-principal);
+}
+
+.senha {
     margin-top: 20px;
     text-decoration: none;
+    color: var(--roxo-claro);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.senha:hover {
+    color: var(--verde-claro);
+    text-decoration: underline;
+}
+
+:root[data-theme="claro"] .senha {
     color: var(--roxo);
 }
 
-label.lembrar{
+:root[data-theme="claro"] .senha:hover {
+    color: var(--verde-escuro);
+}
+
+label.lembrar {
     display: inline-block;
     margin-bottom: 30px;
 }
 
-#skillo{
-    width: 150px;
-    margin-bottom: 10px;
+#skillo {
+    width: 120px;
+    margin-bottom: 12px;
+    filter: var(--filtro-mascote);
 }
 
-h1{
-    margin-bottom: 30px;
+h1 {
+    margin-bottom: 24px;
+    color: var(--texto-principal);
+    font-size: 24px;
+    font-weight: 700;
 }
 
-.texto-apoio{
+.texto-apoio {
     width: 90%;
     margin: -15px 0 15px;
     text-align: center;
+    color: var(--texto-secundario);
+    font-size: 14px;
 }
 
-.alerta{
+.alerta {
     width: 90%;
-    margin: 0 0 12px;
-    padding: 10px 12px;
+    margin: 0 0 14px;
+    padding: 10px 14px;
     border-radius: 10px;
     text-align: center;
+    font-size: 14px;
 }
 
 .alerta.erro,
-#erro{
+#erro {
     color: #fff;
-    background: rgba(227, 42, 51, 0.72);
+    background: rgba(227, 42, 51, 0.85);
+    border: 1px solid rgba(227, 42, 51, 0.4);
 }
 
-.alerta.sucesso{
+.alerta.sucesso {
     color: #fff;
-    background: rgba(9, 112, 75, 0.82);
+    background: rgba(9, 112, 75, 0.9);
+    border: 1px solid rgba(31, 173, 84, 0.5);
 }
 
-.recuperacao-invalida{
+.recuperacao-invalida {
     display: flex;
     flex-direction: column;
     align-items: center;

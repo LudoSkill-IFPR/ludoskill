@@ -41,8 +41,12 @@ class GestorRepository
     {
         $stm = $this->connection->prepare(
             "SELECT g.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
-                    u.email, u.senha_hash, u.numero_telefone, u.estado
-             FROM Gestores g INNER JOIN Usuarios u ON u.id_usuario = g.id_usuario
+                    u.email, u.senha_hash, u.numero_telefone, u.estado,
+                    e.cnpj AS empresa_cnpj, e.nome AS empresa_nome,
+                    e.email AS empresa_email, e.plano AS empresa_plano
+             FROM Gestores g
+             INNER JOIN Usuarios u ON u.id_usuario = g.id_usuario
+             INNER JOIN Empresas e ON e.id_empresa = g.id_empresa
              WHERE g.id_gestor = :id"
         );
         $stm->bindValue('id', $id);
@@ -51,7 +55,15 @@ class GestorRepository
 
         $gestor = $stm->fetch();
 
-        return $gestor ? Gestor::arrayParaObjeto($gestor) : null;
+        if (!$gestor) return null;
+        $empresa = new Empresa(
+            (int) $gestor['id_empresa'],
+            (string) $gestor['empresa_cnpj'],
+            (string) $gestor['empresa_nome'],
+            (string) $gestor['empresa_email'],
+            (string) $gestor['empresa_plano']
+        );
+        return Gestor::arrayParaObjeto($gestor, $empresa);
     }
 
     public function getGestorByUsuario(int $idUsuario): ?Gestor

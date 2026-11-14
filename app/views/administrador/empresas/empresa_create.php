@@ -13,7 +13,7 @@
     <header><?php include __DIR__ . '/../../includes/menuAdministrador.html'; ?></header>
     <main>
         <div class="container">
-            <div id="topo"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas">Voltar</a>
+            <div id="topo"><a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/empresas"><i class="bi bi-arrow-left"></i> Voltar</a>
                 <div>
                     <h1>Cadastro de Empresa</h1>
                     <p class="mensagem">Cadastre uma nova empresa no LudoSkill.</p>
