@@ -39,4 +39,8 @@ class AtividadeService {
     public function updateAtividade(Atividade $atividade) {
         return $this->atividadeRepository->updateAtividade($atividade);
     }
+
+    public function countAtividades(): int {
+        return $this->atividadeRepository->countAtividades();
+    }
 }

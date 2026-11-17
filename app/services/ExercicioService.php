@@ -43,4 +43,8 @@ class ExercicioService {
     public function updateExercicio(Exercicio $exercicio) {
         return $this->exercicioRepository->updateExercicio($exercicio);
     }
+
+    public function countExercicios(): int {
+        return $this->exercicioRepository->countExercicios();
+    }
 }

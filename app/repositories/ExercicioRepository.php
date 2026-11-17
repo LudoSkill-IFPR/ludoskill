@@ -99,4 +99,10 @@ class ExercicioRepository {
         $stm->bindValue('id', $exercicio->getId());
         return $stm->execute();
     }
+
+    public function countExercicios(): int {
+        $stm = $this->connection->prepare("SELECT COUNT(*) FROM Exercicios");
+        $stm->execute();
+        return (int) $stm->fetchColumn();
+    }
 }

@@ -41,12 +41,22 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                     <p><?= $quantidadeGestores ?></p>
                 </div>
 
-                <div class="card">
-                    <h3><i class="bi bi-file-post"></i><a href="<?= URL_BASE ?>/administrador/modulos/">Módulos cadastrados</a></h3>
-                    <p><?= $quantidadeModulos ?></p>
+                <div class="card modulo">
 
-                    <h3><a href="<?= URL_BASE ?>/administrador/atividades/">Atividades cadastradas</a></h3>
-                    <h3><a href="<?= URL_BASE ?>/administrador/exercicios/">Exercícios cadastrados</a></h3>
+                    <div class="curso">
+                        <h3><i class="bi bi-file-post"></i><a href="<?= URL_BASE ?>/administrador/modulos/">Módulos cadastrados:</a></h3>
+                        <p><?= $quantidadeModulos ?></p>
+                    </div>
+
+                    <div class="curso">
+                        <h3><a href="<?= URL_BASE ?>/administrador/atividades/">Atividades cadastradas:</a></h3>
+                        <p></p><?= $quantidadeAtividades ?></p>
+                    </div>
+
+                    <div class="curso">
+                        <h3><a href="<?= URL_BASE ?>/administrador/exercicios/">Exercícios cadastrados:</a></h3>
+                        <p></p><?= $quantidadeExercicios ?></p>
+                    </div>
 
                 </div>
 
