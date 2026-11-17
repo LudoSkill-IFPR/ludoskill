@@ -101,7 +101,7 @@ class SolicitacaoAcessoController extends Controller
                 . "<p><a href=\"{$login}\">Acessar o LudoSkill</a></p>"
                 . '<p>Por segurança, altere a senha depois do primeiro acesso.</p>';
 
-            if ($this->mail->sendMail($acesso['email'], 'Acesso aprovado - LudoSkill', $mensagem)) {
+            if ($this->mail->sendMail($acesso['email'], 'Acesso aprovado - LudoSkill <NÃO RESPONDER>', $mensagem)) {
                 $this->service->marcarEmailEnviado($id);
                 $this->definirMensagem('Solicitação aprovada e dados de acesso enviados por e-mail.');
             } else {

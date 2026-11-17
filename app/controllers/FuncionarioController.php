@@ -96,9 +96,14 @@ class FuncionarioController extends Controller
 
         $this->funcionarioService->saveFuncionario($funcionario);
 
-        $mensagem = "Olá {$dados['nome_completo']},\n\nSeu acesso ao LudoSkill foi criado com sucesso. Você pode fazer login com o e-mail {$dados['email']} e a senha que seu gestor definiu durante o cadastro: {$dados['senha_hash']}\n\nLembre de alterar essa senha assim que fizer o login.\n\nAcesse o sistema em: " . URL_BASE . "\n\nAtenciosamente,\nEquipe LudoSkill";
+        $mensagem = "<h2>Seu acesso ao LudoSkill foi criado com sucesso!</h2>"
+                . "<p>Olá, {$dados['nome_completo']}.</p>"
+                . '<p>Seu cadastro de funcionário foi criado e aprovado. Use os dados abaixo para entrar:</p>'
+                . "<p><strong>E-mail:</strong> {$dados['email']}<br><strong>Senha temporária:</strong> {$dados['senha_hash']}</p>"
+                . "<p><a href=\"" . URL_BASE . "\">Acessar o LudoSkill</a></p>"
+                . '<p>Por segurança, altere a senha depois do primeiro acesso.</p>';
 
-        $this->Mail->sendMail($dados['email'], 'Acesso ao LudoSkill', $mensagem);
+        $this->Mail->sendMail($dados['email'], 'Acesso ao LudoSkill <NÃO RESPONDER>', $mensagem);
 
         $this->redirect(URL_BASE . '/gestor/funcionarios');
     }
