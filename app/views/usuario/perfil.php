@@ -287,7 +287,7 @@
                     <section class="card-perfil">
                         <div>
                             <h2><i class="bi bi-speedometer2"></i> Painel do Sistema</h2>
-                            <p style="color: #b0b0b0; margin-bottom: 16px;">Visão geral dos recursos ativos no LudoSkill.</p>
+                            <p style="color: var(--texto-suave); margin-bottom: 16px;">Visão geral dos recursos ativos no LudoSkill.</p>
 
                             <div class="grid-metricas">
                                 <div class="card-metrica">

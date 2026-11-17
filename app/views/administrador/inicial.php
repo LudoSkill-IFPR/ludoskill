@@ -112,7 +112,7 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
         if (canvasEmpresas) {
             const cores = () => {
                 const estilos = getComputedStyle(document.documentElement);
-                return { texto: estilos.getPropertyValue('--texto-principal').trim() || '#fff', grade: estilos.getPropertyValue('--borda-interface').trim() || 'rgba(255,255,255,.15)' };
+                return { texto: estilos.getPropertyValue('--texto-principal').trim() || '#fff', grade: estilos.getPropertyValue('--borda-interface').trim() || 'rgba(255,255,255,.15)', verde: estilos.getPropertyValue('--grafico-verde').trim() || '#46d48f', roxo: estilos.getPropertyValue('--grafico-roxo').trim() || '#c874df' };
             };
             const paleta = cores();
             const graficoEmpresas = new Chart(canvasEmpresas, {
@@ -120,8 +120,8 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                 data: {
                     labels: <?= json_encode($nomesEmpresas, $jsonSeguro) ?>,
                     datasets: [
-                        { label: 'Gestores', data: <?= json_encode($quantidadesGestores) ?>, backgroundColor: '#46d48f' },
-                        { label: 'Funcionários', data: <?= json_encode($quantidadesFuncionarios) ?>, backgroundColor: '#c874df' }
+                        { label: 'Gestores', data: <?= json_encode($quantidadesGestores) ?>, backgroundColor: paleta.verde },
+                        { label: 'Funcionários', data: <?= json_encode($quantidadesFuncionarios) ?>, backgroundColor: paleta.roxo }
                     ]
                 },
                 options: {
@@ -140,6 +140,8 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                 graficoEmpresas.options.scales.y.ticks.color = nova.texto;
                 graficoEmpresas.options.scales.y.grid.color = nova.grade;
                 graficoEmpresas.options.plugins.legend.labels.color = nova.texto;
+                graficoEmpresas.data.datasets[0].backgroundColor = nova.verde;
+                graficoEmpresas.data.datasets[1].backgroundColor = nova.roxo;
                 graficoEmpresas.update();
             });
         }

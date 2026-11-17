@@ -80,13 +80,6 @@ class Validador {
         return $erros;
     }
 
-    /**
-     * Valida os dados usados no cadastro e na edição de um exercício.
-     *
-     * Confere a descrição e o tipo declarado no JSON. Exercícios exigem questões
-     * completas; simulações exigem etapas, ferramentas e ao menos um componente
-     * quebrado. Por fim, valida o identificador da atividade vinculada.
-     */
     public static function validarExercicio(array $data): array {
         $erros = [];
 
@@ -504,8 +497,8 @@ class Validador {
             $erros['tempo_limite'] = 'O tempo limite deve ser informado em segundos e ser maior que zero.';
         }
 
-        if (!isset($data['estrelas_recompensa']) || filter_var($data['estrelas_recompensa'], FILTER_VALIDATE_INT) === false || (int) $data['estrelas_recompensa'] < 0 || (int) $data['estrelas_recompensa'] > 3) {
-            $erros['estrelas_recompensa'] = 'A recompensa deve ser um número inteiro entre 0 e 3 estrelas.';
+        if (!isset($data['estrelas_recompensa']) || filter_var($data['estrelas_recompensa'], FILTER_VALIDATE_INT) === false || (int) $data['estrelas_recompensa'] < 0 || (int) $data['estrelas_recompensa'] > 5) {
+            $erros['estrelas_recompensa'] = 'A recompensa deve ser um número inteiro entre 0 e 5 estrelas.';
         }
 
         if (!isset($data['bolotas_recompensa']) || filter_var($data['bolotas_recompensa'], FILTER_VALIDATE_INT) === false || (int) $data['bolotas_recompensa'] < 0 || (int) $data['bolotas_recompensa'] > 100000) {

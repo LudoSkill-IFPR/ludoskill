@@ -11,6 +11,8 @@
     <title>LudoSkill</title>
 </head>
 <body>
+    <div id="chuva-bolotas" class="chuva-bolotas" aria-hidden="true"></div>
+
     <header>
         <nav>
             <a href="<?= URL_BASE ?>/" class="botao-voltar" aria-label="Voltar para a página inicial">
@@ -84,6 +86,30 @@
                 toggleSenhaButton.innerHTML = '<i class="bi bi-eye"></i>'
             }
         })
+
+        // Chuva de bolotas pequenas na tela de login
+        const containerChuva = document.getElementById('chuva-bolotas');
+        if (containerChuva) {
+            const totalBolotas = 35;
+            for (let i = 0; i < totalBolotas; i++) {
+                const bolota = document.createElement('span');
+                bolota.className = 'bolota-caindo';
+                const tamanho = Math.floor(Math.random() * 16) + 16; // tamanho pequeno: entre 16px e 32px
+                const duracao = (Math.random() * 3 + 3.5).toFixed(2); // tempo de queda: entre 3.5s e 6.5s
+                const atraso = (-Math.random() * 6.5).toFixed(2); // atraso negativo para já começar chovendo
+                const posicaoX = (Math.random() * 96 + 2).toFixed(2); // posição horizontal (2% a 98%)
+                const opacidade = (Math.random() * 0.4 + 0.6).toFixed(2); // opacidade sutil entre 0.6 e 1.0
+
+                bolota.style.left = posicaoX + '%';
+                bolota.style.width = tamanho + 'px';
+                bolota.style.height = tamanho + 'px';
+                bolota.style.animationDuration = duracao + 's';
+                bolota.style.animationDelay = atraso + 's';
+                bolota.style.opacity = opacidade;
+
+                containerChuva.appendChild(bolota);
+            }
+        }
 
     </script>
 </body>

@@ -1,0 +1,2 @@
+Essa pasta é destinada ao teste das demais funcionalidades do sistema para ter certeza de que estão funcionando corretamente.
+Esses testes são realizados no terminal usando aquela velha e boa tática do php {$nome do arquivo} php.

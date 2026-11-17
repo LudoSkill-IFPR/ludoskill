@@ -23,7 +23,7 @@ class Atividade {
         int $ordem = 1,
         int $tempoLimite = 180,
         string $descricao = '',
-        int $estrelasRecompensa = 3,
+        int $estrelasRecompensa = 5,
         int $bolotasRecompensa = 10
     ) {
         $this->id = $id;
@@ -54,7 +54,7 @@ class Atividade {
             (int) ($atividade['ordem'] ?? 1),
             (int) ($atividade['tempo_limite'] ?? 180),
             (string) ($atividade['descricao'] ?? ''),
-            (int) ($atividade['estrelas_recompensa'] ?? 3),
+            (int) ($atividade['estrelas_recompensa'] ?? 5),
             (int) ($atividade['bolotas_recompensa'] ?? 10)
         );
     }

@@ -48,7 +48,12 @@ class FuncionarioAtividadeRepository
     public function getDesempenhoByEmpresa(int $idEmpresa): array
     {
         $sql = "SELECT f.id_funcionario, u.nome_completo,
-                       COALESCE(AVG(CASE WHEN fa.estado = 'CONCLUIDO' AND a.tipo_atividade <> 'TEXTO' THEN fa.estrelas_obtidas END), 0) AS media_estrelas,
+                       COALESCE(AVG(CASE
+                           WHEN fa.estado = 'CONCLUIDO'
+                            AND a.tipo_atividade <> 'TEXTO'
+                            AND a.estrelas_recompensa > 0
+                           THEN LEAST(5.0, GREATEST(0.0, fa.estrelas_obtidas * 5.0 / a.estrelas_recompensa))
+                       END), 0) AS media_estrelas,
                        COUNT(CASE WHEN fa.estado = 'CONCLUIDO' THEN 1 END) AS atividades_concluidas
                 FROM Funcionarios f
                 INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario
@@ -231,7 +236,12 @@ class FuncionarioAtividadeRepository
         $sql = "SELECT COUNT(a.id_atividade) AS total,
                        COUNT(CASE WHEN fa.estado = 'CONCLUIDO' THEN 1 END) AS concluidas,
                        COALESCE(SUM(CASE WHEN fa.estado = 'CONCLUIDO' THEN fa.estrelas_obtidas ELSE 0 END), 0) AS estrelas,
-                       COALESCE(AVG(CASE WHEN fa.estado = 'CONCLUIDO' AND a.tipo_atividade <> 'TEXTO' THEN fa.estrelas_obtidas END), 0) AS desempenho
+                       COALESCE(AVG(CASE
+                           WHEN fa.estado = 'CONCLUIDO'
+                            AND a.tipo_atividade <> 'TEXTO'
+                            AND a.estrelas_recompensa > 0
+                           THEN LEAST(5.0, GREATEST(0.0, fa.estrelas_obtidas * 5.0 / a.estrelas_recompensa))
+                       END), 0) AS desempenho
                 FROM Atividades a
                 INNER JOIN Modulos m ON m.id_modulo = a.id_modulo AND m.estado = 'ATIVO'
                 LEFT JOIN Funcionarios f ON f.id_usuario = :usuario

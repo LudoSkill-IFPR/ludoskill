@@ -35,7 +35,7 @@
 
                 <div class="card">
                     <h3>Desempenho atual:</h3>
-                    <p><i class="bi bi-star-fill brilhinho"></i> <?= number_format((float) $resumo['desempenho'], 1, ',', '.') ?> / 3</p>
+                    <p><i class="bi bi-star-fill brilhinho"></i> <?= number_format((float) $resumo['desempenho'], 1, ',', '.') ?> / 5</p>
                 </div>
 
                 <div class="card">
@@ -104,14 +104,16 @@
         const canvasProgresso = document.getElementById('progressoFuncionario');
         if (canvasProgresso) {
             const corTexto = () => getComputedStyle(document.documentElement).getPropertyValue('--texto-principal').trim() || '#fff';
+            const corVar = (nome, padrao) => getComputedStyle(document.documentElement).getPropertyValue(nome).trim() || padrao;
+            const coresGrafico = () => [corVar('--grafico-verde', '#00c466'), corVar('--grafico-roxo', '#a900d6')];
             const graficoProgresso = new Chart(canvasProgresso, {
                 type: 'doughnut',
                 data: {
                     labels: ['Concluídas', 'Pendentes'],
                     datasets: [{
                         data: [atividadesConcluidas, Math.max(0, totalAtividades - atividadesConcluidas)],
-                        backgroundColor: ['#00c466', '#a900d6'],
-                        borderColor: '#181818',
+                        backgroundColor: coresGrafico(),
+                        borderColor: corVar('--grafico-borda', '#181818'),
                         borderWidth: 2
                     }]
                 },
@@ -124,6 +126,8 @@
             });
             window.addEventListener('ludoskill:tema-alterado', () => {
                 graficoProgresso.options.plugins.legend.labels.color = corTexto();
+                graficoProgresso.data.datasets[0].backgroundColor = coresGrafico();
+                graficoProgresso.data.datasets[0].borderColor = corVar('--grafico-borda', '#181818');
                 graficoProgresso.update();
             });
         }

@@ -68,7 +68,7 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
             const atividadesConcluidas = <?= json_encode($atividadesConcluidas) ?>;
             const cores = () => {
                 const estilos = getComputedStyle(document.documentElement);
-                return { texto: estilos.getPropertyValue('--texto-principal').trim() || '#fff', grade: estilos.getPropertyValue('--borda-interface').trim() || 'rgba(255,255,255,.15)' };
+                return { texto: estilos.getPropertyValue('--texto-principal').trim() || '#fff', grade: estilos.getPropertyValue('--borda-interface').trim() || 'rgba(255,255,255,.15)', verde: estilos.getPropertyValue('--grafico-verde').trim() || '#00c466' };
             };
             const paleta = cores();
             const graficoDesempenho = new Chart(canvasDesempenho, {
@@ -76,10 +76,10 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                 data: {
                     labels: <?= json_encode($nomesFuncionarios, $jsonSeguro) ?>,
                     datasets: [{
-                        label: 'Média de estrelas',
+                        label: 'Desempenho médio (0 a 5)',
                         data: <?= json_encode($mediasFuncionarios, JSON_PRESERVE_ZERO_FRACTION) ?>,
-                        backgroundColor: '#00c466',
-                        borderColor: '#64f5ad',
+                        backgroundColor: paleta.verde,
+                        borderColor: paleta.verde,
                         borderWidth: 1
                     }]
                 },
@@ -88,7 +88,7 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { beginAtZero: true, max: 3, ticks: { color: paleta.texto, stepSize: 1, font: { size: 13, weight: '600' } }, grid: { color: paleta.grade } },
+                        x: { beginAtZero: true, max: 5, ticks: { color: paleta.texto, stepSize: 1, font: { size: 13, weight: '600' } }, grid: { color: paleta.grade } },
                         y: { ticks: { color: paleta.texto, autoSkip: false, font: { size: 13, weight: '600' }, padding: 8 }, grid: { display: false } }
                     },
                     plugins: {
@@ -103,6 +103,8 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                 graficoDesempenho.options.scales.x.grid.color = nova.grade;
                 graficoDesempenho.options.scales.y.ticks.color = nova.texto;
                 graficoDesempenho.options.plugins.legend.labels.color = nova.texto;
+                graficoDesempenho.data.datasets[0].backgroundColor = nova.verde;
+                graficoDesempenho.data.datasets[0].borderColor = nova.verde;
                 graficoDesempenho.update();
             });
         }

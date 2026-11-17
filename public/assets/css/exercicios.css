@@ -168,7 +168,7 @@
 
 .cronometro-atividade small {
     margin-top: 4px;
-    color: #cfcfcf;
+    color: var(--texto-suave);
 }
 
 .cronometro-atividade strong {
@@ -285,7 +285,7 @@
 .modulo-funcionario summary::-webkit-details-marker { display: none; }
 .modulo-funcionario summary strong, .modulo-funcionario summary small { display: block; }
 .modulo-funcionario summary strong { font-size: 21px; }
-.modulo-funcionario summary small { margin-top: 5px; color: #cfcfcf; }
+.modulo-funcionario summary small { margin-top: 5px; color: var(--texto-suave); }
 .abrir-modulo, .atividade-concluida { color: var(--verde-claro); }
 .atividades-modulo { display: grid; gap: 12px; margin-top: 20px; }
 .atividade-modulo { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin: 0; }

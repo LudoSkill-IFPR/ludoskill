@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS Atividades (
     estado ENUM('ATIVO', 'INATIVO') NOT NULL DEFAULT 'ATIVO',
     ordem INT NOT NULL DEFAULT 1,
     tempo_limite INT NOT NULL DEFAULT 180,
-    estrelas_recompensa INT NOT NULL DEFAULT 3,
+    estrelas_recompensa INT NOT NULL DEFAULT 5,
     bolotas_recompensa INT NOT NULL DEFAULT 10,
     CONSTRAINT fk_atividade_modulo FOREIGN KEY (id_modulo) 
         REFERENCES Modulos(id_modulo) ON DELETE CASCADE ON UPDATE CASCADE

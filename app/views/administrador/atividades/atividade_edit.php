@@ -52,7 +52,7 @@
                 <div class="formgroup"><label for="tempo_limite">Tempo limite (segundos):</label><input class="card-secundario" type="number" min="1" id="tempo_limite" name="tempo_limite" value="<?= $atividade->getTempoLimite() ?>"><?php if (isset($erros['tempo_limite'])): ?><div class="erro"><?= htmlspecialchars($erros['tempo_limite']) ?></div><?php endif; ?></div>
                 <div class="formgroup">
                     <label for="estrelas_recompensa">Máximo de estrelas:</label>
-                    <input class="card-secundario" type="number" min="0" max="3" id="estrelas_recompensa" name="estrelas_recompensa" value="<?= $atividade->getEstrelasRecompensa() ?>">
+                    <input class="card-secundario" type="number" min="0" max="5" id="estrelas_recompensa" name="estrelas_recompensa" value="<?= $atividade->getEstrelasRecompensa() ?>">
                     <small>Uma estrela é descontada por erro e outra se o tempo limite for ultrapassado.</small>
                     <?php if (isset($erros['estrelas_recompensa'])): ?><div class="erro"><?= htmlspecialchars($erros['estrelas_recompensa']) ?></div><?php endif; ?>
                 </div>

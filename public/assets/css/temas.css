@@ -32,12 +32,13 @@
     --cinza-ultraescuro: #111111;
 
     /* Status e Alertas */
-    --problema: #e32a33;
+    --problema: #ff6b72; 
     --sucesso: #1fad54;
 
     /* Fundos e Cards */
     --fundo-pagina: radial-gradient(ellipse at 85% 95%, #7a22c5 0%, #1e0d36 45%, #0d0617 100%);
-    --fundo-entrada: radial-gradient(circle at right bottom, #9933dd, #8fe4b8 55%);
+    
+    --fundo-entrada: radial-gradient(circle at right bottom, #9933dd, #0e5a4a 55%);
     --superficie: #171122;
     --superficie-secundaria: #241a35;
     --superficie-card: rgba(23, 17, 34, 0.88);
@@ -68,8 +69,12 @@
     --botao-voltar-fundo: rgba(55, 17, 109, 0.85);
     --botao-voltar-texto: #ffffff;
     --botao-voltar-borda: rgba(255, 255, 255, 0.32);
-    --botao-voltar-hover-fundo: linear-gradient(135deg, #1fad54, #09704b);
-    --botao-voltar-hover-borda: #38ff4c;
+    --botao-voltar-hover-fundo: linear-gradient(135deg, #0b6b3c, #06492d); 
+
+    /* Gráficos (Chart.js lê estas variáveis) */
+    --grafico-verde: #00c466;
+    --grafico-roxo: #a900d6;
+    --grafico-borda: #181818;
 
     /* Mascote */
     --filtro-mascote: none;
@@ -129,7 +134,7 @@
     --botao-voltar-fundo: #221536;
     --botao-voltar-texto: #f8f7fc;
     --botao-voltar-borda: rgba(168, 85, 247, 0.45);
-    --botao-voltar-hover-fundo: linear-gradient(135deg, #1fad54, #09704b);
+    --botao-voltar-hover-fundo: linear-gradient(135deg, #0b6b3c, #06492d); 
     --botao-voltar-hover-borda: #38ff4c;
 
     /* Mascote */
@@ -146,24 +151,28 @@
     --verde: #087a3c;
     --verde-escuro: #0b6b3c;
     --verde-claro: #15803d;
-    --verde-escurao: #06492d;
+    --verde-escurao: #15803d;
     --verde-legal: #d1fae5;
 
     --roxo: #7a2db3;
     --roxo-claro: #9333ea;
-    --roxo-escuro: #581c87;
+    --roxo-escuro: #642594;
     --roxo-escurao: #3b0764;
 
     --cinza-escuro: #ded5e6;
     --cinza-escurao: #eee7f4;
     --cinza-ultraescuro: #ffffff;
 
+    /* Status e Alertas — AJUSTE: o claro herdava as cores do Padrão, fracas no fundo branco */
+    --problema: #b91c1c; 
+    --sucesso: #0b6b3c;  
+
     /* Fundos e Cards */
-    --fundo-pagina: linear-gradient(135deg, #f5effb 0%, #e7f6ee 50%, #f0eaf7 100%);
-    --fundo-entrada: linear-gradient(135deg, #f5effb 0%, #e7f6ee 50%, #f0eaf7 100%);
+    --fundo-pagina: linear-gradient(135deg, #e9ddfb 0%, #f5effb 45%, #d9f7e8 100%);
+    --fundo-entrada: linear-gradient(135deg, #e9ddfb 0%, #f5effb 45%, #d9f7e8 100%);
     --superficie: #ffffff;
     --superficie-secundaria: #f8f5fc;
-    --superficie-card: #ffffff;
+    --superficie-card: #f2dcf997;
     --superficie-card-secundario: #f8f5fc;
 
     /* Bordas e Sombras */
@@ -180,7 +189,7 @@
     --fundo-input: #ffffff;
     --borda-input: #c6b9d2;
     --texto-input: #1c1328;
-    --texto-placeholder: #8c7e99;
+    --texto-placeholder: #6e627b; 
 
     /* Seletor de Tema */
     --fundo-seletor: #ffffff;
@@ -193,6 +202,11 @@
     --botao-voltar-borda: #baa9cb;
     --botao-voltar-hover-fundo: linear-gradient(135deg, #0b6b3c, #06492d);
     --botao-voltar-hover-borda: #087a3c;
+
+    /* Gráficos no modo claro: cores mais leves e separação branca em vez de preta */
+    --grafico-verde: #18a058;
+    --grafico-roxo: #9b4dde;
+    --grafico-borda: #ffffff;
 
     /* Destaque no logo e mascote no modo claro */
     --filtro-mascote: drop-shadow(0 6px 14px rgba(99, 29, 168, 0.28));
