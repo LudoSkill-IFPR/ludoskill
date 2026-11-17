@@ -104,47 +104,11 @@ class Validador {
             } elseif (($conteudo['tipo'] ?? '') !== $tipo) {
                 $erros['conteudo'] = 'O tipo informado não corresponde ao tipo do conteúdo.';
             } elseif ($tipo === 'simulacao') {
-                $etapas = $conteudo['etapas'] ?? [];
-                $ferramentas = $conteudo['ferramentas'] ?? [];
                 $pecaQuebrada = (string) ($conteudo['peca_quebrada'] ?? '');
                 $pecasPermitidas = ['bateria', 'camera', 'chip'];
-                $ferramentasPermitidas = ['chave_fenda', 'pinca', 'pino_ejetor', 'luvas', 'aquecedor', 'palheta', 'adesivo'];
 
-                if (!is_array($etapas) || $etapas === []) {
-                    $erros['conteudo'] = 'Cadastre pelo menos uma etapa da simulação.';
-                } elseif (!in_array($pecaQuebrada, $pecasPermitidas, true)) {
+                if (!in_array($pecaQuebrada, $pecasPermitidas, true)) {
                     $erros['conteudo'] = 'Selecione a peça com defeito na simulação.';
-                } elseif (!is_array($ferramentas) || $ferramentas === [] || array_diff($ferramentas, $ferramentasPermitidas)) {
-                    $erros['conteudo'] = 'Selecione pelo menos uma ferramenta válida para a simulação.';
-                }
-
-                foreach (is_array($etapas) ? $etapas : [] as $indice => $etapa) {
-                    if (isset($erros['conteudo'])) break;
-                    $numero = $indice + 1;
-                    if (trim((string) ($etapa['descricao'] ?? '')) === '') {
-                        $erros['conteudo'] = "Informe a descrição da etapa {$numero}.";
-                        break;
-                    }
-                }
-
-                $necessarias = ['luvas', 'aquecedor', 'palheta', 'chave_fenda'];
-                if ($pecaQuebrada === 'chip') {
-                    $necessarias[] = 'pino_ejetor';
-                } else {
-                    $necessarias[] = 'pinca';
-                }
-                if ($pecaQuebrada === 'bateria') $necessarias[] = 'adesivo';
-                $faltantes = array_diff($necessarias, is_array($ferramentas) ? $ferramentas : []);
-                if (!isset($erros['conteudo']) && $faltantes !== []) {
-                    $nomes = [
-                        'luvas' => 'luvas', 'aquecedor' => 'soprador térmico', 'palheta' => 'palheta plástica',
-                        'chave_fenda' => 'chave de fenda', 'pinca' => 'pinça', 'pino_ejetor' => 'pino ejetor',
-                        'adesivo' => 'adesivo para bateria',
-                    ];
-                    $erros['conteudo'] = 'Inclua as ferramentas necessárias: ' . implode(', ', array_map(
-                        static fn(string $ferramenta): string => $nomes[$ferramenta],
-                        $faltantes
-                    )) . '.';
                 }
             } else {
                 $questoes = $conteudo['questoes'] ?? [];

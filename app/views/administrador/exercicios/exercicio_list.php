@@ -31,7 +31,7 @@
                                 : ($conteudo['tipo'] ?? 'exercicio');
                             $tipo = in_array($tipoJson, ['s', 'simulacao'], true) ? 'Simulação' : 'Exercício';
                             $quantidadeItens = $tipo === 'Simulação'
-                                ? count($conteudo['etapas'] ?? (array_is_list($conteudo) ? $conteudo : []))
+                                ? 1
                                 : count($conteudo['questoes'] ?? (array_is_list($conteudo) ? $conteudo : []));
                             ?>
                             <tr>

@@ -3,10 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const lista = document.getElementById('lista-itens');
     const tipo = document.getElementById('tipo');
     const modeloQuestao = document.getElementById('modelo-exercicio');
-    const modeloSimulacao = document.getElementById('modelo-simulacao');
     const botaoAdicionar = document.getElementById('adicionar-exercicio');
     const configuracoesSimulacao = [...document.querySelectorAll('.configuracao-simulacao')];
-    if (!formulario || !lista || !tipo || !modeloQuestao || !modeloSimulacao || !botaoAdicionar) return;
+    if (!formulario || !lista || !tipo || !modeloQuestao || !botaoAdicionar) return;
 
     const reindexar = () => {
         const questoes = [...lista.querySelectorAll('.bloco-exercicio')];
@@ -14,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bloco.querySelector('.numero-exercicio').textContent = indiceQuestao + 1;
             bloco.querySelector('.campo-enunciado').name = `questoes[${indiceQuestao}][enunciado]`;
             bloco.querySelector('.campo-justificativa').name = `questoes[${indiceQuestao}][justificativa]`;
+
             bloco.querySelectorAll('.linha-alternativa').forEach((linha, indiceAlternativa) => {
                 const radio = linha.querySelector('.alternativa-correta');
                 const input = linha.querySelector('.campo-alternativa');
@@ -26,13 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        const simulacoes = [...lista.querySelectorAll('.bloco-simulacao')];
-        simulacoes.forEach((bloco, indiceSimulacao) => {
-            bloco.querySelector('.numero-simulacao').textContent = indiceSimulacao + 1;
-            bloco.querySelector('.campo-descricao-simulacao').name = `etapas[${indiceSimulacao}][descricao]`;
-        });
-
-        lista.querySelectorAll('.remover-exercicio, .remover-simulacao').forEach((botao) => {
+        lista.querySelectorAll('.remover-exercicio').forEach((botao) => {
             botao.disabled = lista.children.length === 1;
         });
     };
@@ -97,58 +91,51 @@ document.addEventListener('DOMContentLoaded', () => {
         reindexar();
     };
 
-    const adicionarSimulacao = (dados = {}) => {
-        const bloco = modeloSimulacao.content.firstElementChild.cloneNode(true);
-        bloco.querySelector('.campo-descricao-simulacao').value = dados.descricao ?? '';
-        bloco.querySelector('.remover-simulacao').addEventListener('click', () => {
-            bloco.remove();
-            reindexar();
-        });
-        lista.appendChild(bloco);
-        reindexar();
-    };
-
-    const atualizarBotao = () => {
+    const atualizarTela = () => {
         const simulacao = tipo.value === 'simulacao';
-        botaoAdicionar.textContent = simulacao ? 'Adicionar etapa' : 'Adicionar questão';
+        botaoAdicionar.hidden = simulacao;
+        botaoAdicionar.style.display = simulacao ? 'none' : '';
+        lista.hidden = simulacao;
+        lista.style.display = simulacao ? 'none' : '';
+
         configuracoesSimulacao.forEach((configuracao) => {
             configuracao.hidden = !simulacao;
             configuracao.querySelectorAll('input').forEach((input) => {
                 input.disabled = !simulacao;
             });
         });
-    };
 
-    const adicionarItem = (dados = {}) => {
-        if (tipo.value === 'simulacao') adicionarSimulacao(dados);
-        else adicionarQuestao(dados);
+        lista.querySelectorAll('input, textarea, button').forEach((campo) => {
+            campo.disabled = simulacao;
+        });
+        if (!simulacao) reindexar();
     };
 
     let tipoAtual = ['s', 'simulacao'].includes(window.tipoExercicioInicial) ? 'simulacao' : 'exercicio';
     tipo.value = tipoAtual;
-    atualizarBotao();
 
-    const iniciais = Array.isArray(window.itensExercicioIniciais) && window.itensExercicioIniciais.length
-        ? window.itensExercicioIniciais
-        : [{}];
-    iniciais.forEach(adicionarItem);
+    const iniciais = Array.isArray(window.itensExercicioIniciais) ? window.itensExercicioIniciais : [];
+    if (tipoAtual === 'exercicio') {
+        (iniciais.length ? iniciais : [{}]).forEach(adicionarQuestao);
+    }
+    atualizarTela();
 
-    botaoAdicionar.addEventListener('click', () => adicionarItem());
+    botaoAdicionar.addEventListener('click', () => adicionarQuestao());
     tipo.addEventListener('change', () => {
-        if (!window.confirm('Alterar o tipo removerá os itens preenchidos. Deseja continuar?')) {
+        if (!window.confirm('Alterar o tipo removerá os dados preenchidos. Deseja continuar?')) {
             tipo.value = tipoAtual;
             return;
         }
+
         tipoAtual = tipo.value;
         lista.replaceChildren();
-        atualizarBotao();
-        adicionarItem();
+        if (tipoAtual === 'exercicio') adicionarQuestao();
+        atualizarTela();
     });
 
     formulario.addEventListener('submit', (evento) => {
         if (tipo.value !== 'simulacao') return;
-        const pecaQuebrada = formulario.querySelector('input[name="peca_quebrada"]:checked');
-        if (!pecaQuebrada) {
+        if (!formulario.querySelector('input[name="peca_quebrada"]:checked')) {
             evento.preventDefault();
             window.alert('Selecione a peça com defeito na simulação.');
         }

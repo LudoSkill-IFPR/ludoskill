@@ -27,14 +27,12 @@ $atividadeTexto = new Atividade(2, $modulo, 'TEXTO', 'Leitura', 'ATIVO', 2, 180,
 $conteudoQuestao = ['tipo' => 'exercicio', 'questoes' => [['enunciado' => 'Questão?', 'alternativas' => ['A', 'B'], 'alternativa_correta' => 0, 'justificativa' => 'Justificativa']]];
 $conteudoSimulacao = [
     'tipo' => 'simulacao',
-    'etapas' => [['descricao' => 'Aqueça e remova a tampa traseira.']],
-    'ferramentas' => ['luvas', 'aquecedor', 'palheta', 'chave_fenda', 'pinca', 'adesivo'],
-    'peca_quebrada' => 'bateria',
-    'componentes' => ['bateria', 'camera', 'chip'],
-    'sequencia' => [
-        ['acao' => 'ferramenta:luvas', 'instrucao' => 'Use as luvas.'],
-        ['acao' => 'remover:tampa', 'instrucao' => 'Remova a tampa.'],
+    'etapas' => [
+        ['descricao' => 'Aqueça a tampa traseira.'],
+        ['descricao' => 'Retire a bateria e coloque uma nova.'],
     ],
+    'ferramentas' => ['pinca', 'aquecedor', 'solda', 'palheta', 'alcool'],
+    'peca_quebrada' => 'bateria',
 ];
 $exercicio = new Exercicio(1, 'Conjunto', json_encode($conteudoQuestao), $atividade);
 $exercicioSimulacao = new Exercicio(2, 'Diagnóstico', json_encode($conteudoSimulacao), $atividade);
@@ -82,7 +80,7 @@ $casos = [
     ['funcionario/exercicios', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 1, 'descricao' => 'Conjunto', 'tipo' => 'exercicio', 'conteudo' => $conteudoQuestao]], 'tempoRestante' => 120]],
     ['funcionario/exercicios', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 1, 'descricao' => 'Conjunto', 'tipo' => 'exercicio', 'conteudo' => $conteudoQuestao]], 'respostas' => ['1' => [0]], 'resultado' => ['acertos' => 1, 'total' => 1, 'pontuacao' => 100, 'estrelas' => 3, 'bolotas' => 10, 'tentativas' => 1, 'tempo' => 30.0]]],
     ['funcionario/simulacao', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 2, 'descricao' => 'Diagnóstico', 'tipo' => 'simulacao', 'conteudo' => $conteudoSimulacao]], 'respostasSimulacao' => [], 'tempoRestante' => 120]],
-    ['funcionario/simulacao', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 2, 'descricao' => 'Troca de bateria', 'tipo' => 'simulacao', 'conteudo' => $conteudoSimulacao]], 'respostasSimulacao' => ['2' => ['acoes' => '["ferramenta:luvas","remover:tampa"]']], 'resultado' => ['acertos' => 2, 'total' => 2, 'pontuacao' => 100, 'estrelas' => 3, 'bolotas' => 10, 'tentativas' => 1, 'tempo' => 30.0]]],
+    ['funcionario/simulacao', ['atividade' => $atividade, 'exercicios' => [['id_exercicio' => 2, 'descricao' => 'Troca de bateria', 'tipo' => 'simulacao', 'conteudo' => $conteudoSimulacao]], 'respostasSimulacao' => ['2' => ['acoes' => '["ferramenta:aquecedor","interagir:tampa"]']], 'resultado' => ['acertos' => 1, 'total' => 1, 'pontuacao' => 100, 'estrelas' => 3, 'bolotas' => 10, 'tentativas' => 1, 'tempo' => 30.0, 'erros_simulacao' => 0, 'dentro_tempo' => true]]],
     ['usuario/perfil', ['usuario' => $funcionario, 'resumo' => ['concluidas' => 1, 'total' => 2, 'estrelas' => 2, 'desempenho' => 2]]],
     ['usuario/perfil', ['usuario' => $gestor, 'empresa' => $empresa, 'qtdFuncionarios' => 5, 'qtdModulos' => 2, 'taxaConclusao' => 75.0]],
     ['usuario/perfil', ['usuario' => $admin, 'qtdEmpresas' => 3, 'qtdGestores' => 4, 'qtdModulos' => 2, 'qtdItens' => 5]],

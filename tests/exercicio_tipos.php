@@ -2,8 +2,8 @@
 
 require __DIR__ . '/../app/core/Autoload.php';
 
-use app\helpers\Validador;
 use app\controllers\ExercicioController;
+use app\helpers\Validador;
 
 $questao = [
     'tipo' => 'exercicio',
@@ -26,19 +26,13 @@ $simulacao = [
     'atividade_id' => 1,
     'conteudo' => json_encode([
         'tipo' => 'simulacao',
-        'etapas' => [[
-            'descricao' => 'Aqueça e remova a tampa traseira.',
-        ]],
-        'ferramentas' => ['luvas', 'aquecedor', 'palheta', 'chave_fenda', 'pinca', 'adesivo'],
         'peca_quebrada' => 'bateria',
-        'componentes' => ['bateria', 'camera', 'chip'],
     ]),
 ];
 
 if (Validador::validarExercicio($questao) !== []) {
     throw new RuntimeException('Uma questão válida foi rejeitada.');
 }
-
 if (Validador::validarExercicio($simulacao) !== []) {
     throw new RuntimeException('Uma simulação válida foi rejeitada.');
 }
@@ -46,16 +40,10 @@ if (Validador::validarExercicio($simulacao) !== []) {
 $simulacaoInvalida = $simulacao;
 $simulacaoInvalida['conteudo'] = json_encode([
     'tipo' => 'simulacao',
-    'etapas' => [[
-        'descricao' => 'Aqueça e remova a tampa traseira.',
-    ]],
-    'ferramentas' => ['luvas'],
-    'peca_quebrada' => 'bateria',
-    'componentes' => ['bateria', 'camera', 'chip'],
+    'peca_quebrada' => 'tela',
 ]);
-
 if (!isset(Validador::validarExercicio($simulacaoInvalida)['conteudo'])) {
-    throw new RuntimeException('Uma simulação sem as ferramentas necessárias foi aceita.');
+    throw new RuntimeException('Uma simulação com peça inválida foi aceita.');
 }
 
 $reflection = new ReflectionClass(ExercicioController::class);
@@ -73,28 +61,52 @@ $legadoSimulacao = $decodificar->invoke($controller, json_encode([[
     'descricao' => 'Simulação antiga',
     'pecas_quebradas' => ['bateria'],
 ]]));
+$originalSimulacao = $decodificar->invoke($controller, json_encode([
+    'tipo' => 's',
+    'componentes' => ['bateria' => true, 'camera' => false, 'chip' => true],
+    'instrucoes' => ['Retire a câmera'],
+]));
 
 if (($legadoQuestao['tipo'] ?? null) !== 'exercicio') {
     throw new RuntimeException('JSON antigo de questões não foi reconhecido.');
 }
-if (($legadoSimulacao['tipo'] ?? null) !== 'simulacao') {
-    throw new RuntimeException('JSON antigo de simulação não foi reconhecido.');
-}
 if (($legadoSimulacao['peca_quebrada'] ?? null) !== 'bateria') {
-    throw new RuntimeException('A peça quebrada do JSON antigo não foi preservada.');
+    throw new RuntimeException('A peça quebrada do JSON legado não foi preservada.');
+}
+if (($originalSimulacao['peca_quebrada'] ?? null) !== 'camera') {
+    throw new RuntimeException('O JSON da simulação original não foi convertido.');
 }
 
-$montarSequencia = $reflection->getMethod('montarSequenciaSimulacao');
-$sequenciaBateria = $montarSequencia->invoke($controller, json_decode($simulacao['conteudo'], true));
-$acoesBateria = array_column($sequenciaBateria, 'acao');
-$acoesEsperadas = [
-    'ferramenta:luvas', 'ferramenta:aquecedor', 'ferramenta:palheta', 'remover:tampa',
-    'ferramenta:chave_fenda', 'remover:protecao', 'ferramenta:pinca', 'remover:bateria',
-    'ferramenta:adesivo', 'instalar:bateria', 'instalar:protecao', 'ferramenta:chave_fenda',
+$montarEtapas = $reflection->getMethod('montarEtapasSimulacao');
+$etapas = $montarEtapas->invoke($controller, 'bateria');
+if (count($etapas) !== 6 || !str_contains($etapas[2]['descricao'], 'álcool')) {
+    throw new RuntimeException('As etapas fixas da troca de bateria estão incorretas.');
+}
+
+$avaliar = $reflection->getMethod('avaliarSimulacao');
+$trocaBateria = [
+    'ferramenta:aquecedor', 'interagir:tampa',
+    'ferramenta:palheta', 'interagir:tampa',
+    'ferramenta:alcool', 'interagir:bateria',
+    'ferramenta:palheta', 'interagir:bateria',
+    'instalar:bateria', 'instalar:tampa',
+];
+$resultadoBateria = $avaliar->invoke($controller, $trocaBateria, 'bateria');
+if (!$resultadoBateria['concluida'] || $resultadoBateria['erros'] !== 0) {
+    throw new RuntimeException('A troca correta da bateria não foi concluída.');
+}
+
+$trocaCameraComReparoExtra = [
+    'ferramenta:aquecedor', 'interagir:tampa',
+    'ferramenta:palheta', 'interagir:tampa',
+    'ferramenta:pinca', 'interagir:camera', 'instalar:camera',
+    'ferramenta:solda', 'interagir:chip',
+    'ferramenta:pinca', 'interagir:chip', 'instalar:chip',
     'instalar:tampa',
 ];
-if ($acoesBateria !== $acoesEsperadas) {
-    throw new RuntimeException('A sequência prática para troca da bateria está incorreta.');
+$resultadoReparo = $avaliar->invoke($controller, $trocaCameraComReparoExtra, 'camera');
+if (!$resultadoReparo['concluida'] || $resultadoReparo['erros'] !== 1) {
+    throw new RuntimeException('A simulação não permitiu corrigir uma peça danificada por engano.');
 }
 
-echo "Tipos de exercício validados.\n";
+echo "Tipos e regras da simulação validados.\n";

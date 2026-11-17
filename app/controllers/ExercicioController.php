@@ -46,10 +46,7 @@ class ExercicioController extends Controller{
         $conteudo = $dados['tipo'] === 'simulacao'
             ? [
                 'tipo' => 'simulacao',
-                'etapas' => $this->normalizarEtapas($dados['etapas'] ?? []),
-                'ferramentas' => $this->normalizarFerramentas($dados['ferramentas'] ?? []),
                 'peca_quebrada' => (string) ($dados['peca_quebrada'] ?? ''),
-                'componentes' => ['bateria', 'camera', 'chip'],
             ]
             : [
                 'tipo' => 'exercicio',
@@ -134,10 +131,7 @@ class ExercicioController extends Controller{
         $conteudo = $dados['tipo'] === 'simulacao'
             ? [
                 'tipo' => 'simulacao',
-                'etapas' => $this->normalizarEtapas($dados['etapas'] ?? []),
-                'ferramentas' => $this->normalizarFerramentas($dados['ferramentas'] ?? []),
                 'peca_quebrada' => (string) ($dados['peca_quebrada'] ?? ''),
-                'componentes' => ['bateria', 'camera', 'chip'],
             ]
             : [
                 'tipo' => 'exercicio',
@@ -234,6 +228,8 @@ class ExercicioController extends Controller{
         $respostasSimulacao = is_array($_POST['respostas_simulacao'] ?? null) ? $_POST['respostas_simulacao'] : [];
         $total = 0;
         $acertos = 0;
+        $errosSimulacao = 0;
+        $somenteSimulacoes = $this->somenteSimulacoes($exercicios);
 
         foreach ($exercicios as $exercicio) {
             $idExercicio = (string) $exercicio['id_exercicio'];
@@ -242,8 +238,7 @@ class ExercicioController extends Controller{
                 $acoes = is_array($resposta)
                     ? json_decode((string) ($resposta['acoes'] ?? ''), true)
                     : null;
-                $sequencia = array_column($exercicio['conteudo']['sequencia'] ?? [], 'acao');
-                if (!is_array($acoes) || $acoes === [] || $sequencia === []) {
+                if (!is_array($acoes) || $acoes === []) {
                     $this->view($this->getViewRealizacao($exercicios), [
                         'atividade' => $atividade,
                         'exercicios' => $exercicios,
@@ -255,16 +250,13 @@ class ExercicioController extends Controller{
                     return;
                 }
 
-                $indiceEsperado = 0;
-                foreach ($acoes as $acao) {
-                    $total++;
-                    if (is_string($acao) && ($sequencia[$indiceEsperado] ?? null) === $acao) {
-                        $acertos++;
-                        $indiceEsperado++;
-                    }
-                }
-                $total += count($sequencia) - $indiceEsperado;
-                if ($indiceEsperado !== count($sequencia)) {
+                $avaliacao = $this->avaliarSimulacao(
+                    $acoes,
+                    (string) ($exercicio['conteudo']['peca_quebrada'] ?? '')
+                );
+                $total++;
+                $errosSimulacao += $avaliacao['erros'];
+                if (!$avaliacao['concluida']) {
                     $this->view($this->getViewRealizacao($exercicios), [
                         'atividade' => $atividade,
                         'exercicios' => $exercicios,
@@ -275,6 +267,7 @@ class ExercicioController extends Controller{
                     ]);
                     return;
                 }
+                $acertos++;
                 continue;
             }
 
@@ -309,12 +302,22 @@ class ExercicioController extends Controller{
         $pontuacao = (int) round(($acertos / $total) * 100);
         $inicio = (float) ($_SESSION['atividade_inicio'][$idAtividade] ?? microtime(true));
         $tempoExecucao = max(0.001, microtime(true) - $inicio);
-        $erros = $total - $acertos;
-        $concluida = $pontuacao >= 66;
-        $estrelas = $concluida
-            ? max(0, $atividade->getEstrelasRecompensa() - $erros - ($tempoExecucao > $atividade->getTempoLimite() ? 1 : 0))
-            : 0;
-        $bolotas = $concluida ? $atividade->getBolotasRecompensa() : 0;
+        $dentroDoTempo = $tempoExecucao <= $atividade->getTempoLimite();
+
+        if ($somenteSimulacoes) {
+            // Na simulação, os erros precisam ser consertados e não reduzem estrelas.
+            // O único critério da recompensa de estrelas é concluir dentro do tempo.
+            $pontuacao = 100;
+            $estrelas = $dentroDoTempo ? $atividade->getEstrelasRecompensa() : 0;
+            $bolotas = $atividade->getBolotasRecompensa();
+        } else {
+            $erros = $total - $acertos;
+            $concluida = $pontuacao >= 66;
+            $estrelas = $concluida
+                ? max(0, $atividade->getEstrelasRecompensa() - $erros - ($dentroDoTempo ? 0 : 1))
+                : 0;
+            $bolotas = $concluida ? $atividade->getBolotasRecompensa() : 0;
+        }
         unset($_SESSION['atividade_inicio'][$idAtividade]);
 
         $registro = $this->funcionarioAtividadeService->registrarResultado(
@@ -338,7 +341,9 @@ class ExercicioController extends Controller{
                 'estrelas' => $estrelas,
                 'bolotas' => $registro->getBolotasObtidas(),
                 'tentativas' => $registro->getQtdTentativas(),
-                'tempo' => $tempoExecucao
+                'tempo' => $tempoExecucao,
+                'erros_simulacao' => $errosSimulacao,
+                'dentro_tempo' => $dentroDoTempo,
             ]
         ]);
     }
@@ -361,7 +366,8 @@ class ExercicioController extends Controller{
         foreach ($this->exercicioService->getExerciciosByAtividade($idAtividade) as $registro) {
             $conteudo = $this->decodificarConteudo($registro->getConteudo());
             if ($conteudo['tipo'] === 'simulacao') {
-                $conteudo['sequencia'] = $this->montarSequenciaSimulacao($conteudo);
+                $conteudo['etapas'] = $this->montarEtapasSimulacao((string) $conteudo['peca_quebrada']);
+                $conteudo['ferramentas'] = $this->getFerramentasSimulacao();
             }
             $exercicios[] = [
                 'id_exercicio' => $registro->getId(),
@@ -415,23 +421,6 @@ class ExercicioController extends Controller{
         return $normalizadas;
     }
 
-    private function normalizarEtapas(array $etapas): array {
-        $normalizadas = [];
-
-        foreach ($etapas as $etapa) {
-            if (!is_array($etapa)) continue;
-            $normalizadas[] = ['descricao' => trim((string) ($etapa['descricao'] ?? ''))];
-        }
-
-        return $normalizadas;
-    }
-
-    private function normalizarFerramentas(array $ferramentas): array {
-        $permitidas = ['chave_fenda', 'pinca', 'pino_ejetor', 'luvas', 'aquecedor', 'palheta', 'adesivo'];
-        $recebidas = array_filter($ferramentas, 'is_string');
-        return array_values(array_unique(array_intersect($permitidas, $recebidas)));
-    }
-
     private function normalizarTipo(string $tipo): string {
         return match (strtolower(trim($tipo))) {
             'q', 'questao', 'exercicio' => 'exercicio',
@@ -451,46 +440,166 @@ class ExercicioController extends Controller{
         return '';
     }
 
-    //Monta o roteiro técnico usado pelo JavaScript e novamente conferido pelo PHP na correção.
-    private function montarSequenciaSimulacao(array $conteudo): array {
-        $peca = (string) ($conteudo['peca_quebrada'] ?? '');
-        $ferramentas = $conteudo['ferramentas'] ?? [];
-        $sequencia = [];
-        $adicionarFerramenta = static function (array &$acoes, string $ferramenta, string $rotulo) use ($ferramentas): void {
-            if (in_array($ferramenta, $ferramentas, true)) {
-                $acoes[] = ['acao' => 'ferramenta:' . $ferramenta, 'instrucao' => 'Use ' . $rotulo . '.'];
-            }
+    //As etapas e ferramentas são definidas pelo sistema. O administrador escolhe somente a peça defeituosa.
+    private function montarEtapasSimulacao(string $peca): array {
+        $nomes = ['bateria' => 'bateria', 'camera' => 'câmera', 'chip' => 'chip'];
+        $nomePeca = $nomes[$peca] ?? 'componente';
+
+        $remocao = match ($peca) {
+            'bateria' => 'Aplique álcool isopropílico na cola e use a palheta para retirar a bateria.',
+            'camera' => 'Use a pinça para retirar a câmera com defeito.',
+            'chip' => 'Use a solda para liberar o chip e depois retire-o com a pinça.',
+            default => 'Retire o componente com defeito usando a ferramenta adequada.',
         };
+        $instalacao = $peca === 'chip'
+            ? 'Coloque um novo chip no aparelho.'
+            : 'Coloque uma nova ' . $nomePeca . ' no aparelho.';
 
-        $adicionarFerramenta($sequencia, 'luvas', 'as luvas de proteção');
-        $adicionarFerramenta($sequencia, 'aquecedor', 'o soprador térmico para amolecer a cola da tampa');
-        $adicionarFerramenta($sequencia, 'palheta', 'a palheta para soltar a tampa');
-        $sequencia[] = ['acao' => 'remover:tampa', 'instrucao' => 'Remova a tampa traseira.'];
-        $adicionarFerramenta($sequencia, 'chave_fenda', 'a chave de fenda nos parafusos da proteção');
-        $sequencia[] = ['acao' => 'remover:protecao', 'instrucao' => 'Remova a proteção interna.'];
+        return [
+            ['descricao' => 'Use o soprador térmico para amolecer a cola da tampa traseira.'],
+            ['descricao' => 'Use a palheta plástica para remover a tampa.'],
+            ['descricao' => $remocao],
+            ['descricao' => $instalacao],
+            ['descricao' => 'Se outra peça for danificada durante o procedimento, retire-a e substitua-a também.'],
+            ['descricao' => 'Confira se todos os componentes funcionam e recoloque a tampa traseira.'],
+        ];
+    }
 
-        if ($peca === 'chip') {
-            $adicionarFerramenta($sequencia, 'pino_ejetor', 'o pino ejetor para liberar o chip');
-        } else {
-            $adicionarFerramenta($sequencia, 'pinca', 'a pinça para retirar o componente com segurança');
+    private function getFerramentasSimulacao(): array {
+        return ['pinca', 'aquecedor', 'solda', 'palheta', 'alcool'];
+    }
+
+    //Repete no servidor as mesmas regras usadas pelo JavaScript e confirma que o aparelho terminou consertado.
+    private function avaliarSimulacao(array $acoes, string $pecaQuebrada): array {
+        if (!in_array($pecaQuebrada, ['bateria', 'camera', 'chip'], true)) {
+            return ['concluida' => false, 'erros' => 0];
         }
-        $sequencia[] = ['acao' => 'remover:' . $peca, 'instrucao' => 'Retire a peça com defeito.'];
-        if ($peca === 'bateria') {
-            $adicionarFerramenta($sequencia, 'adesivo', 'o adesivo para fixar a bateria nova');
+
+        $componentes = ['bateria' => true, 'camera' => true, 'chip' => true];
+        $componentes[$pecaQuebrada] = false;
+        $removidos = ['bateria' => false, 'camera' => false, 'chip' => false];
+        $ferramenta = '';
+        $tampaRemovida = false;
+        $tampaFoiRemovida = false;
+        $colaTampaAquecida = false;
+        $colaBateriaSolta = false;
+        $soldaChipSolta = false;
+        $concluida = false;
+        $erros = 0;
+
+        foreach ($acoes as $acao) {
+            if (!is_string($acao)) continue;
+            $partes = explode(':', $acao, 2);
+            $tipo = $partes[0] ?? '';
+            $alvo = $partes[1] ?? '';
+
+            if ($tipo === 'ferramenta' && in_array($alvo, $this->getFerramentasSimulacao(), true)) {
+                $ferramenta = $alvo;
+                continue;
+            }
+
+            if ($tipo === 'interagir' && $alvo === 'tampa') {
+                if (!$tampaRemovida && $ferramenta === 'aquecedor') {
+                    $colaTampaAquecida = true;
+                } elseif (!$tampaRemovida && $ferramenta === 'palheta' && $colaTampaAquecida) {
+                    $tampaRemovida = true;
+                    $tampaFoiRemovida = true;
+                } elseif ($tampaRemovida && $ferramenta === 'aquecedor') {
+                    $componentes['bateria'] = false;
+                    $erros++;
+                } else {
+                    $erros++;
+                }
+                continue;
+            }
+
+            if ($tipo === 'interagir' && isset($componentes[$alvo])) {
+                if (!$tampaRemovida || $removidos[$alvo]) {
+                    $erros++;
+                    continue;
+                }
+
+                if ($alvo === 'bateria') {
+                    if ($ferramenta === 'aquecedor') {
+                        $componentes['bateria'] = false;
+                        $erros++;
+                    } elseif ($ferramenta === 'alcool') {
+                        $colaBateriaSolta = true;
+                    } elseif ($ferramenta === 'palheta' && $colaBateriaSolta && !$componentes['bateria']) {
+                        $removidos['bateria'] = true;
+                    } else {
+                        $erros++;
+                    }
+                } elseif ($alvo === 'camera') {
+                    if ($ferramenta === 'aquecedor') {
+                        $componentes['camera'] = false;
+                        $erros++;
+                    } elseif ($ferramenta === 'pinca' && !$componentes['camera']) {
+                        $removidos['camera'] = true;
+                    } else {
+                        $erros++;
+                    }
+                } elseif ($alvo === 'chip') {
+                    if ($ferramenta === 'solda') {
+                        if ($componentes['chip']) $erros++;
+                        $componentes['chip'] = false;
+                        $soldaChipSolta = true;
+                    } elseif ($ferramenta === 'pinca' && $soldaChipSolta && !$componentes['chip']) {
+                        $removidos['chip'] = true;
+                    } else {
+                        $erros++;
+                    }
+                }
+                continue;
+            }
+
+            if ($tipo === 'instalar' && isset($componentes[$alvo])) {
+                if ($tampaRemovida && $removidos[$alvo]) {
+                    $removidos[$alvo] = false;
+                    $componentes[$alvo] = true;
+                    if ($alvo === 'bateria') $colaBateriaSolta = false;
+                    if ($alvo === 'chip') $soldaChipSolta = false;
+                } else {
+                    $erros++;
+                }
+                continue;
+            }
+
+            if ($tipo === 'instalar' && $alvo === 'tampa') {
+                $algumaPecaRemovida = in_array(true, $removidos, true);
+                $algumaPecaQuebrada = in_array(false, $componentes, true);
+                if ($tampaRemovida && !$algumaPecaRemovida && !$algumaPecaQuebrada) {
+                    $tampaRemovida = false;
+                    $concluida = true;
+                } else {
+                    $erros++;
+                }
+                continue;
+            }
+
+            $erros++;
         }
-        $sequencia[] = ['acao' => 'instalar:' . $peca, 'instrucao' => 'Instale a peça nova.'];
-        $sequencia[] = ['acao' => 'instalar:protecao', 'instrucao' => 'Recoloque a proteção interna.'];
-        $adicionarFerramenta($sequencia, 'chave_fenda', 'a chave de fenda para prender novamente a proteção');
-        $sequencia[] = ['acao' => 'instalar:tampa', 'instrucao' => 'Recoloque a tampa traseira.'];
-        return $sequencia;
+
+        return [
+            'concluida' => $concluida
+                && $tampaFoiRemovida
+                && !$tampaRemovida
+                && !in_array(true, $removidos, true)
+                && !in_array(false, $componentes, true),
+            'erros' => $erros,
+        ];
+    }
+
+    private function somenteSimulacoes(array $exercicios): bool {
+        if ($exercicios === []) return false;
+        foreach ($exercicios as $exercicio) {
+            if (($exercicio['tipo'] ?? '') !== 'simulacao') return false;
+        }
+        return true;
     }
 
     private function getViewRealizacao(array $exercicios): string {
-        if ($exercicios !== [] && array_reduce(
-            $exercicios,
-            static fn(bool $somenteSimulacoes, array $exercicio): bool => $somenteSimulacoes && $exercicio['tipo'] === 'simulacao',
-            true
-        )) {
+        if ($this->somenteSimulacoes($exercicios)) {
             return 'funcionario/simulacao';
         }
         return 'funcionario/exercicios';
@@ -516,18 +625,19 @@ class ExercicioController extends Controller{
             if ($tipo === 'simulacao') {
                 $etapas = is_array($dados['etapas'] ?? null) ? array_values($dados['etapas']) : [];
                 $pecaQuebrada = (string) ($dados['peca_quebrada'] ?? $this->getPecaQuebradaLegada($etapas));
+                $componentesAntigos = is_array($dados['componentes'] ?? null) ? $dados['componentes'] : [];
+                if (!in_array($pecaQuebrada, ['bateria', 'camera', 'chip'], true)) {
+                    foreach (['bateria', 'camera', 'chip'] as $peca) {
+                        if (array_key_exists($peca, $componentesAntigos) && $componentesAntigos[$peca] === false) {
+                            $pecaQuebrada = $peca;
+                            break;
+                        }
+                    }
+                }
+                if (!in_array($pecaQuebrada, ['bateria', 'camera', 'chip'], true)) $pecaQuebrada = 'bateria';
                 return [
                     'tipo' => 'simulacao',
-                    'etapas' => array_map(
-                        static fn($etapa): array => ['descricao' => is_array($etapa) ? (string) ($etapa['descricao'] ?? '') : ''],
-                        $etapas
-                    ),
-                    'ferramentas' => $this->normalizarFerramentas(is_array($dados['ferramentas'] ?? null) ? $dados['ferramentas'] : []),
                     'peca_quebrada' => $pecaQuebrada,
-                    'componentes' => array_values(array_intersect(
-                        ['bateria', 'camera', 'chip'],
-                        is_array($dados['componentes'] ?? null) ? $dados['componentes'] : ['bateria', 'camera', 'chip']
-                    )),
                 ];
             }
             return [
@@ -538,18 +648,11 @@ class ExercicioController extends Controller{
 
         $tipoLegado = (($dados[0]['tipo'] ?? 'q') === 's') ? 'simulacao' : 'exercicio';
         if ($tipoLegado === 'simulacao') {
+            $pecaQuebrada = $this->getPecaQuebradaLegada($dados);
+            if (!in_array($pecaQuebrada, ['bateria', 'camera', 'chip'], true)) $pecaQuebrada = 'bateria';
             return [
                 'tipo' => 'simulacao',
-                'etapas' => array_map(
-                    static fn($item, int $indice): array => [
-                        'descricao' => is_array($item) ? ($item['descricao'] ?? '') : '',
-                    ],
-                    $dados,
-                    array_keys($dados)
-                ),
-                'ferramentas' => ['luvas', 'aquecedor', 'palheta', 'chave_fenda', 'pinca', 'adesivo'],
-                'peca_quebrada' => $this->getPecaQuebradaLegada($dados),
-                'componentes' => ['bateria', 'camera', 'chip'],
+                'peca_quebrada' => $pecaQuebrada,
             ];
         }
 

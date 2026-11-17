@@ -9,35 +9,47 @@
 </head>
 <body class="corpo-simulacao">
     <header><?php include __DIR__ . '/../includes/menuFuncionario.php'; ?></header>
+
     <main class="pagina-simulacao">
         <div class="topo-simulacao">
-            <a class="botao-voltar botao brilho" id="voltar-conteudo" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>"><i class="bi bi-arrow-left"></i> Voltar ao conteúdo</a>
+            <a class="botao-voltar botao brilho" id="voltar-conteudo" href="<?= URL_BASE ?>/funcionario/atividades/conteudo?id=<?= $atividade->getId() ?>">
+                <i class="bi bi-arrow-left"></i> Voltar ao conteúdo
+            </a>
             <div>
                 <span class="rotulo-simulacao">Simulação prática</span>
                 <h1><?= htmlspecialchars($atividade->getNome()) ?></h1>
             </div>
+
             <?php if (!isset($resultado)): ?>
                 <?php $segundosRestantes = max(0, (int) $tempoRestante); ?>
                 <div class="timer-simulacao" id="cronometro-atividade" role="timer" aria-live="polite">
                     <span id="rotulo-timer">Tempo restante</span>
                     <strong id="valor-timer" data-segundos="<?= $segundosRestantes ?>"><?= sprintf('%02d:%02d', intdiv($segundosRestantes, 60), $segundosRestantes % 60) ?></strong>
-                    <small id="mensagem-timer">O tempo continua contando.</small>
+                    <small id="mensagem-timer">Conclua no tempo para receber todas as estrelas.</small>
                 </div>
             <?php endif; ?>
         </div>
 
         <?php if (isset($erro)): ?><div class="alerta-simulacao"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
+
         <?php if (isset($resultado)): ?>
             <section class="resultado-simulacao-geral">
-                <div><strong><?= (int) $resultado['pontuacao'] ?>%</strong><span>Pontuação</span></div>
+                <div><strong><?= number_format((float) $resultado['tempo'], 1, ',', '.') ?>s</strong><span>Tempo utilizado</span></div>
                 <div><strong><?= (int) $resultado['estrelas'] ?></strong><span>Estrelas</span></div>
+                <div><strong><?= (int) ($resultado['erros_simulacao'] ?? 0) ?></strong><span>Erros cometidos</span></div>
                 <div><strong><?= (int) $resultado['bolotas'] ?></strong><span>Bolotas</span></div>
-                <div><strong><?= (int) $resultado['acertos'] ?>/<?= (int) $resultado['total'] ?></strong><span>Ações corretas</span></div>
             </section>
+            <div class="feedback-resultado <?= !empty($resultado['dentro_tempo']) ? 'resultado-no-tempo' : 'resultado-fora-tempo' ?>">
+                <?php if (!empty($resultado['dentro_tempo'])): ?>
+                    Você concluiu dentro do tempo e recebeu a quantidade máxima de estrelas da atividade.
+                <?php else: ?>
+                    O aparelho foi consertado, mas o tempo terminou antes da conclusão. Por isso, esta tentativa não recebeu estrelas.
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
 
         <form action="<?= URL_BASE ?>/funcionario/atividades/exercicios/responder" method="post" id="form-simulacao"
-            data-storage-key="ludoskill:simulacao:<?= $_SESSION['usuario_logado']->getId() ?>:<?= $atividade->getId() ?>"
+            data-storage-key="ludoskill:simulacao:v2:<?= $_SESSION['usuario_logado']->getId() ?>:<?= $atividade->getId() ?>"
             data-finalizada="<?= isset($resultado) ? '1' : '0' ?>">
             <input type="hidden" name="id_atividade" value="<?= $atividade->getId() ?>">
 
@@ -46,7 +58,6 @@
                 $conteudo = $exercicio['conteudo'];
                 $etapas = $conteudo['etapas'] ?? [];
                 $ferramentas = $conteudo['ferramentas'] ?? [];
-                $acoesEsperadas = array_column($conteudo['sequencia'] ?? [], 'acao');
                 $idExercicio = (string) $exercicio['id_exercicio'];
                 $respostaAtual = $respostasSimulacao[$idExercicio]['acoes'] ?? '[]';
                 $acoesAtuais = json_decode((string) $respostaAtual, true);
@@ -54,24 +65,30 @@
                 $pecaQuebrada = (string) ($conteudo['peca_quebrada'] ?? 'bateria');
                 $nomesComponentes = ['bateria' => 'Bateria', 'camera' => 'Câmera', 'chip' => 'Chip'];
                 $dadosFerramentas = [
-                    'luvas' => ['Luvas', '♧'], 'aquecedor' => ['Soprador térmico', '♨'],
-                    'palheta' => ['Palheta plástica', '◒'], 'chave_fenda' => ['Chave de fenda', '🪛'],
-                    'pinca' => ['Pinça', '⌁'], 'pino_ejetor' => ['Pino ejetor', '⊙'],
-                    'adesivo' => ['Adesivo para bateria', '▰'],
+                    'pinca' => ['Pinça', 'pinca-de-manutencao.png'],
+                    'aquecedor' => ['Soprador térmico', 'aquecedor.png'],
+                    'solda' => ['Ferro de solda', 'solda.png'],
+                    'palheta' => ['Palheta plástica', 'palheta.png'],
+                    'alcool' => ['Álcool isopropílico', 'alcool.png'],
                 ];
                 ?>
+
                 <section class="tabuleiro-simulacao simulacao-interativa"
                     data-id="<?= (int) $idExercicio ?>"
-                    data-sequencia="<?= htmlspecialchars(json_encode($acoesEsperadas, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>"
+                    data-defeito="<?= htmlspecialchars($pecaQuebrada) ?>"
                     data-acoes="<?= htmlspecialchars(json_encode($acoesAtuais, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>"
                     aria-labelledby="titulo-simulacao-<?= (int) $idExercicio ?>">
+
                     <aside class="painel-simulacao painel-etapas">
                         <h2>Etapas</h2>
                         <div class="lista-etapas">
                             <?php foreach ($etapas as $indice => $etapa): ?>
                                 <article class="etapa-simulacao">
                                     <span><?= str_pad((string) ($indice + 1), 2, '0', STR_PAD_LEFT) ?></span>
-                                    <div><h3>Etapa <?= $indice + 1 ?></h3><p><?= nl2br(htmlspecialchars($etapa['descricao'] ?? '')) ?></p></div>
+                                    <div>
+                                        <h3>Etapa <?= $indice + 1 ?></h3>
+                                        <p><?= htmlspecialchars($etapa['descricao'] ?? '') ?></p>
+                                    </div>
                                 </article>
                             <?php endforeach; ?>
                         </div>
@@ -81,34 +98,43 @@
                         <div class="cabecalho-cenario">
                             <span>Simulação <?= $numero + 1 ?></span>
                             <h2 id="titulo-simulacao-<?= (int) $idExercicio ?>"><?= htmlspecialchars($exercicio['descricao']) ?></h2>
-                            <p>Use as ferramentas e execute a manutenção na ordem correta.</p>
+                            <p>Defeito inicial: <strong><?= htmlspecialchars($nomesComponentes[$pecaQuebrada] ?? $pecaQuebrada) ?></strong></p>
                         </div>
+
                         <div class="andamento-simulacao" aria-live="polite">
-                            <strong class="progresso-simulacao">Ação 1 de <?= count($acoesEsperadas) ?></strong>
-                            <span class="mensagem-acao">Escolha a primeira ação.</span>
+                            <strong class="progresso-simulacao">Aparelho aguardando manutenção</strong>
+                            <span class="mensagem-acao">Escolha uma ferramenta e interaja com o celular.</span>
                         </div>
-                        <div class="aparelho-simulacao" aria-label="Representação interativa de um telefone celular">
-                            <div class="camera camera-um"></div><div class="camera camera-dois"></div><div class="flash-aparelho">+</div>
-                            <div class="tela-aparelho"><span>LudoSkill</span><strong>MANUTENÇÃO</strong></div>
-                            <div class="placa-aparelho protecao-visual">PROTEÇÃO</div>
-                            <div class="bateria-aparelho <?= $pecaQuebrada === 'bateria' ? 'alvo-visual peca-defeituosa' : '' ?>">BATERIA</div>
-                            <div class="chip-aparelho <?= $pecaQuebrada === 'chip' ? 'alvo-visual peca-defeituosa' : '' ?>">CHIP</div>
-                            <div class="camera-alvo <?= $pecaQuebrada === 'camera' ? 'alvo-visual peca-defeituosa' : '' ?>">CÂMERA</div>
-                            <div class="tampa-aparelho">TAMPA TRASEIRA</div>
+
+                        <div class="bancada-celular" aria-label="Celular interativo para manutenção">
+                            <img class="estrutura-celular" src="<?= URL_BASE ?>/assets/imagens/simulacao/pelado.png" alt="Parte interna do celular">
+
+                            <button type="button" class="componente-celular componente-bateria" data-acao="interagir:bateria" aria-label="Interagir com a bateria">
+                                <img src="<?= URL_BASE ?>/assets/imagens/simulacao/bateria.png" alt="Bateria">
+                            </button>
+                            <button type="button" class="componente-celular componente-camera" data-acao="interagir:camera" aria-label="Interagir com a câmera">
+                                <img src="<?= URL_BASE ?>/assets/imagens/simulacao/camera.png" alt="Câmera">
+                            </button>
+                            <button type="button" class="componente-celular componente-chip" data-acao="interagir:chip" aria-label="Interagir com o chip">
+                                <img src="<?= URL_BASE ?>/assets/imagens/simulacao/chip.png" alt="Chip">
+                            </button>
+
+                            <button type="button" class="tampa-celular" data-acao="interagir:tampa" aria-label="Interagir com a tampa traseira">
+                                <img src="<?= URL_BASE ?>/assets/imagens/simulacao/verso-celular.png" alt="Tampa traseira do celular">
+                            </button>
                         </div>
-                        <fieldset class="acoes-pecas">
-                            <legend>Peças do aparelho</legend>
-                            <button type="button" class="acao-simulacao" data-acao="remover:tampa" <?= isset($resultado) ? 'disabled' : '' ?>>Remover tampa</button>
-                            <button type="button" class="acao-simulacao" data-acao="remover:protecao" <?= isset($resultado) ? 'disabled' : '' ?>>Remover proteção</button>
-                            <button type="button" class="acao-simulacao" data-acao="remover:<?= htmlspecialchars($pecaQuebrada) ?>" <?= isset($resultado) ? 'disabled' : '' ?>>Retirar <?= htmlspecialchars($nomesComponentes[$pecaQuebrada] ?? $pecaQuebrada) ?></button>
-                            <button type="button" class="acao-simulacao" data-acao="instalar:<?= htmlspecialchars($pecaQuebrada) ?>" <?= isset($resultado) ? 'disabled' : '' ?>>Instalar <?= htmlspecialchars($nomesComponentes[$pecaQuebrada] ?? $pecaQuebrada) ?> nova</button>
-                            <button type="button" class="acao-simulacao" data-acao="instalar:protecao" <?= isset($resultado) ? 'disabled' : '' ?>>Recolocar proteção</button>
-                            <button type="button" class="acao-simulacao" data-acao="instalar:tampa" <?= isset($resultado) ? 'disabled' : '' ?>>Recolocar tampa</button>
-                        </fieldset>
+
+                        <div class="acoes-componentes">
+                            <h3>Peças novas</h3>
+                            <?php foreach ($nomesComponentes as $componente => $rotulo): ?>
+                                <button type="button" class="acao-simulacao botao-instalar" data-acao="instalar:<?= $componente ?>" <?= isset($resultado) ? 'disabled' : '' ?>>
+                                    Inserir <?= htmlspecialchars($rotulo) ?>
+                                </button>
+                            <?php endforeach; ?>
+                            <button type="button" class="acao-simulacao botao-fechar" data-acao="instalar:tampa" <?= isset($resultado) ? 'disabled' : '' ?>>Recolocar tampa</button>
+                        </div>
+
                         <input class="registro-acoes" type="hidden" name="respostas_simulacao[<?= (int) $idExercicio ?>][acoes]" value="<?= htmlspecialchars(json_encode($acoesAtuais), ENT_QUOTES, 'UTF-8') ?>">
-                        <?php if (isset($resultado)): ?>
-                            <div class="feedback-simulacao feedback-correto"><strong>Manutenção concluída.</strong><p>A pontuação considera a ordem das ações e as tentativas incorretas.</p></div>
-                        <?php endif; ?>
                     </section>
 
                     <aside class="painel-simulacao painel-ferramentas">
@@ -117,9 +143,18 @@
                             <?php foreach ($ferramentas as $ferramenta): ?>
                                 <?php if (!isset($dadosFerramentas[$ferramenta])) continue; ?>
                                 <button type="button" class="acao-simulacao ferramenta-simulacao" data-acao="ferramenta:<?= htmlspecialchars($ferramenta) ?>" <?= isset($resultado) ? 'disabled' : '' ?>>
-                                    <span><?= $dadosFerramentas[$ferramenta][1] ?></span><?= htmlspecialchars($dadosFerramentas[$ferramenta][0]) ?>
+                                    <span><img src="<?= URL_BASE ?>/assets/imagens/simulacao/<?= htmlspecialchars($dadosFerramentas[$ferramenta][1]) ?>" alt=""></span>
+                                    <?= htmlspecialchars($dadosFerramentas[$ferramenta][0]) ?>
                                 </button>
                             <?php endforeach; ?>
+                        </div>
+
+                        <div class="estado-componentes">
+                            <h2>Estado das peças</h2>
+                            <?php foreach ($nomesComponentes as $componente => $rotulo): ?>
+                                <p data-estado-componente="<?= $componente ?>"><span></span><?= htmlspecialchars($rotulo) ?>: <strong>Aguardando</strong></p>
+                            <?php endforeach; ?>
+                            <p class="contador-erros">Erros cometidos: <strong>0</strong></p>
                         </div>
                     </aside>
                 </section>
@@ -134,6 +169,7 @@
             </div>
         </form>
     </main>
+
     <script src="<?= URL_BASE ?>/assets/javascript/simulacao.js"></script>
 </body>
 </html>

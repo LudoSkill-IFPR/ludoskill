@@ -25,14 +25,13 @@
             $tipoSelecionado = in_array($tipoSelecionado, ['s', 'simulacao'], true) ? 'simulacao' : 'exercicio';
             $conteudoInicial = $conteudoExercicio ?? [];
             $itensIniciais = $tipoSelecionado === 'simulacao'
-                ? ($conteudoInicial['etapas'] ?? [['descricao' => '']])
+                ? []
                 : ($conteudoInicial['questoes'] ?? [[
                 'enunciado' => '',
                 'alternativas' => ['', ''],
                 'alternativa_correta' => null,
                 'justificativa' => '',
             ]]);
-            $ferramentasIniciais = $conteudoInicial['ferramentas'] ?? ['luvas', 'aquecedor', 'palheta', 'chave_fenda', 'pinca', 'adesivo'];
             $pecaQuebradaInicial = $conteudoInicial['peca_quebrada'] ?? 'bateria';
             $descricaoExercicio = $exercicio['descricao'] ?? '';
             $atividadeSelecionada = (int) ($exercicio['atividade_id'] ?? $exercicio['id_atividade'] ?? 0);
@@ -74,12 +73,10 @@
                     <?php endforeach; ?>
                 </fieldset>
 
-                <fieldset class="grupo-pecas configuracao-simulacao" id="configuracao-ferramentas">
-                    <legend>Ferramentas disponíveis na simulação:</legend>
-                    <?php foreach (['luvas' => 'Luvas', 'aquecedor' => 'Soprador térmico', 'palheta' => 'Palheta plástica', 'chave_fenda' => 'Chave de fenda', 'pinca' => 'Pinça', 'pino_ejetor' => 'Pino ejetor', 'adesivo' => 'Adesivo para bateria'] as $ferramenta => $rotulo): ?>
-                        <label><input type="checkbox" name="ferramentas[]" value="<?= $ferramenta ?>" <?= in_array($ferramenta, $ferramentasIniciais, true) ? 'checked' : '' ?>> <?= $rotulo ?></label>
-                    <?php endforeach; ?>
-                </fieldset>
+                <div class="card-secundario configuracao-simulacao instrucao-simulacao">
+                    <strong>Etapas definidas pelo sistema</strong>
+                    <p>O administrador escolhe a peça defeituosa. O passo a passo, as ferramentas e as regras de conserto são adicionados automaticamente ao abrir a simulação.</p>
+                </div>
 
                 <div id="lista-itens" aria-live="polite"></div>
 
@@ -104,19 +101,6 @@
                     <div class="formgroup">
                         <label>Justificativa da alternativa correta:</label>
                         <textarea class="card-secundario campo-justificativa" required></textarea>
-                    </div>
-                </fieldset>
-            </template>
-
-            <template id="modelo-simulacao">
-                <fieldset class="card-secundario bloco-simulacao">
-                    <div class="cabecalho-simulacao">
-                        <legend>Etapa <span class="numero-simulacao"></span></legend>
-                        <button type="button" class="botao remover-simulacao">Remover etapa</button>
-                    </div>
-                    <div class="formgroup">
-                        <label>Descrição:</label>
-                        <textarea class="card-secundario campo-descricao-simulacao" required></textarea>
                     </div>
                 </fieldset>
             </template>
