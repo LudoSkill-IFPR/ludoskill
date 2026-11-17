@@ -236,12 +236,8 @@ class FuncionarioAtividadeRepository
         $sql = "SELECT COUNT(a.id_atividade) AS total,
                        COUNT(CASE WHEN fa.estado = 'CONCLUIDO' THEN 1 END) AS concluidas,
                        COALESCE(SUM(CASE WHEN fa.estado = 'CONCLUIDO' THEN fa.estrelas_obtidas ELSE 0 END), 0) AS estrelas,
-                       COALESCE(AVG(CASE
-                           WHEN fa.estado = 'CONCLUIDO'
-                            AND a.tipo_atividade <> 'TEXTO'
-                            AND a.estrelas_recompensa > 0
-                           THEN LEAST(5.0, GREATEST(0.0, fa.estrelas_obtidas * 5.0 / a.estrelas_recompensa))
-                       END), 0) AS desempenho
+                       COALESCE(SUM(a.estrelas_recompensa), 0) AS estrelas_maximas,
+                       COALESCE(SUM(CASE WHEN fa.estado = 'CONCLUIDO' THEN fa.estrelas_obtidas ELSE 0 END), 0) AS desempenho
                 FROM Atividades a
                 INNER JOIN Modulos m ON m.id_modulo = a.id_modulo AND m.estado = 'ATIVO'
                 LEFT JOIN Funcionarios f ON f.id_usuario = :usuario
@@ -249,7 +245,13 @@ class FuncionarioAtividadeRepository
                 WHERE a.estado = 'ATIVO'";
         $stm = $this->connection->prepare($sql);
         $stm->execute(['usuario' => $idUsuario]);
-        return $stm->fetch() ?: ['total' => 0, 'concluidas' => 0, 'estrelas' => 0, 'desempenho' => 0];
+        return $stm->fetch() ?: [
+            'total' => 0,
+            'concluidas' => 0,
+            'estrelas' => 0,
+            'estrelas_maximas' => 0,
+            'desempenho' => 0,
+        ];
     }
 
     public function getProximaAtividade(int $idUsuario): ?Atividade

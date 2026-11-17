@@ -35,7 +35,7 @@
 
                 <div class="card">
                     <h3>Desempenho atual:</h3>
-                    <p><i class="bi bi-star-fill brilhinho"></i> <?= number_format((float) $resumo['desempenho'], 1, ',', '.') ?> / 5</p>
+                    <p><i class="bi bi-star-fill brilhinho"></i> <?= (int) ($resumo['estrelas'] ?? 0) ?> / <?= (int) ($resumo['estrelas_maximas'] ?? 0) ?></p>
                 </div>
 
                 <div class="card">
@@ -74,7 +74,9 @@
             <section class="inventario">
                 <div class="card">
                     <h2><i class="bi bi-backpack4-fill"></i> Inventário</h2>
-                    <p>Nossa, olha o que você já conquistou!</p>
+                    <?php if (!empty($inventario)): ?>
+                        <p>Nossa, olha o que você já conquistou!</p>
+                    <?php endif; ?>
 
                     <ul id="inventario">
                         <?php foreach($inventario as $registro): ?>

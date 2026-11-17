@@ -72,7 +72,7 @@ $casos = [
     ['gestor/funcionarios/funcionario_create', ['funcionario' => ['nome_completo' => 'Funcionário'], 'erros' => ['email' => 'Inválido']]],
     ['gestor/funcionarios/funcionario_edit', ['funcionario' => $funcionario]],
     ['gestor/inicial', ['quantidadeFuncionarios' => 1, 'empresa' => $empresa, 'desempenho' => [['nome_completo' => 'Funcionário', 'media_estrelas' => 2.5]], 'taxaConclusao' => 50.0]],
-    ['funcionario/inicial', ['funcionario' => $funcionario, 'inventario' => [], 'resumo' => ['desempenho' => 2, 'concluidas' => 1, 'total' => 2], 'proximaAtividade' => $atividade, 'mensagem' => null, 'erro' => null]],
+    ['funcionario/inicial', ['funcionario' => $funcionario, 'inventario' => [], 'resumo' => ['desempenho' => 8, 'estrelas' => 8, 'estrelas_maximas' => 12, 'concluidas' => 2, 'total' => 4], 'proximaAtividade' => $atividade, 'mensagem' => null, 'erro' => null]],
     ['funcionario/loja', ['funcionario' => $funcionario, 'inventario' => [], 'lista' => [$item], 'mensagem' => null, 'erro' => null]],
     ['funcionario/modulos', ['lista' => [['entidade' => $modulo, 'atividades' => [['entidade' => $atividade, 'liberada' => true]]]], 'resultados' => []]],
     ['funcionario/atividade', ['atividade' => $atividade, 'descricao' => $atividade->getDescricao(), 'temExercicios' => true, 'atividadeTexto' => false, 'concluida' => false]],
@@ -93,6 +93,9 @@ foreach ($casos as [$view, $dados]) {
     $controller->view($view, $dados);
     $html = ob_get_clean();
     if ($html === '') throw new RuntimeException("View vazia: {$view}");
+    if ($view === 'funcionario/inicial' && !str_contains($html, '8 / 12')) {
+        throw new RuntimeException('O desempenho do funcionário não exibiu o total de estrelas conquistadas e alcançáveis.');
+    }
     if (preg_match('/<form\b[^>]*method=["\']?post/i', $html) && !str_contains($html, 'name="_csrf"')) {
         throw new RuntimeException("Formulário POST sem token CSRF: {$view}");
     }
