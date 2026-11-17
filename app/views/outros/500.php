@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= defined('URL_BASE') ? URL_BASE : '' ?>/assets/css/geralUsuario.css">
     <title>Erro interno</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 
 <body>

@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/404.css">
     <title>LudoSkill - Página não encontrada</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
     <div class="barra-topo-voltar">

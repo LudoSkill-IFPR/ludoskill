@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
-    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/arruma.css">
-    <link rel="icon" type="x-icon" href="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png">
-    
+    <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/arruma.css">    
     <title>LudoSkill</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
     <header>

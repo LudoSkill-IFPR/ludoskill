@@ -17,6 +17,7 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     <title>LudoSkill - Gestor</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
 

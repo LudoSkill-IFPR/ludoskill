@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/exercicios.css">
     <title>LudoSkill - <?= htmlspecialchars($atividade->getNome()) ?></title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 
 <body>

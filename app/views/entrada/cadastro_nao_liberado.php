@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/cadastroNaoAutorizado.css">
     <title>Cadastro não liberado</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
     <div class="barra-topo-voltar">

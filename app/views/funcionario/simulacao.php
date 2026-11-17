@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/simulacao.css">
     <title>LudoSkill - Simulação: <?= htmlspecialchars($atividade->getNome()) ?></title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body class="corpo-simulacao">
     <header><?php include __DIR__ . '/../includes/menuFuncionario.php'; ?></header>

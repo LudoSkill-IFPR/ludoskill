@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/login.css">
     <title>LudoSkill - Nova senha</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
     <header><?php include __DIR__ . '/../includes/menuEntrada.php'; ?></header>

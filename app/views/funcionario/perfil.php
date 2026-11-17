@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="assets/css/geralUsuario.css">
     
     <title>LudoSkill - Perfil</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 
 <body>

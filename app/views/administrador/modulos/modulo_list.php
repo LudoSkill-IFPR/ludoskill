@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
     
     <title>LudoSkill - Listar Módulos</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
 

@@ -1,3 +1,7 @@
+/* body{
+    pointer-events: none;
+} */
+
 .chuva-bolotas {
     position: fixed;
     top: 0;
@@ -277,4 +281,43 @@ h1 {
     align-items: center;
     gap: 18px;
     text-align: center;
+}
+
+/* Easter egg: as bolotas passam a aceitar clique */
+.bolota-caindo {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.easter-egg {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(13, 6, 23, 0.75);
+    cursor: pointer;
+}
+
+.easter-egg[hidden] {
+    display: none;
+}
+
+.easter-egg img {
+    width: min(360px, 70vw);
+    animation: esquilo-surge 0.5s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+.easter-egg p {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+@keyframes esquilo-surge {
+    from { transform: scale(0.3) rotate(-15deg); opacity: 0; }
+    to   { transform: scale(1) rotate(0); opacity: 1; }
 }

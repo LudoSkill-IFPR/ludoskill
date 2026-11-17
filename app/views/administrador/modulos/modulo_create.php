@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
 
     <title>LudoSkill - Cadastrar Módulo</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
 <!-- implementar aqui uma atenticacao para que apenas administrador possam acessar a pagina de cadastro de modulos -->

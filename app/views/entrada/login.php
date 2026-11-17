@@ -9,9 +9,15 @@
 
 
     <title>LudoSkill</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
     <div id="chuva-bolotas" class="chuva-bolotas" aria-hidden="true"></div>
+
+    <div id="easter-egg" class="easter-egg" hidden>
+        <img src="<?= URL_BASE ?>/assets/imagens/EsquiloEasterEgg.png" alt="Esquilo do LudoSkill">
+        <p>Você achou o esquilo das bolotas! 🐿️</p>
+    </div>
 
     <header>
         <nav>
@@ -109,7 +115,25 @@
 
                 containerChuva.appendChild(bolota);
             }
+
+
         }
+
+                    // Easter egg: clicar numa bolota mostra o esquilo
+            const easterEgg = document.getElementById('easter-egg');
+
+            containerChuva.addEventListener('click', (evento) => {
+                if (evento.target.classList.contains('bolota-caindo')) {
+                    evento.target.remove();          // a bolota clicada "some"
+                    easterEgg.hidden = false;
+                }
+            });
+
+            // Fecha clicando em qualquer lugar ou apertando Esc
+            easterEgg.addEventListener('click', () => easterEgg.hidden = true);
+            document.addEventListener('keydown', (evento) => {
+                if (evento.key === 'Escape') easterEgg.hidden = true;
+            });
 
     </script>
 </body>

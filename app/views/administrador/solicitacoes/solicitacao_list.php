@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/solicitacaoAcesso.css">
     <title>LudoSkill - Solicitações de acesso</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 
 <body>

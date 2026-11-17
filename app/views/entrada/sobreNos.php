@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralEntrada.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/sobreNos.css">
     <title>Sobre Nós - LudoSkill</title>
+    <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
 <body>
 
