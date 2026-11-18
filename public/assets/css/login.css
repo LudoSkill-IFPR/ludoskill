@@ -1,6 +1,4 @@
-.easter-egg {
-    pointer-events: none;
-}
+/*  */
 
 .chuva-bolotas {
     position: fixed;
@@ -283,11 +281,6 @@ h1 {
     text-align: center;
 }
 
-/* Easter egg: as bolotas passam a aceitar clique */
-.bolota-caindo {
-    pointer-events: auto;
-    cursor: pointer;
-}
 
 .easter-egg {
     position: fixed;

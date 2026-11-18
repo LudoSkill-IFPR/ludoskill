@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <title>LudoSkill</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body>
     <div id="chuva-bolotas" class="chuva-bolotas" aria-hidden="true"></div>
 
@@ -49,14 +51,14 @@
             <form action="<?= URL_BASE ?>/logar" method="post">
                 <img id="skillo" src="<?= URL_BASE ?>/assets/imagens/icone-ludoskill-transparente.png" alt="">
                 <h1>Bem vindo(a)!</h1>
-            
+
                 <?php if (!empty($erro)): ?>
                     <div id="erro" role="alert"><?= htmlspecialchars($erro) ?></div>
                 <?php endif; ?>
                 <?php if (!empty($sucesso)): ?>
                     <div class="alerta sucesso" role="status"><?= htmlspecialchars($sucesso) ?></div>
                 <?php endif; ?>
-            
+
                 <div class="formgroup">
                     <label for="email">Email:</label>
                     <input class="botao" type="email" name="email" id="email" placeholder="skillo@bolotas.com" value="<?= htmlspecialchars($email ?? '') ?>" autocomplete="email" required>
@@ -71,19 +73,18 @@
 
                 <button class="botao brilho" type="submit">Entrar</button>
 
-            
+
                 <a href="<?= URL_BASE ?>/esqueci-senha" class="senha">Esqueceu a senha?</a> <!--Adicionar redirecionamento pra envio de email de recuperação -->
-            
+
             </form>
         </div>
     </main>
 
     <script>
-
         const toggleSenhaButton = document.getElementById('toggleSenha')
         const senhaInput = document.getElementById('senha')
 
-        toggleSenhaButton.addEventListener('click', function () {
+        toggleSenhaButton.addEventListener('click', function() {
             if (senhaInput.type === 'password') {
                 senhaInput.type = 'text'
                 toggleSenhaButton.innerHTML = '<i class="bi bi-eye-slash"></i>'
@@ -119,22 +120,36 @@
 
         }
 
-                    // Easter egg: clicar numa bolota mostra o esquilo
-            const easterEgg = document.getElementById('easter-egg');
+        // Easter egg: clicar numa bolota mostra o esquilo
+        const easterEgg = document.getElementById('easter-egg');
 
-            containerChuva.addEventListener('click', (evento) => {
-                if (evento.target.classList.contains('bolota-caindo')) {
-                    evento.target.remove();          // a bolota clicada "some"
+        document.addEventListener('click', (evento) => {
+            // Se o clique foi num botão, link ou campo, deixa funcionar normalmente
+            if (evento.target.closest('a, button, input, select, label, .card')) return;
+            if (!easterEgg.hidden) return;
+
+            // Confere se o clique caiu em cima de alguma bolota (com 8px de folga, porque elas estão caindo)
+            for (const bolota of containerChuva.children) {
+                const area = bolota.getBoundingClientRect();
+                const folga = 8;
+                if (evento.clientX >= area.left - folga && evento.clientX <= area.right + folga &&
+                    evento.clientY >= area.top - folga && evento.clientY <= area.bottom + folga) {
+                    bolota.remove();
                     easterEgg.hidden = false;
+                    return;
                 }
-            });
+            }
+        });
 
-            // Fecha clicando em qualquer lugar ou apertando Esc
-            easterEgg.addEventListener('click', () => easterEgg.hidden = true);
-            document.addEventListener('keydown', (evento) => {
-                if (evento.key === 'Escape') easterEgg.hidden = true;
-            });
-
+        // Fecha clicando no esquilo ou apertando Esc
+        easterEgg.addEventListener('click', (evento) => {
+            evento.stopPropagation();
+            easterEgg.hidden = true;
+        });
+        document.addEventListener('keydown', (evento) => {
+            if (evento.key === 'Escape') easterEgg.hidden = true;
+        });
     </script>
 </body>
+
 </html>
