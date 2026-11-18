@@ -143,3 +143,28 @@
         width: 100%;
     }
 }
+
+.grafico-sub {
+    color: var(--texto-suave);
+    margin: 4px 0 14px;
+}
+
+.legenda-faixas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+    color: var(--texto-secundario);
+    font-size: 14px;
+}
+
+.legenda-faixas span {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: -1px;
+}

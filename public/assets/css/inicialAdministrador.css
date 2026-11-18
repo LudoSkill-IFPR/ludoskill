@@ -126,3 +126,8 @@
         width: 100%;
     }
 }
+
+.grafico-sub {
+    color: var(--texto-suave);
+    margin: 4px 0 6px;
+}

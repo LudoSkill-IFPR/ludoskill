@@ -7,6 +7,7 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     <title>LudoSkill - Gestor</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body>
 
     <header>
@@ -41,23 +43,33 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                     <h3><i class="bi bi-building"></i> Empresa</h3>
                     <p><?= htmlspecialchars($empresa?->getNome() ?? 'N/A') ?></p>
                 </div>
-                <div class="card"><h3>Taxa de conclusão</h3><p><?= number_format($taxaConclusao, 1, ',', '.') ?>%</p></div>
+                <div class="card">
+                    <h3>Taxa de conclusão</h3>
+                    <p><?= number_format($taxaConclusao, 1, ',', '.') ?>%</p>
+                </div>
 
             </section>
 
             <section class="grafico">
-                <div id="grafico" class="card verde">
+                <div id="grafico" class="card">
                     <h2><i class="bi bi-graph-up"></i> Desempenho dos Funcionários</h2>
-                    <?php if (empty($desempenho)): ?><p>Nenhum funcionário ativo cadastrado.</p><?php endif; ?>
-                    <?php if (!empty($desempenho)): ?>
+                    <p class="grafico-sub">Média de estrelas por atividade concluída, do maior para o menor.</p>
+
+                    <?php if (empty($desempenho)): ?>
+                        <p>Nenhum funcionário ativo cadastrado.</p>
+                    <?php else: ?>
+                        <ul class="legenda-faixas">
+                            <li><span style="background:#16a34a"></span>Bom desempenho</li>
+                            <li><span style="background:#d97706"></span>Em evolução</li>
+                            <li><span style="background:#dc2626"></span>Precisa de atenção</li>
+                        </ul>
                         <div class="chart-scroll-vertical" tabindex="0" aria-label="Área rolável do gráfico">
-                            <div class="chart-container" style="height: <?= $alturaGraficoFuncionarios ?>px">
+                            <div class="chart-container" style="height: <?= count($desempenho) * 56 + 70 ?>px">
                                 <canvas id="desempenhoFuncionarios" role="img" aria-label="Gráfico de desempenho dos funcionários em ordem decrescente"></canvas>
                             </div>
                         </div>
                     <?php endif; ?>
                 </div>
-
             </section>
         </div>
     </main>
@@ -66,50 +78,131 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     <script>
         const canvasDesempenho = document.getElementById('desempenhoFuncionarios');
         if (canvasDesempenho) {
-            const atividadesConcluidas = <?= json_encode($atividadesConcluidas) ?>;
-            const cores = () => {
-                const estilos = getComputedStyle(document.documentElement);
-                return { texto: estilos.getPropertyValue('--texto-principal').trim() || '#fff', grade: estilos.getPropertyValue('--borda-interface').trim() || 'rgba(255,255,255,.15)', verde: estilos.getPropertyValue('--grafico-verde').trim() || '#00c466' };
+            const NOTA_MAXIMA = 5; // estrelas máximas por atividade (ajuste se for 3)
+
+            // Junta os dados e ordena do maior para o menor
+            const dados = <?= json_encode($nomesFuncionarios, $jsonSeguro) ?>.map((nome, i) => ({
+                nome,
+                media: <?= json_encode($mediasFuncionarios, JSON_PRESERVE_ZERO_FRACTION) ?>[i],
+                concluidas: <?= json_encode($atividadesConcluidas) ?>[i]
+            })).sort((a, b) => b.media - a.media);
+
+            // Faixas de desempenho (cor + texto, nunca só a cor)
+            const faixa = (media) => {
+                const p = media / NOTA_MAXIMA;
+                if (p >= 0.7) return {
+                    cor: '#16a34a',
+                    texto: 'Bom desempenho'
+                };
+                if (p >= 0.4) return {
+                    cor: '#d97706',
+                    texto: 'Em evolução'
+                };
+                return {
+                    cor: '#dc2626',
+                    texto: 'Precisa de atenção'
+                };
             };
-            const paleta = cores();
-            const graficoDesempenho = new Chart(canvasDesempenho, {
+
+            const corTema = (nome, padrao) =>
+                getComputedStyle(document.documentElement).getPropertyValue(nome).trim() || padrao;
+
+            // Escreve "4,2 ★ · 8 atividades" no fim de cada barra
+            const rotulos = {
+                id: 'rotulos',
+                afterDatasetsDraw(chart) {
+                    const {
+                        ctx
+                    } = chart;
+                    ctx.save();
+                    ctx.font = '600 13px system-ui, sans-serif';
+                    ctx.fillStyle = corTema('--texto-principal', '#fff');
+                    ctx.textBaseline = 'middle';
+                    chart.getDatasetMeta(0).data.forEach((barra, i) => {
+                        const d = dados[i];
+                        const txt = `${d.media.toFixed(1).replace('.', ',')} ★ · ${d.concluidas} atividade${d.concluidas === 1 ? '' : 's'}`;
+                        ctx.fillText(txt, barra.x + 8, barra.y);
+                    });
+                    ctx.restore();
+                }
+            };
+
+            const grafico = new Chart(canvasDesempenho, {
                 type: 'bar',
                 data: {
-                    labels: <?= json_encode($nomesFuncionarios, $jsonSeguro) ?>,
+                    labels: dados.map(d => d.nome),
                     datasets: [{
-                        label: 'Desempenho médio (0 a 5)',
-                        data: <?= json_encode($mediasFuncionarios, JSON_PRESERVE_ZERO_FRACTION) ?>,
-                        backgroundColor: paleta.verde,
-                        borderColor: paleta.verde,
-                        borderWidth: 1
+                        data: dados.map(d => d.media),
+                        backgroundColor: dados.map(d => faixa(d.media).cor),
+                        borderRadius: 6,
+                        maxBarThickness: 26
                     }]
                 },
                 options: {
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            right: 150
+                        }
+                    },
                     scales: {
-                        x: { beginAtZero: true, max: 5, ticks: { color: paleta.texto, stepSize: 1, font: { size: 13, weight: '600' } }, grid: { color: paleta.grade } },
-                        y: { ticks: { color: paleta.texto, autoSkip: false, font: { size: 13, weight: '600' }, padding: 8 }, grid: { display: false } }
+                        x: {
+                            min: 0,
+                            max: NOTA_MAXIMA,
+                            ticks: {
+                                stepSize: 1,
+                                color: corTema('--texto-suave', '#aaa')
+                            },
+                            grid: {
+                                color: corTema('--borda-interface', 'rgba(255,255,255,.12)')
+                            },
+                            title: {
+                                display: true,
+                                text: 'Média de estrelas',
+                                color: corTema('--texto-suave', '#aaa')
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: corTema('--texto-principal', '#fff'),
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
                     },
                     plugins: {
-                        legend: { labels: { color: paleta.texto, font: { size: 14, weight: '600' }, usePointStyle: true } },
-                        tooltip: { callbacks: { afterLabel: context => `Atividades concluídas: ${atividadesConcluidas[context.dataIndex]}` } }
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (c) => `Média: ${dados[c.dataIndex].media.toFixed(1).replace('.', ',')} de ${NOTA_MAXIMA} estrelas`,
+                                afterLabel: (c) => `${faixa(dados[c.dataIndex].media).texto} · ${dados[c.dataIndex].concluidas} atividade(s) concluída(s)`
+                            }
+                        }
                     }
-                }
+                },
+                plugins: [rotulos]
             });
+
+            // Atualiza as cores do texto quando o tema muda
             window.addEventListener('ludoskill:tema-alterado', () => {
-                const nova = cores();
-                graficoDesempenho.options.scales.x.ticks.color = nova.texto;
-                graficoDesempenho.options.scales.x.grid.color = nova.grade;
-                graficoDesempenho.options.scales.y.ticks.color = nova.texto;
-                graficoDesempenho.options.plugins.legend.labels.color = nova.texto;
-                graficoDesempenho.data.datasets[0].backgroundColor = nova.verde;
-                graficoDesempenho.data.datasets[0].borderColor = nova.verde;
-                graficoDesempenho.update();
+                grafico.options.scales.y.ticks.color = corTema('--texto-principal', '#fff');
+                grafico.options.scales.x.ticks.color = corTema('--texto-suave', '#aaa');
+                grafico.options.scales.x.title.color = corTema('--texto-suave', '#aaa');
+                grafico.options.scales.x.grid.color = corTema('--borda-interface', 'rgba(255,255,255,.12)');
+                grafico.update();
             });
         }
     </script>
 
 </body>
+
 </html>

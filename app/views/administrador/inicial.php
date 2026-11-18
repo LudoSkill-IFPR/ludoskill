@@ -8,6 +8,7 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +19,7 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     <title>LudoSkill - Administrador</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body>
 
     <header>
@@ -72,13 +74,14 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
             </section>
 
             <section class="grafico">
-                <div id="grafico" class="card verde">
+                <div id="grafico" class="card">
                     <h2><i class="bi bi-graph-up"></i> Usuários por empresa</h2>
+                    <p class="grafico-sub">Gestores e funcionários cadastrados em cada empresa, da maior para a menor.</p>
                     <?php if (empty($empresasComQuantidadeUsuarios)): ?>
                         <p>Nenhuma empresa cadastrada.</p>
                     <?php else: ?>
-                        <div class="chart-scroll" tabindex="0" aria-label="Área rolável do gráfico">
-                            <div class="chart-container" style="min-width: <?= $larguraGraficoEmpresas ?>px">
+                        <div class="chart-scroll-vertical" tabindex="0" aria-label="Área rolável do gráfico" style="max-height: 520px; overflow-y: auto;">
+                            <div class="chart-container" style="height: <?= count($dadosEmpresas) * 56 + 90 ?>px">
                                 <canvas id="usuariosPorEmpresa" role="img" aria-label="Gráfico da quantidade de gestores e funcionários por empresa"></canvas>
                             </div>
                         </div>
@@ -90,27 +93,27 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
                     <?php if (empty($dadosEmpresas)): ?>
                         <p>Nenhuma empresa cadastrada.</p>
                     <?php else: ?>
-                    <ol class="ranking-top-tres">
-                        <?php foreach (array_slice($dadosEmpresas, 0, 3) as $empresa): ?>
-                            <li class="card-secundario">
-                                <?= htmlspecialchars($empresa['nome']) ?>
-                                (<?= (int) $empresa['quantidade_usuarios'] ?>)
-                            </li>
-                        <?php endforeach; ?>
-                    </ol>
-                    <?php if (count($dadosEmpresas) > 3): ?>
-                        <button type="button" id="alternarRanking" class="botao brilho" aria-expanded="false" aria-controls="rankingCompleto">Ver mais</button>
-                        <div id="rankingCompleto" class="ranking-restante" hidden>
-                            <ol start="4">
-                                <?php foreach (array_slice($dadosEmpresas, 3) as $empresa): ?>
-                                    <li class="card-secundario">
-                                        <?= htmlspecialchars($empresa['nome']) ?>
-                                        (<?= (int) $empresa['quantidade_usuarios'] ?>)
-                                    </li>
-                                <?php endforeach; ?>
-                            </ol>
-                        </div>
-                    <?php endif; ?>
+                        <ol class="ranking-top-tres">
+                            <?php foreach (array_slice($dadosEmpresas, 0, 3) as $empresa): ?>
+                                <li class="card-secundario">
+                                    <?= htmlspecialchars($empresa['nome']) ?>
+                                    (<?= (int) $empresa['quantidade_usuarios'] ?>)
+                                </li>
+                            <?php endforeach; ?>
+                        </ol>
+                        <?php if (count($dadosEmpresas) > 3): ?>
+                            <button type="button" id="alternarRanking" class="botao brilho" aria-expanded="false" aria-controls="rankingCompleto">Ver mais</button>
+                            <div id="rankingCompleto" class="ranking-restante" hidden>
+                                <ol start="4">
+                                    <?php foreach (array_slice($dadosEmpresas, 3) as $empresa): ?>
+                                        <li class="card-secundario">
+                                            <?= htmlspecialchars($empresa['nome']) ?>
+                                            (<?= (int) $empresa['quantidade_usuarios'] ?>)
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ol>
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </section>
@@ -121,39 +124,141 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     <script>
         const canvasEmpresas = document.getElementById('usuariosPorEmpresa');
         if (canvasEmpresas) {
-            const cores = () => {
-                const estilos = getComputedStyle(document.documentElement);
-                return { texto: estilos.getPropertyValue('--texto-principal').trim() || '#fff', grade: estilos.getPropertyValue('--borda-interface').trim() || 'rgba(255,255,255,.15)', verde: estilos.getPropertyValue('--grafico-verde').trim() || '#46d48f', roxo: estilos.getPropertyValue('--grafico-roxo').trim() || '#c874df' };
+            const corTema = (nome, padrao) =>
+                getComputedStyle(document.documentElement).getPropertyValue(nome).trim() || padrao;
+
+            // Junta os dados e ordena pelo total de usuários (maior primeiro)
+            const empresas = <?= json_encode($nomesEmpresas, $jsonSeguro) ?>.map((nome, i) => {
+                const gestores = <?= json_encode($quantidadesGestores) ?>[i];
+                const funcionarios = <?= json_encode($quantidadesFuncionarios) ?>[i];
+                return {
+                    nome,
+                    gestores,
+                    funcionarios,
+                    total: gestores + funcionarios
+                };
+            }).sort((a, b) => b.total - a.total);
+
+            // Escreve o total ("12 usuários") no fim de cada barra
+            const rotulosTotal = {
+                id: 'rotulosTotal',
+                afterDatasetsDraw(chart) {
+                    const {
+                        ctx
+                    } = chart;
+                    const ultima = chart.getDatasetMeta(chart.data.datasets.length - 1);
+                    ctx.save();
+                    ctx.font = '600 13px system-ui, sans-serif';
+                    ctx.fillStyle = corTema('--texto-principal', '#fff');
+                    ctx.textBaseline = 'middle';
+                    ultima.data.forEach((barra, i) => {
+                        const t = empresas[i].total;
+                        ctx.fillText(`${t} usuário${t === 1 ? '' : 's'}`, barra.x + 8, barra.y);
+                    });
+                    ctx.restore();
+                }
             };
-            const paleta = cores();
+
             const graficoEmpresas = new Chart(canvasEmpresas, {
                 type: 'bar',
                 data: {
-                    labels: <?= json_encode($nomesEmpresas, $jsonSeguro) ?>,
-                    datasets: [
-                        { label: 'Gestores', data: <?= json_encode($quantidadesGestores) ?>, backgroundColor: paleta.verde },
-                        { label: 'Funcionários', data: <?= json_encode($quantidadesFuncionarios) ?>, backgroundColor: paleta.roxo }
+                    labels: empresas.map(e => e.nome),
+                    datasets: [{
+                            label: 'Gestores',
+                            data: empresas.map(e => e.gestores),
+                            backgroundColor: corTema('--grafico-verde', '#00c466'),
+                            maxBarThickness: 26,
+                            borderColor: corTema('--superficie', '#171122'),
+                            borderWidth: {
+                                right: 2
+                            }
+                        },
+                        {
+                            label: 'Funcionários',
+                            data: empresas.map(e => e.funcionarios),
+                            backgroundColor: corTema('--grafico-roxo', '#a900d6'),
+                            maxBarThickness: 26,
+                            borderRadius: {
+                                topRight: 6,
+                                bottomRight: 6
+                            },
+                            borderSkipped: false
+                        }
                     ]
                 },
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: { stacked: true, ticks: { color: paleta.texto, font: { size: 13, weight: '600' }, maxRotation: 35, minRotation: 0 }, grid: { display: false } },
-                        y: { stacked: true, beginAtZero: true, ticks: { color: paleta.texto, precision: 0, font: { size: 13 } }, grid: { color: paleta.grade } }
+                    layout: {
+                        padding: {
+                            right: 110
+                        }
                     },
-                    plugins: { legend: { labels: { color: paleta.texto, font: { size: 14, weight: '600' }, usePointStyle: true, padding: 18 } } }
-                }
+                    scales: {
+                        x: {
+                            stacked: true,
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                color: corTema('--texto-suave', '#aaa')
+                            },
+                            grid: {
+                                color: corTema('--borda-interface', 'rgba(255,255,255,.12)')
+                            },
+                            title: {
+                                display: true,
+                                text: 'Quantidade de usuários',
+                                color: corTema('--texto-suave', '#aaa')
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            ticks: {
+                                color: corTema('--texto-principal', '#fff'),
+                                font: {
+                                    size: 14,
+                                    weight: '600'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'start',
+                            labels: {
+                                color: corTema('--texto-secundario', '#ddd'),
+                                usePointStyle: true,
+                                pointStyle: 'rectRounded',
+                                padding: 18
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                footer: (itens) => `Total: ${empresas[itens[0].dataIndex].total} usuário(s)`
+                            }
+                        }
+                    }
+                },
+                plugins: [rotulosTotal]
             });
+
+            // Atualiza as cores quando o tema muda
             window.addEventListener('ludoskill:tema-alterado', () => {
-                const nova = cores();
-                graficoEmpresas.options.scales.x.ticks.color = nova.texto;
-                graficoEmpresas.options.scales.y.ticks.color = nova.texto;
-                graficoEmpresas.options.scales.y.grid.color = nova.grade;
-                graficoEmpresas.options.plugins.legend.labels.color = nova.texto;
-                graficoEmpresas.data.datasets[0].backgroundColor = nova.verde;
-                graficoEmpresas.data.datasets[1].backgroundColor = nova.roxo;
-                graficoEmpresas.update();
+                const g = graficoEmpresas;
+                g.data.datasets[0].backgroundColor = corTema('--grafico-verde', '#00c466');
+                g.data.datasets[0].borderColor = corTema('--superficie', '#171122');
+                g.data.datasets[1].backgroundColor = corTema('--grafico-roxo', '#a900d6');
+                g.options.scales.y.ticks.color = corTema('--texto-principal', '#fff');
+                g.options.scales.x.ticks.color = corTema('--texto-suave', '#aaa');
+                g.options.scales.x.title.color = corTema('--texto-suave', '#aaa');
+                g.options.scales.x.grid.color = corTema('--borda-interface', 'rgba(255,255,255,.12)');
+                g.options.plugins.legend.labels.color = corTema('--texto-secundario', '#ddd');
+                g.update();
             });
         }
 
@@ -168,4 +273,5 @@ $jsonSeguro = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
     </script>
 
 </body>
+
 </html>
