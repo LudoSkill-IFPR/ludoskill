@@ -19,11 +19,6 @@ class GestorService
         return $this->repository->getGestores();
     }
 
-    public function getGestorById(int $id)
-    {
-        return $this->repository->getGestorById($id);
-    }
-
     public function getGestorByUsuario(int $idUsuario): ?Gestor
     {
         return $this->repository->getGestorByUsuario($idUsuario);
@@ -34,8 +29,8 @@ class GestorService
         return $this->repository->saveGestor($gestor);
     }
 
-    public function cpfExiste(string $cpf, ?int $ignorar = null): bool { return $this->repository->cpfExiste($cpf, $ignorar); }
-    public function emailExiste(string $email, ?int $ignorar = null): bool { return $this->repository->emailExiste($email, $ignorar); }
+    public function cpfExiste(string $cpf): bool { return $this->repository->cpfExiste($cpf); }
+    public function emailExiste(string $email): bool { return $this->repository->emailExiste($email); }
 
     public function desativarGestor(int $id)
     {
@@ -45,11 +40,6 @@ class GestorService
     public function ativarGestor(int $id)
     {
         return $this->repository->ativarGestor($id);
-    }
-
-    public function updateGestor(Gestor $gestor, int $idGestor, ?string $novaSenha = null)
-    {
-        return $this->repository->updateGestor($gestor, $idGestor, $novaSenha);
     }
 
     public function countGestores(): int

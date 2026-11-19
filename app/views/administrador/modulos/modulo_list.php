@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
-    
+
     <title>LudoSkill - Listar Módulos</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body>
 
     <header>
@@ -26,7 +28,7 @@
                     <p class="mensagem">Visualize as etapas da trilha de aprendizado.</p>
                 </div>
             </div>
-    
+
             <section class="card">
                 <h2>Lista de Módulos</h2>
                 <table>
@@ -43,20 +45,24 @@
 
                     <tbody>
                         <?php foreach (($lista ?? []) as $modulo): ?>
-                        <tr>
-                            <td><?= $modulo->getId() ?></td>
-                            <td><?= htmlspecialchars($modulo->getNome()) ?></td>
-                            <td><?= htmlspecialchars($modulo->getDescricao()) ?></td>
-                            <td><?= $modulo->getMinEstrelasLiberacao() ?></td>
-                            <td><?= htmlspecialchars($modulo->getEstado()) ?></td>
-                            <td id="acao">
-                                <a href="<?= URL_BASE ?>/administrador/modulos/editar?id=<?= $modulo->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                                <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" onsubmit="return confirm('Deseja desativar este módulo?')">
-                                    <input type="hidden" name="id" value="<?= $modulo->getId() ?>">
-                                    <button type="submit" class="botao brilhinho"><i class="bi bi-x-circle"></i> Desativar</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td><?= $modulo->getId() ?></td>
+                                <td><?= htmlspecialchars($modulo->getNome()) ?></td>
+                                <td><?= htmlspecialchars($modulo->getDescricao()) ?></td>
+                                <td><?= $modulo->getMinEstrelasLiberacao() ?></td>
+                                <td><?php if ($modulo->getEstado() === 'ATIVO'): ?>
+                                    <span class="badge badge-ativo">Ativo</span>
+                                <?php else: ?>
+                                    <span class="badge badge-inativo">Inativo</span>
+                                <?php endif; ?></td>
+                                <td id="acao">
+                                    <a href="<?= URL_BASE ?>/administrador/modulos/editar?id=<?= $modulo->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
+                                    <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" onsubmit="return confirm('Deseja desativar este módulo?')">
+                                        <input type="hidden" name="id" value="<?= $modulo->getId() ?>">
+                                        <button type="submit" class="botao brilhinho"><i class="bi bi-x-circle"></i> Desativar</button>
+                                    </form>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
 
@@ -66,4 +72,5 @@
         </div>
     </main>
 </body>
+
 </html>

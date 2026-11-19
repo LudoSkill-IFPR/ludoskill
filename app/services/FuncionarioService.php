@@ -24,24 +24,19 @@ class FuncionarioService
         return $this->funcionarioRepository->getFuncionariosByEmpresa($idEmpresa);
     }
 
-    public function getFuncionarioByIdAndEmpresa(int $id, int $idEmpresa)
-    {
-        return $this->funcionarioRepository->getFuncionarioByIdAndEmpresa($id, $idEmpresa);
-    }
-
     public function getEmpresaIdByGestorUsuario(int $idUsuario): ?int
     {
         return $this->funcionarioRepository->getEmpresaIdByGestorUsuario($idUsuario);
     }
 
-    public function cpfExiste(string $cpf, ?int $idFuncionarioIgnorado = null): bool
+    public function cpfExiste(string $cpf): bool
     {
-        return $this->funcionarioRepository->cpfExiste($cpf, $idFuncionarioIgnorado);
+        return $this->funcionarioRepository->cpfExiste($cpf);
     }
 
-    public function emailExiste(string $email, ?int $idFuncionarioIgnorado = null): bool
+    public function emailExiste(string $email): bool
     {
-        return $this->funcionarioRepository->emailExiste($email, $idFuncionarioIgnorado);
+        return $this->funcionarioRepository->emailExiste($email);
     }
 
     public function saveFuncionario(Funcionario $funcionario)
@@ -57,11 +52,6 @@ class FuncionarioService
     public function ativarFuncionario(int $id, int $idEmpresa)
     {
         return $this->funcionarioRepository->ativarFuncionario($id, $idEmpresa);
-    }
-
-    public function updateFuncionario(Funcionario $funcionario, int $idEmpresa, ?string $novaSenha = null)
-    {
-        return $this->funcionarioRepository->updateFuncionario($funcionario, $idEmpresa, $novaSenha);
     }
 
     public function countFuncionarios(): int

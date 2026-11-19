@@ -68,23 +68,6 @@ class FuncionarioRepository
         return array_map([Funcionario::class, 'arrayParaObjeto'], $stm->fetchAll());
     }
 
-    public function getFuncionarioByIdAndEmpresa(int $id, int $idEmpresa)
-    {
-        $sql = "SELECT f.*, u.nome_completo, u.data_nascimento, u.CPF AS cpf,
-                       u.email, u.senha_hash, u.numero_telefone, u.estado
-                FROM Funcionarios f
-                INNER JOIN Usuarios u ON u.id_usuario = f.id_usuario
-                WHERE f.id_funcionario = :id AND f.id_empresa = :idEmpresa";
-        $stm = $this->connection->prepare($sql);
-        $stm->bindValue('id', $id, PDO::PARAM_INT);
-        $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
-
-        $stm->execute();
-
-        $funcionario = $stm->fetch();
-        return $funcionario ? Funcionario::arrayParaObjeto($funcionario) : null;
-    }
-
     public function getEmpresaIdByGestorUsuario(int $idUsuario): ?int
     {
         $stm = $this->connection->prepare(
@@ -96,46 +79,20 @@ class FuncionarioRepository
         return $idEmpresa === false ? null : (int) $idEmpresa;
     }
 
-    public function cpfExiste(string $cpf, ?int $idFuncionarioIgnorado = null): bool
+    public function cpfExiste(string $cpf): bool
     {
-        $sql = "SELECT 1 FROM Usuarios u
-                LEFT JOIN Funcionarios f ON f.id_usuario = u.id_usuario
-                WHERE u.CPF = :cpf";
-
-        if ($idFuncionarioIgnorado !== null) {
-            $sql .= " AND (f.id_funcionario IS NULL OR f.id_funcionario <> :idFuncionario)";
-        }
-
-        $sql .= " LIMIT 1";
+        $sql = "SELECT 1 FROM Usuarios WHERE CPF = :cpf LIMIT 1";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('cpf', $cpf);
-
-        if ($idFuncionarioIgnorado !== null) {
-            $stm->bindValue('idFuncionario', $idFuncionarioIgnorado, PDO::PARAM_INT);
-        }
-
         $stm->execute();
         return $stm->fetchColumn() !== false;
     }
 
-    public function emailExiste(string $email, ?int $idFuncionarioIgnorado = null): bool
+    public function emailExiste(string $email): bool
     {
-        $sql = "SELECT 1 FROM Usuarios u
-                LEFT JOIN Funcionarios f ON f.id_usuario = u.id_usuario
-                WHERE u.email = :email";
-
-        if ($idFuncionarioIgnorado !== null) {
-            $sql .= " AND (f.id_funcionario IS NULL OR f.id_funcionario <> :idFuncionario)";
-        }
-
-        $sql .= " LIMIT 1";
+        $sql = "SELECT 1 FROM Usuarios WHERE email = :email LIMIT 1";
         $stm = $this->connection->prepare($sql);
         $stm->bindValue('email', $email);
-
-        if ($idFuncionarioIgnorado !== null) {
-            $stm->bindValue('idFuncionario', $idFuncionarioIgnorado, PDO::PARAM_INT);
-        }
-
         $stm->execute();
         return $stm->fetchColumn() !== false;
     }
@@ -202,28 +159,6 @@ class FuncionarioRepository
         $stm->bindValue('id', $id, PDO::PARAM_INT);
         $stm->bindValue('idEmpresa', $idEmpresa, PDO::PARAM_INT);
 
-        return $stm->execute();
-    }
-
-    public function updateFuncionario(Funcionario $funcionario, int $idEmpresa, ?string $novaSenha = null): bool
-    {
-        $atual = $this->getFuncionarioByIdAndEmpresa($funcionario->getIdFuncionario(), $idEmpresa);
-        if (!$atual) {
-            return false;
-        }
-
-        $senhaSql = $novaSenha !== null && $novaSenha !== '' ? ', senha_hash = :senha' : '';
-        $sql = "UPDATE Usuarios SET nome_completo = :nomeCompleto, data_nascimento = :dataNascimento, CPF = :cpf, email = :email, numero_telefone = :numeroTelefone{$senhaSql} WHERE id_usuario = :id";
-        $stm = $this->connection->prepare($sql);
-        $stm->bindValue('nomeCompleto', $funcionario->getNomeCompleto());
-        $stm->bindValue('dataNascimento', $funcionario->getDataNascimento()->format('Y-m-d'));
-        $stm->bindValue('cpf', $funcionario->getCpf());
-        $stm->bindValue('email', $funcionario->getEmail());
-        $stm->bindValue('numeroTelefone', $funcionario->getNumeroTelefone());
-        $stm->bindValue('id', $atual->getId(), PDO::PARAM_INT);
-        if ($novaSenha !== null && $novaSenha !== '') {
-            $stm->bindValue('senha', password_hash($novaSenha, PASSWORD_DEFAULT));
-        }
         return $stm->execute();
     }
 

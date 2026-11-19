@@ -46,6 +46,11 @@ $_SESSION['usuario_logado'] = $funcionario;
 $controller = new Controller();
 $casos = [
     ['administrador/empresas/empresa_list', ['lista' => [$empresa]]],
+    ['administrador/empresas/empresa_list', [
+        'lista' => [$empresa],
+        'erro' => 'Não podemos excluir uma empresa com usuários cadastrados.',
+        'empresaConfirmacaoId' => 1,
+    ]],
     ['administrador/empresas/empresa_create', ['empresa' => ['nome' => 'Empresa'], 'erros' => ['cnpj' => 'Inválido']]],
     ['administrador/empresas/empresa_edit', ['empresa' => ['id_empresa' => 1, 'cnpj' => '123', 'nome' => 'Empresa', 'email' => 'invalido', 'plano' => 'BASICO'], 'erros' => ['email' => 'Inválido']]],
     ['administrador/modulos/modulo_list', ['lista' => [$modulo]]],
@@ -60,7 +65,6 @@ $casos = [
     ['administrador/exercicios/exercicio_edit', ['exercicio' => $exercicioSimulacao, 'tipo' => 'simulacao', 'conteudoExercicio' => $conteudoSimulacao, 'atividades' => [$atividade]]],
     ['administrador/gestores/gestor_list', ['lista' => [$gestor]]],
     ['administrador/gestores/gestor_create', ['gestor' => ['nome_completo' => 'Gestor'], 'empresas' => [$empresa], 'erros' => ['email' => 'Inválido']]],
-    ['administrador/gestores/gestor_edit', ['gestor' => $gestor, 'empresas' => [$empresa]]],
     ['administrador/itens/item_list', ['lista' => [$item]]],
     ['administrador/itens/item_create', ['item' => ['nome' => 'Item', 'estado' => '1'], 'erros' => ['tipo' => 'Inválido']]],
     ['administrador/itens/item_edit', ['item' => $item]],
@@ -70,7 +74,6 @@ $casos = [
     ['entrada/solicitarAcesso', ['solicitacao' => ['nome_completo' => 'Solicitante'], 'erros' => ['email' => 'Inválido']]],
     ['gestor/funcionarios/funcionario_list', ['lista' => [$funcionario]]],
     ['gestor/funcionarios/funcionario_create', ['funcionario' => ['nome_completo' => 'Funcionário'], 'erros' => ['email' => 'Inválido']]],
-    ['gestor/funcionarios/funcionario_edit', ['funcionario' => $funcionario]],
     ['gestor/inicial', ['quantidadeFuncionarios' => 1, 'empresa' => $empresa, 'desempenho' => [['nome_completo' => 'Funcionário', 'media_estrelas' => 2.5]], 'taxaConclusao' => 50.0]],
     ['funcionario/inicial', ['funcionario' => $funcionario, 'inventario' => [], 'resumo' => ['desempenho' => 8, 'estrelas' => 8, 'estrelas_maximas' => 12, 'concluidas' => 2, 'total' => 4], 'proximaAtividade' => $atividade, 'mensagem' => null, 'erro' => null]],
     ['funcionario/loja', ['funcionario' => $funcionario, 'inventario' => [], 'lista' => [$item], 'mensagem' => null, 'erro' => null]],
@@ -95,6 +98,23 @@ foreach ($casos as [$view, $dados]) {
     if ($html === '') throw new RuntimeException("View vazia: {$view}");
     if ($view === 'funcionario/inicial' && !str_contains($html, '8 / 12')) {
         throw new RuntimeException('O desempenho do funcionário não exibiu o total de estrelas conquistadas e alcançáveis.');
+    }
+    if ($view === 'administrador/empresas/empresa_list' && isset($dados['empresaConfirmacaoId'])) {
+        if (!str_contains($html, '<span class="erro aviso-exclusao"')) {
+            throw new RuntimeException('O aviso de exclusão da empresa não foi renderizado em um span.');
+        }
+        if (!str_contains($html, 'name="confirmar_exclusao" value="1"')) {
+            throw new RuntimeException('O formulário de segunda confirmação da exclusão não foi renderizado.');
+        }
+        if (!str_contains($html, 'Excluir empresa e usuários')) {
+            throw new RuntimeException('O botão de exclusão conjunta não foi renderizado.');
+        }
+    }
+    if ($view === 'administrador/gestores/gestor_list' && str_contains($html, '/administrador/gestores/editar')) {
+        throw new RuntimeException('A listagem de gestores ainda permite edição pelo administrador.');
+    }
+    if ($view === 'gestor/funcionarios/funcionario_list' && str_contains($html, '/gestor/funcionarios/editar')) {
+        throw new RuntimeException('A listagem de funcionários ainda permite edição pelo gestor.');
     }
     if (preg_match('/<form\b[^>]*method=["\']?post/i', $html) && !str_contains($html, 'name="_csrf"')) {
         throw new RuntimeException("Formulário POST sem token CSRF: {$view}");

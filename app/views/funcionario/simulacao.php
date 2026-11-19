@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <title>LudoSkill - Simulação: <?= htmlspecialchars($atividade->getNome()) ?></title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body class="corpo-simulacao">
     <header><?php include __DIR__ . '/../includes/menuFuncionario.php'; ?></header>
 
@@ -173,4 +175,5 @@
 
     <script src="<?= URL_BASE ?>/assets/javascript/simulacao.js"></script>
 </body>
+
 </html>

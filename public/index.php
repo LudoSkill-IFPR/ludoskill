@@ -54,9 +54,7 @@ $router->post('/administrador/itens/excluir', 'ItemController@excluir');
 //gestores
 $router->get('/administrador/gestores', 'GestorController@listarTodos');
 $router->get('/administrador/gestores/cadastrar', 'GestorController@criar');
-$router->get('/administrador/gestores/editar', 'GestorController@editar');
 $router->post('/administrador/gestores/salvar', 'GestorController@salvar');
-$router->post('/administrador/gestores/atualizar', 'GestorController@atualizar');
 $router->post('/administrador/gestores/desativar', 'GestorController@desativar');
 $router->post('/administrador/gestores/ativar', 'GestorController@ativar');
 $router->post('/administrador/gestores/excluir', 'GestorController@excluir');
@@ -89,9 +87,7 @@ $router->post('/funcionario/atividades/exercicios/responder', 'ExercicioControll
 //funcionarios
 $router->get('/gestor/funcionarios', 'FuncionarioController@listarTodos');
 $router->get('/gestor/funcionarios/cadastrar', 'FuncionarioController@criar');
-$router->get('/gestor/funcionarios/editar', 'FuncionarioController@editar');
 $router->post('/gestor/funcionarios/salvar', 'FuncionarioController@salvar');
-$router->post('/gestor/funcionarios/atualizar', 'FuncionarioController@atualizar');
 $router->post('/gestor/funcionarios/desativar', 'FuncionarioController@desativar');
 $router->post('/gestor/funcionarios/ativar', 'FuncionarioController@ativar');
 $router->post('/gestor/funcionarios/excluir', 'FuncionarioController@excluir');
@@ -104,8 +100,6 @@ $router->get('/funcionario/inicial', 'FuncionarioController@inicial');
 
 $router->get('/funcionario/loja', 'ItemController@listarTodosFuncionario');
 $router->post('/funcionario/comprar', 'ItemController@comprar');
-$router->get('/funcionario/editar', 'FuncionarioController@funcEditar');
-$router->post('/funcionario/atualizar', 'FuncionarioController@funcAtualizar');
 $router->get('/funcionario/modulos', 'ModuloController@listarTodosFuncionario');
 $router->post('/funcionario/equipar', 'FuncionarioController@equipaItem');
 

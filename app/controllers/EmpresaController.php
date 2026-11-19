@@ -68,19 +68,37 @@ class EmpresaController extends Controller{
     public function excluir(){
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-        if (!$id) {
+        if (!$id || !$this->empresaService->getEmpresaById($id)) {
             $this->redirect(URL_BASE . '/administrador/empresas');
         }
 
-        if ($this->empresaService->possuiUsuariosVinculados($id)) {
+        $possuiUsuarios = $this->empresaService->possuiUsuariosVinculados($id);
+        $exclusaoConfirmada = ($_POST['confirmar_exclusao'] ?? '') === '1';
+
+        if ($possuiUsuarios && !$exclusaoConfirmada) {
             $this->view('/administrador/empresas/empresa_list', [
                 'lista' => $this->empresaService->getEmpresas(),
-                'erro' => 'A empresa não pode ser excluída enquanto possuir gestores ou funcionários vinculados.'
+                'erro' => 'Não podemos excluir uma empresa com gestores ou funcionários cadastrados. Clique novamente em “Excluir empresa e usuários” para confirmar a exclusão de todos os vínculos.',
+                'empresaConfirmacaoId' => $id,
             ]);
             return;
         }
 
-        $this->empresaService->deleteEmpresa($id);
+        try {
+            if ($possuiUsuarios) {
+                $this->empresaService->deleteEmpresaComUsuarios($id);
+            } else {
+                $this->empresaService->deleteEmpresa($id);
+            }
+        } catch (\Throwable $exception) {
+            error_log('Erro ao excluir empresa: ' . $exception->getMessage());
+            $this->view('/administrador/empresas/empresa_list', [
+                'lista' => $this->empresaService->getEmpresas(),
+                'erro' => 'Não foi possível excluir a empresa. Nenhum dado foi removido.',
+            ]);
+            return;
+        }
+
         $this->redirect(URL_BASE . '/administrador/empresas');
     }
 

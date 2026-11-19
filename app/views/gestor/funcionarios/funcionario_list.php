@@ -59,7 +59,6 @@
                             </td>
                     
                             <td id="acao">
-                                <a href="<?= URL_BASE ?>/gestor/funcionarios/editar?id=<?= $funcionario->getIdFuncionario() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
                                 <?php if ($funcionario->isAtivo()): ?>
                                     <form action="<?= URL_BASE ?>/gestor/funcionarios/desativar" method="post" onsubmit="return confirm('Deseja desativar este funcionário?')">
                                         <input type="hidden" name="id" value="<?= $funcionario->getIdFuncionario() ?>">

@@ -77,10 +77,61 @@ class EmpresaRepository {
         return $stm->execute();
     }
 
+    /**
+     * Exclui os usuários vinculados e depois a empresa na mesma transação.
+     * Ao apagar Usuarios, as chaves estrangeiras removem Gestores, Funcionarios,
+     * progresso e inventário associados.
+     */
+    public function deleteEmpresaComUsuarios(int $id): bool {
+        $this->connection->beginTransaction();
+
+        try {
+            $stm = $this->connection->prepare(
+                "SELECT id_usuario FROM Gestores WHERE id_empresa = :id_gestor
+                 UNION
+                 SELECT id_usuario FROM Funcionarios WHERE id_empresa = :id_funcionario"
+            );
+            $stm->execute([
+                'id_gestor' => $id,
+                'id_funcionario' => $id,
+            ]);
+            $usuarios = $stm->fetchAll(PDO::FETCH_COLUMN);
+
+            $excluirUsuario = $this->connection->prepare(
+                'DELETE FROM Usuarios WHERE id_usuario = :id_usuario'
+            );
+            foreach ($usuarios as $idUsuario) {
+                $excluirUsuario->execute(['id_usuario' => (int) $idUsuario]);
+            }
+
+            $excluirEmpresa = $this->connection->prepare(
+                'DELETE FROM Empresas WHERE id_empresa = :id_empresa'
+            );
+            $excluirEmpresa->execute(['id_empresa' => $id]);
+
+            if ($excluirEmpresa->rowCount() !== 1) {
+                throw new \RuntimeException('Empresa não encontrada para exclusão.');
+            }
+
+            $this->connection->commit();
+            return true;
+        } catch (\Throwable $exception) {
+            if ($this->connection->inTransaction()) {
+                $this->connection->rollBack();
+            }
+            throw $exception;
+        }
+    }
+
     public function possuiUsuariosVinculados(int $id): bool {
-        $sql = "SELECT EXISTS(SELECT 1 FROM Gestores WHERE id_empresa = :id UNION ALL SELECT 1 FROM Funcionarios WHERE id_empresa = :id)";
+        $sql = "SELECT EXISTS(
+                    SELECT 1 FROM Gestores WHERE id_empresa = :id_gestor
+                    UNION ALL
+                    SELECT 1 FROM Funcionarios WHERE id_empresa = :id_funcionario
+                )";
         $stm = $this->connection->prepare($sql);
-        $stm->bindValue('id', $id, PDO::PARAM_INT);
+        $stm->bindValue('id_gestor', $id, PDO::PARAM_INT);
+        $stm->bindValue('id_funcionario', $id, PDO::PARAM_INT);
         $stm->execute();
         return (bool) $stm->fetchColumn();
     }

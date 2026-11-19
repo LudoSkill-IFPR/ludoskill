@@ -37,6 +37,10 @@ class EmpresaService {
         return $this->empresaRepository->deleteEmpresa($id);
     }
 
+    public function deleteEmpresaComUsuarios(int $id): bool {
+        return $this->empresaRepository->deleteEmpresaComUsuarios($id);
+    }
+
     public function possuiUsuariosVinculados(int $id): bool {
         return $this->empresaRepository->possuiUsuariosVinculados($id);
     }

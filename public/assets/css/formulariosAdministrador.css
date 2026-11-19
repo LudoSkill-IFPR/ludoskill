@@ -72,7 +72,18 @@ textarea{
 }
 
 .erro{
-    color: var(--problema)
+    color: var(--problema);
+}
+
+.aviso-exclusao{
+    display: block;
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    border: 1px solid var(--problema);
+    border-radius: 10px;
+    background-color: rgba(227, 42, 51, 0.14);
+    font-weight: 600;
+    line-height: 1.4;
 }
 
 table{

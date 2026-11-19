@@ -94,19 +94,6 @@ class GestorController extends Controller
         $this->redirect(URL_BASE . '/administrador/gestores');
     }
 
-    public function editar()
-    {
-        $this->adminRequired();
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        if (!$id) {
-            $this->redirect(URL_BASE . '/administrador/gestores');
-        }
-        $data['gestor'] = $this->gestorService->getGestorById($id);
-        if (!$data['gestor']) $this->redirect(URL_BASE . '/administrador/gestores');
-        $data['empresas'] = $this->empresaService->getEmpresas();
-        $this->view('administrador/gestores/gestor_edit', $data);
-    }
-
     public function desativar()
     {
         $this->adminRequired();
@@ -140,46 +127,6 @@ class GestorController extends Controller
     public function excluir()
     {
         $this->desativar();
-    }
-
-    public function atualizar()
-    {
-        $this->adminRequired();
-        $idGestor = filter_input(INPUT_POST, 'id_gestor', FILTER_VALIDATE_INT);
-        if (!$idGestor || !$this->gestorService->getGestorById($idGestor)) {
-            $this->redirect(URL_BASE . '/administrador/gestores');
-        }
-        $_POST['cpf'] = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
-        $_POST['numero_telefone'] = preg_replace('/\D/', '', $_POST['numero_telefone'] ?? '');
-        $erros = Validador::validarGestor($_POST, false);
-        if (empty($erros['id_empresa']) && !$this->empresaService->getEmpresaById((int) $_POST['id_empresa'])) $erros['id_empresa'] = 'A empresa selecionada não existe.';
-        if (empty($erros['cpf']) && $this->gestorService->cpfExiste(preg_replace('/\D/', '', $_POST['cpf'] ?? ''), $idGestor)) $erros['cpf'] = 'Já existe um usuário com este CPF.';
-        if (empty($erros['email']) && $this->gestorService->emailExiste($_POST['email'] ?? '', $idGestor)) $erros['email'] = 'Já existe um usuário com este e-mail.';
-        if (!empty($erros)) {
-            $data['erros'] = $erros;
-            $dadosGestor = $_POST;
-            $dadosGestor['id_gestor'] = $idGestor;
-            $dadosGestor['id_usuario'] = $this->gestorService->getGestorById($idGestor)?->getId() ?? 0;
-            $data['gestor'] = Gestor::arrayParaObjeto($dadosGestor);
-            $data['empresas'] = $this->empresaService->getEmpresas();
-            $this->view('administrador/gestores/gestor_edit', $data);
-            return;
-        }
-
-        $empresa = (new Empresa())->setId((int) $_POST['id_empresa']);
-        $gestor = new Gestor(
-            0,
-            $_POST['nome_completo'],
-            new \DateTimeImmutable($_POST['data_nascimento']),
-            $_POST['cpf'],
-            $_POST['email'],
-            $_POST['senha'] ?? '',
-            $_POST['numero_telefone'],
-            $empresa
-        );
-
-        $this->gestorService->updateGestor($gestor, $idGestor, $_POST['senha'] ?? null);
-        $this->redirect(URL_BASE . '/administrador/gestores');
     }
 
     public function countGestoresByEmpresa(int $idEmpresa): int

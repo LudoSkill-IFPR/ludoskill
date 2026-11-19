@@ -10,16 +10,73 @@
 </head>
 <body>
     <header><?php include __DIR__ . '/../../includes/menuAdministrador.html'; ?></header>
-    <main><div class="container">
-        <div id="topo"><a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/inicial"><i class="bi bi-arrow-left"></i> Voltar</a><a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas/cadastrar">Nova empresa</a><div><h1>Listagem de Empresas</h1><p class="mensagem">Visualize as empresas cadastradas.</p></div></div>
-        <?php if (!empty($erro)): ?><div class="erro"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
-        <section class="card"><h2>Lista de Empresas</h2>
-            <?php if (empty($lista)): ?><p>Nenhuma empresa cadastrada.</p><?php else: ?>
-                <table><thead><tr><th>Nome</th><th>CNPJ</th><th>E-mail</th><th>Plano</th><th>Ações</th></tr></thead><tbody>
-                <?php foreach ($lista as $empresa): ?><tr><td><?= htmlspecialchars($empresa->getNome()) ?></td><td><?= htmlspecialchars($empresa->getCnpj()) ?></td><td><?= htmlspecialchars($empresa->getEmail()) ?></td><td><?= htmlspecialchars($empresa->getPlano()) ?></td><td><div id="acao"><a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas/editar?id=<?= $empresa->getId() ?>">Editar</a><form action="<?= URL_BASE ?>/administrador/empresas/excluir" method="post" onsubmit="return confirm('Deseja excluir esta empresa?')"><input type="hidden" name="id" value="<?= $empresa->getId() ?>"><button type="submit" class="botao brilhinho">Excluir</button></form></div></td></tr><?php endforeach; ?>
-                </tbody></table>
+    <main>
+        <div class="container">
+            <div id="topo">
+                <a class="botao-voltar botao brilho" href="<?= URL_BASE ?>/administrador/inicial">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+                <a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas/cadastrar">Nova empresa</a>
+                <div>
+                    <h1>Listagem de Empresas</h1>
+                    <p class="mensagem">Visualize as empresas cadastradas.</p>
+                </div>
+            </div>
+
+            <?php if (!empty($erro)): ?>
+                <span class="erro aviso-exclusao" role="alert"><?= htmlspecialchars($erro) ?></span>
             <?php endif; ?>
-        </section>
-    </div></main>
+
+            <section class="card">
+                <h2>Lista de Empresas</h2>
+                <?php if (empty($lista)): ?>
+                    <p>Nenhuma empresa cadastrada.</p>
+                <?php else: ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CNPJ</th>
+                                <th>E-mail</th>
+                                <th>Plano</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($lista as $empresa): ?>
+                                <?php $aguardandoConfirmacao = isset($empresaConfirmacaoId) && (int) $empresaConfirmacaoId === $empresa->getId(); ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($empresa->getNome()) ?></td>
+                                    <td><?= htmlspecialchars($empresa->getCnpj()) ?></td>
+                                    <td><?= htmlspecialchars($empresa->getEmail()) ?></td>
+                                    <td><?= htmlspecialchars($empresa->getPlano()) ?></td>
+                                    <td>
+                                        <div id="acao">
+                                            <a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas/editar?id=<?= $empresa->getId() ?>">Editar</a>
+                                            <form
+                                                action="<?= URL_BASE ?>/administrador/empresas/excluir"
+                                                method="post"
+                                                onsubmit="return confirm('<?= $aguardandoConfirmacao
+                                                    ? 'Esta segunda confirmação excluirá a empresa, seus gestores, funcionários e todos os dados vinculados. Deseja continuar?'
+                                                    : 'Deseja excluir esta empresa?' ?>')"
+                                            >
+                                                <input type="hidden" name="id" value="<?= $empresa->getId() ?>">
+                                                <?php if ($aguardandoConfirmacao): ?>
+                                                    <input type="hidden" name="confirmar_exclusao" value="1">
+                                                    <button type="submit" class="botao brilho botao-desativar">Excluir empresa e usuários</button>
+                                                <?php else: ?>
+                                                    <button type="submit" class="botao brilhinho">Excluir</button>
+                                                <?php endif; ?>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </section>
+        </div>
+    </main>
 </body>
 </html>
