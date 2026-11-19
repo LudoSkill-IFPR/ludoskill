@@ -209,7 +209,7 @@
     --grafico-borda: #ffffff;
 
     /* Destaque no logo e mascote no modo claro */
-    --filtro-mascote: drop-shadow(0 6px 14px rgba(99, 29, 168, 0.28));
+    --filtro-mascote: drop-shadow(0 6px 14px rgba(66, 17, 115, 0.28));
     --badge-logo-fundo: linear-gradient(135deg, #37116d, #25094d);
 }
 

@@ -67,8 +67,9 @@ section p:last-child {
     object-fit: contain;
     transform-origin: 50% 90%;
     animation: logo-ifpr 5.5s ease-in-out infinite;
+    filter: var(--filtro-mascote);
 }
-/* aaaaaaaaaaaaaaaaaa */
+
 #mascote-ludo {
     position: relative;
     z-index: 2;
