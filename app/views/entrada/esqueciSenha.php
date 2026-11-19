@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <title>LudoSkill - Recuperar senha</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body>
     <header><?php include __DIR__ . '/../includes/menuEntrada.php'; ?></header>
     <main>
@@ -28,4 +30,5 @@
         </div>
     </main>
 </body>
+
 </html>

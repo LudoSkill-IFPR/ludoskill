@@ -1,12 +1,13 @@
 <?php $item = $item instanceof \app\models\Item ? $item : \app\models\Item::arrayParaObjeto($item); ?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
-    
+
     <title>LudoSkill - Editar Item</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
@@ -41,7 +42,7 @@
 
                 <div class="formgroup">
                     <label for="estado">Estado:</label>
-                    <select class="card-secundario" name="estado" id="estado" >
+                    <select class="card-secundario" name="estado" id="estado">
                         <option value="1" <?= $item->getEstado() === 'ATIVO' ? 'selected' : '' ?>>Ativo</option>
                         <option value="0" <?= $item->getEstado() === 'INATIVO' ? 'selected' : '' ?>>Inativo</option>
                     </select>
@@ -51,7 +52,7 @@
                 </div>
 
                 <div class="formgroup"> <!--Aqui deve ser select-->
-                    <label for="tipo" >Tipo:</label>
+                    <label for="tipo">Tipo:</label>
                     <select class="card-secundario" name="tipo" id="tipo">
                         <option value="">Selecione um tipo</option>
                         <option value="TEMA" <?= $item->getTipo() === 'TEMA' ? 'selected' : '' ?>>Tema</option>
@@ -73,21 +74,21 @@
                 <div class="formgroup" id="campo-imagem">
                     <label for="imagem">Imagem:</label>
                     <?php
-                        $imagemAtual = $item->getImagem();
-                        $imagemUrl = !empty($imagemAtual)
-                            ? URL_BASE . '/' . ltrim($imagemAtual, '/')
-                            : '';
+                    $imagemAtual = $item->getImagem();
+                    $imagemUrl = !empty($imagemAtual)
+                        ? URL_BASE . '/' . ltrim($imagemAtual, '/')
+                        : '';
                     ?>
                     <?php if (!empty($imagemUrl)): ?>
 
-                    <div>
-                        <img src="<?= htmlspecialchars($imagemUrl) ?>"
-                            alt="<?= htmlspecialchars($item->getNome()) ?>"
-                            style="max-width: 120px; max-height: 120px; display: block; margin-bottom: 0.5rem;">
-                        <small>
-                            Deixe em branco para manter a imagem atual.
-                        </small>
-                    </div>
+                        <div>
+                            <img src="<?= htmlspecialchars($imagemUrl) ?>"
+                                alt="<?= htmlspecialchars($item->getNome()) ?>"
+                                style="max-width: 120px; max-height: 120px; display: block; margin-bottom: 0.5rem;">
+                            <small>
+                                Deixe em branco para manter a imagem atual.
+                            </small>
+                        </div>
                     <?php endif; ?>
 
                     <input class="card-secundario" type="file" id="imagem" name="imagem">
@@ -105,7 +106,7 @@
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const tipo = document.getElementById('tipo');
             const campoImagem = document.getElementById('campo-imagem');
             const inputImagem = document.getElementById('imagem');
@@ -126,4 +127,5 @@
         });
     </script>
 </body>
+
 </html>

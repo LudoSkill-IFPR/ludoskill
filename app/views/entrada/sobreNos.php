@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <title>Sobre Nós - LudoSkill</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body>
 
     <header>
@@ -22,7 +24,7 @@
                     <p>Somos estudantes do Instituto Federal do Paraná (IFPR) Campus de Foz do Iguaçu, atualmente cursando o 4º ano do curso Técnico em Desenvolvimento de Sistemas.</p>
                     <p>O LudoSkill é um projeto desenvolvido com o objetivo de tornar o processo de capacitação profissional mais interativo, dinâmico e motivador por meio da gamificação.</p>
                 </div>
-            
+
                 <div class="imagem">
                     <a href="https://www.ifpr.edu.br/" target="_blank" rel="noopener noreferrer">
                         <img src="<?= URL_BASE ?>/assets/imagens/IFPR.png" alt="Logo do IFPR" id="logo-ifpr">
@@ -42,18 +44,18 @@
                     <p>Os gestores podem acompanhar o desempenho dos funcionários, enquanto os administradores são responsáveis pelo gerenciamento dos conteúdos e gestores do sistema.</p>
                 </div>
             </section>
-            
+
             <section>
                 <h2>Nossa proposta</h2>
                 <p>Acreditamos que o aprendizado pode ser uma experiência mais prática, interativa e motivadora.</p>
                 <p>Por isso, o LudoSkill utiliza elementos de gamificação, como pontuação, estrelas, níveis, bolotas, recompensas e inventário, para estimular a participação dos usuários.</p>
             </section>
-            
+
             <section>
                 <h2>Nosso objetivo</h2>
                 <p>O projeto tem o objetivo de desenvolver uma plataforma de treinamento que qualifique novos funcinários, utilizando da gamificação e de simulações a fim de tornar a trajetória de aprendizado mais dinâmica, envolvente e interativa.</p>
             </section>
-            
+
             <section>
                 <h2>Integrantes</h2>
 
@@ -63,19 +65,19 @@
                         <h3>Izabella da Costa Codo</h3>
                         <p>Desenvolvimento, modelagem e documentação do projeto.</p>
                     </div>
-                    
+
                     <div class="integrante">
                         <img src="https://api.dicebear.com/10.x/avataaars/svg?accessoriesVariant=&clothesVariant=overall&clothesGraphicVariant=pizza&eyebrowsVariant=raisedExcited&eyesVariant=default&facialHairVariant=&mouthVariant=smile&topVariant=curvy&clothesColor=ffafb9&hairColor=724133&skinColor=ffdbb4&seed=Izabella" alt="avatar">
                         <h3>Alinne Helena</h3>
                         <p>Desenvolvimento, modelagem e documentação do projeto.</p>
                     </div>
-                    
+
                     <div class="integrante">
                         <img src="https://api.dicebear.com/10.x/avataaars/svg?accessoriesVariant=kurt&clothesVariant=shirtCrewNeck&clothesGraphicVariant=cumbia&eyebrowsVariant=raisedExcited&eyesVariant=squint&facialHairVariant=&mouthVariant=grimace&topVariant=curvy&clothesColor=3c4f5c&hairColor=b58143&skinColor=ffdbb4&seed=Izabella" alt="avatar">
                         <h3>Rebeca Schmidt</h3>
                         <p>Desenvolvimento, modelagem e documentação do projeto.</p>
                     </div>
-                    
+
                     <div class="integrante">
                         <img src="https://api.dicebear.com/10.x/avataaars/svg?facialHairVariant=&eyebrowsVariant=upDownNatural&eyesVariant=surprised&clothesGraphicVariant=bat,deer&clothesVariant=graphicShirt&topVariant=straightAndStrand&clothesColor=262e33&hairColor=d6b370&seed=Felix" alt="avatar">
                         <h3>Vinicius Brevesteky</h3>
@@ -83,7 +85,7 @@
                     </div>
                 </div>
             </section>
-        </div>  
+        </div>
     </main>
 
     <footer>

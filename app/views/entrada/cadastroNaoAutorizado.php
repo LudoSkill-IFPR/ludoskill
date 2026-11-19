@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <title>Cadastro não autorizado</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body>
     <div class="barra-topo-voltar">
         <a href="<?= URL_BASE ?>/login" class="botao-voltar" aria-label="Voltar para o login">
@@ -26,4 +28,5 @@
 
     <script src="<?= URL_BASE ?>/assets/javascript/temas.js" data-home-url="<?= URL_BASE ?>/"></script>
 </body>
+
 </html>

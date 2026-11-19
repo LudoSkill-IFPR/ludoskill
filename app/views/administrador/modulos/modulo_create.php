@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,9 @@
     <title>LudoSkill - Cadastrar Módulo</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
+
 <body>
-<!-- implementar aqui uma atenticacao para que apenas administrador possam acessar a pagina de cadastro de modulos -->
+    <!-- implementar aqui uma atenticacao para que apenas administrador possam acessar a pagina de cadastro de modulos -->
 
     <header>
         <?php include_once(__DIR__ . "/../../includes/menuAdministrador.html"); ?>
@@ -42,7 +44,7 @@
                         <div class="erro"><?= htmlspecialchars($erros['descricao']) ?></div>
                     <?php endif; ?>
                 </div>
-                
+
                 <div class="formgroup">
                     <label for="min_estrelas_liberacao">Mínimo de Estrelas para Liberação:</label>
                     <input class="card-secundario" type="number" id="min_estrelas_liberacao" name="min_estrelas_liberacao" value="<?= isset($modulo['min_estrelas_liberacao']) ? htmlspecialchars($modulo['min_estrelas_liberacao']) : '' ?>">
@@ -50,12 +52,16 @@
                         <div class="erro"><?= htmlspecialchars($erros['min_estrelas_liberacao']) ?></div>
                     <?php endif; ?>
                 </div>
-                <div class="formgroup"><label for="estado">Estado:</label><select class="card-secundario" id="estado" name="estado"><option value="ATIVO" <?= ($modulo['estado'] ?? 'ATIVO') === 'ATIVO' ? 'selected' : '' ?>>Ativo</option><option value="INATIVO" <?= ($modulo['estado'] ?? '') === 'INATIVO' ? 'selected' : '' ?>>Inativo</option></select></div>
-                
+                <div class="formgroup"><label for="estado">Estado:</label><select class="card-secundario" id="estado" name="estado">
+                        <option value="ATIVO" <?= ($modulo['estado'] ?? 'ATIVO') === 'ATIVO' ? 'selected' : '' ?>>Ativo</option>
+                        <option value="INATIVO" <?= ($modulo['estado'] ?? '') === 'INATIVO' ? 'selected' : '' ?>>Inativo</option>
+                    </select></div>
+
                 <button type="submit" class="botao brilho">Salvar</button>
-            
+
             </form>
-        </div> 
+        </div>
     </main>
 </body>
+
 </html>

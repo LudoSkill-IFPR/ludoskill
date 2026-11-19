@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/geralUsuario.css">
     <link rel="stylesheet" href="<?= URL_BASE ?>/assets/css/formulariosAdministrador.css">
-    
+
     <title>LudoSkill - Cadastrar Itens</title>
     <link rel="icon" href="<?= URL_BASE ?>/favicon.ico">
 </head>
@@ -36,7 +37,7 @@
                 </div>
 
                 <div class="formgroup">
-                    <label for="estado" >Estado:</label>
+                    <label for="estado">Estado:</label>
                     <select name="estado" id="estado" class="card-secundario">
                         <option value="1" <?= (!isset($item['estado']) || $item['estado'] === '1' || $item['estado'] === '') ? 'selected' : '' ?>>Ativo</option>
                         <option value="0" <?= isset($item['estado']) && $item['estado'] === '0' ? 'selected' : '' ?>>Inativo</option>
@@ -48,7 +49,7 @@
                 </div>
 
                 <div class="formgroup"> <!--Aqui deve ser select-->
-                    <label for="tipo" >Tipo:</label>
+                    <label for="tipo">Tipo:</label>
                     <select name="tipo" id="tipo" class="card-secundario">
                         <option value="">Selecione um tipo</option>
                         <option value="TEMA" <?= isset($item['tipo']) && $item['tipo'] === 'TEMA' ? 'selected' : '' ?>>Tema</option>
@@ -61,7 +62,7 @@
                 </div>
 
                 <div class="formgroup">
-                    <label for="preco" >Preço:</label>
+                    <label for="preco">Preço:</label>
                     <input type="number" step="0.01" class="card-secundario" id="preco" name="preco" value="<?= isset($item['preco']) ? htmlspecialchars($item['preco']) : '' ?>">
 
                     <?php if (isset($erros['preco'])): ?>
@@ -70,7 +71,7 @@
                 </div>
 
                 <div class="formgroup" id="campo-imagem">
-                    <label for="imagem" >Imagem:</label>
+                    <label for="imagem">Imagem:</label>
                     <input type="file" class="card-secundario" id="imagem" name="imagem">
 
                     <?php if (isset($erros['imagem'])): ?>
@@ -85,27 +86,28 @@
                 <button type="submit" class="botao brilho">Salvar</button>
             </form>
         </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const tipo = document.getElementById('tipo');
-            const campoImagem = document.getElementById('campo-imagem');
-            const inputImagem = document.getElementById('imagem');
-            const infoTema = document.getElementById('info-tema');
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const tipo = document.getElementById('tipo');
+                const campoImagem = document.getElementById('campo-imagem');
+                const inputImagem = document.getElementById('imagem');
+                const infoTema = document.getElementById('info-tema');
 
-            function atualizarTipoItem() {
-                const eTema = tipo.value === 'TEMA';
-                campoImagem.style.display = eTema ? 'none' : 'block';
-                inputImagem.disabled = eTema;
-                infoTema.classList.toggle('d-none', !eTema);
-                if (eTema) {
-                    inputImagem.value = '';
+                function atualizarTipoItem() {
+                    const eTema = tipo.value === 'TEMA';
+                    campoImagem.style.display = eTema ? 'none' : 'block';
+                    inputImagem.disabled = eTema;
+                    infoTema.classList.toggle('d-none', !eTema);
+                    if (eTema) {
+                        inputImagem.value = '';
+                    }
                 }
-            }
 
-            tipo.addEventListener('change', atualizarTipoItem);
-            atualizarTipoItem();
-        });
-    </script>
+                tipo.addEventListener('change', atualizarTipoItem);
+                atualizarTipoItem();
+            });
+        </script>
 </body>
+
 </html>
