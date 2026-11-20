@@ -62,8 +62,14 @@ class AtividadeRepository{
         return $stm->execute();
     }
 
-    public function deleteAtividade(int $id){
+    public function desativarAtividade(int $id): bool {
         $stm = $this->connection->prepare("UPDATE Atividades SET estado = 'INATIVO' WHERE id_atividade = :id");
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
+        return $stm->execute();
+    }
+
+    public function ativarAtividade(int $id): bool {
+        $stm = $this->connection->prepare("UPDATE Atividades SET estado = 'ATIVO' WHERE id_atividade = :id");
         $stm->bindValue('id', $id, PDO::PARAM_INT);
         return $stm->execute();
     }

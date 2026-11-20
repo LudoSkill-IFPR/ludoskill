@@ -48,21 +48,34 @@
                     <tbody>
                         <?php foreach (($lista ?? []) as $atividade): ?>
                         <tr>
-                            <td><?= $atividade->getId() ?></td>
-                            <td><?= htmlspecialchars($atividade->getTipoAtividade()) ?></td>
-                            <td><?= htmlspecialchars($atividade->getNome()) ?></td>
-                            <td><?= htmlspecialchars(mb_strimwidth(strip_tags($atividade->getDescricao()), 0, 90, '…')) ?></td>
-                            <td><?= htmlspecialchars($atividade->getEstado()) ?></td>
-                            <td><?= $atividade->getOrdem() ?></td>
-                            <td><?= $atividade->getTempoLimite() ?> s</td>
-                            <td><?= $atividade->getEstrelasRecompensa() ?></td>
-                            <td><?= $atividade->getBolotasRecompensa() ?></td>
-                            <td id="acao">
+                            <td data-label="ID"><?= $atividade->getId() ?></td>
+                            <td data-label="Tipo da atividade"><?= htmlspecialchars($atividade->getTipoAtividade()) ?></td>
+                            <td data-label="Nome"><?= htmlspecialchars($atividade->getNome()) ?></td>
+                            <td data-label="Descrição"><?= htmlspecialchars(mb_strimwidth(strip_tags($atividade->getDescricao()), 0, 90, '…')) ?></td>
+                            <td data-label="Estado">
+                                <?php if ($atividade->getEstado() === 'ATIVO'): ?>
+                                    <span class="badge badge-ativo">Ativo</span>
+                                <?php else: ?>
+                                    <span class="badge badge-inativo">Inativo</span>
+                                <?php endif; ?>
+                            </td>
+                            <td data-label="Ordem"><?= $atividade->getOrdem() ?></td>
+                            <td data-label="Tempo limite"><?= $atividade->getTempoLimite() ?> s</td>
+                            <td data-label="Estrelas"><?= $atividade->getEstrelasRecompensa() ?></td>
+                            <td data-label="Bolotas"><?= $atividade->getBolotasRecompensa() ?></td>
+                            <td id="acao" data-label="Ações">
                                 <a href="<?= URL_BASE ?>/administrador/atividades/editar?id=<?= $atividade->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                                <form action="<?= URL_BASE ?>/administrador/atividades/excluir" method="post" onsubmit="return confirm('Deseja desativar esta atividade?')">
-                                    <input type="hidden" name="id" value="<?= $atividade->getId() ?>">
-                                    <button type="submit" class="botao brilhinho"><i class="bi bi-x-circle"></i> Desativar</button>
-                                </form>
+                                <?php if ($atividade->getEstado() === 'ATIVO'): ?>
+                                    <form action="<?= URL_BASE ?>/administrador/atividades/desativar" method="post" onsubmit="return confirm('Deseja desativar esta atividade?')">
+                                        <input type="hidden" name="id" value="<?= $atividade->getId() ?>">
+                                        <button type="submit" class="botao brilhinho botao-desativar"><i class="bi bi-x-circle"></i> Desativar</button>
+                                    </form>
+                                <?php else: ?>
+                                    <form action="<?= URL_BASE ?>/administrador/atividades/ativar" method="post" onsubmit="return confirm('Deseja reativar esta atividade?')">
+                                        <input type="hidden" name="id" value="<?= $atividade->getId() ?>">
+                                        <button type="submit" class="botao brilho botao-ativar"><i class="bi bi-check-circle"></i> Ativar</button>
+                                    </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>

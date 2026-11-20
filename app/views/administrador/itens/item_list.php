@@ -50,15 +50,15 @@
                                     : '';
                         ?>
                         <tr>
-                            <td><?= $item->getId() ?></td>
-                            <td><?= htmlspecialchars($item->getNome()) ?></td>
-                            <td><?= $item->getPreco() ?></td>
-                            <td class="imagem">
+                            <td data-label="ID"><?= $item->getId() ?></td>
+                            <td data-label="Nome"><?= htmlspecialchars($item->getNome()) ?></td>
+                            <td data-label="Preço"><?= $item->getPreco() ?></td>
+                            <td class="imagem" data-label="Imagem">
                                  <?php if (!empty($imagemUrl)): ?>
                                     <img src="<?= htmlspecialchars($imagemUrl) ?>" alt="<?= htmlspecialchars($item->getNome()) ?>" style="max-width: 100px; max-height: 100px;">
                                 <?php endif; ?>
                             </td>
-                            <td>
+                            <td data-label="Status">
                                 <?php if ($item->getEstado() === 'ATIVO'): ?>
                                     <span class="badge badge-ativo">Ativo</span>
                                 <?php else: ?>
@@ -66,7 +66,7 @@
                                 <?php endif; ?>
                             </td>
 
-                            <td id="acao">
+                            <td id="acao" data-label="Ações">
                                 <a href="<?= URL_BASE ?>/administrador/itens/editar?id=<?= $item->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
                                 
                         

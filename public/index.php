@@ -31,6 +31,8 @@ $router->get('/administrador/modulos/cadastrar', 'ModuloController@criar');
 $router->get('/administrador/modulos/editar', 'ModuloController@editar');
 $router->post('/administrador/modulos/salvar', 'ModuloController@salvar');
 $router->post('/administrador/modulos/atualizar', 'ModuloController@atualizar');
+$router->post('/administrador/modulos/desativar', 'ModuloController@desativar');
+$router->post('/administrador/modulos/ativar', 'ModuloController@ativar');
 $router->post('/administrador/modulos/excluir', 'ModuloController@excluir');
 
 //empresa
@@ -70,6 +72,8 @@ $router->get('/administrador/atividades/cadastrar', 'AtividadeController@criar')
 $router->get('/administrador/atividades/editar', 'AtividadeController@editar');
 $router->post('/administrador/atividades/salvar', 'AtividadeController@salvar');
 $router->post('/administrador/atividades/atualizar', 'AtividadeController@atualizar');
+$router->post('/administrador/atividades/desativar', 'AtividadeController@desativar');
+$router->post('/administrador/atividades/ativar', 'AtividadeController@ativar');
 $router->post('/administrador/atividades/excluir', 'AtividadeController@excluir');
 $router->get('/funcionario/atividades/conteudo', 'AtividadeController@visualizarFuncionario');
 $router->post('/funcionario/atividades/concluir-texto', 'AtividadeController@concluirTexto');

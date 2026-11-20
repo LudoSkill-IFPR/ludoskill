@@ -81,14 +81,28 @@ class AtividadeController extends Controller
         $this->view('administrador/atividades/atividade_edit', $data);
     }
 
-    public function excluir() {
+    public function desativar() {
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
         if (!$id) {
             $this->redirect(URL_BASE . '/administrador/atividades');
         }
-        $this->atividadeService->deleteAtividade($id);
+        $this->atividadeService->desativarAtividade($id);
         $this->redirect(URL_BASE . '/administrador/atividades');
+    }
+
+    public function ativar() {
+        $this->adminRequired();
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
+            $this->redirect(URL_BASE . '/administrador/atividades');
+        }
+        $this->atividadeService->ativarAtividade($id);
+        $this->redirect(URL_BASE . '/administrador/atividades');
+    }
+
+    public function excluir() {
+        $this->desativar();
     }
 
     public function atualizar(){

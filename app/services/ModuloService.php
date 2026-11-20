@@ -32,8 +32,12 @@ class ModuloService {
         return $this->moduloRepository->saveModulo($modulo);
     }
 
-    public function deleteModulo(int $id) {
-        return $this->moduloRepository->deleteModulo($id);
+    public function desativarModulo(int $id): bool {
+        return $this->moduloRepository->desativarModulo($id);
+    }
+
+    public function ativarModulo(int $id): bool {
+        return $this->moduloRepository->ativarModulo($id);
     }
 
     public function updateModulo(Modulo $modulo) {

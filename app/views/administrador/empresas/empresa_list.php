@@ -46,11 +46,11 @@
                             <?php foreach ($lista as $empresa): ?>
                                 <?php $aguardandoConfirmacao = isset($empresaConfirmacaoId) && (int) $empresaConfirmacaoId === $empresa->getId(); ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($empresa->getNome()) ?></td>
-                                    <td><?= htmlspecialchars($empresa->getCnpj()) ?></td>
-                                    <td><?= htmlspecialchars($empresa->getEmail()) ?></td>
-                                    <td><?= htmlspecialchars($empresa->getPlano()) ?></td>
-                                    <td>
+                                    <td data-label="Nome"><?= htmlspecialchars($empresa->getNome()) ?></td>
+                                    <td data-label="CNPJ"><?= htmlspecialchars($empresa->getCnpj()) ?></td>
+                                    <td data-label="E-mail"><?= htmlspecialchars($empresa->getEmail()) ?></td>
+                                    <td data-label="Plano"><?= htmlspecialchars($empresa->getPlano()) ?></td>
+                                    <td data-label="Ações">
                                         <div id="acao">
                                             <a class="botao brilho" href="<?= URL_BASE ?>/administrador/empresas/editar?id=<?= $empresa->getId() ?>">Editar</a>
                                             <form

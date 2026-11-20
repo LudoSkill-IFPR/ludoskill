@@ -32,8 +32,12 @@ class AtividadeService {
         return $this->atividadeRepository->saveAtividade($atividade);
     }
 
-    public function deleteAtividade(int $id) {
-        return $this->atividadeRepository->deleteAtividade($id);
+    public function desativarAtividade(int $id): bool {
+        return $this->atividadeRepository->desativarAtividade($id);
+    }
+
+    public function ativarAtividade(int $id): bool {
+        return $this->atividadeRepository->ativarAtividade($id);
     }
 
     public function updateAtividade(Atividade $atividade) {

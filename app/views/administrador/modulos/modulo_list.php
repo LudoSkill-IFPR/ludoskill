@@ -46,21 +46,28 @@
                     <tbody>
                         <?php foreach (($lista ?? []) as $modulo): ?>
                             <tr>
-                                <td><?= $modulo->getId() ?></td>
-                                <td><?= htmlspecialchars($modulo->getNome()) ?></td>
-                                <td><?= htmlspecialchars($modulo->getDescricao()) ?></td>
-                                <td><?= $modulo->getMinEstrelasLiberacao() ?></td>
-                                <td><?php if ($modulo->getEstado() === 'ATIVO'): ?>
+                                <td data-label="ID"><?= $modulo->getId() ?></td>
+                                <td data-label="Nome"><?= htmlspecialchars($modulo->getNome()) ?></td>
+                                <td data-label="Descrição"><?= htmlspecialchars($modulo->getDescricao()) ?></td>
+                                <td data-label="Mínimo de estrelas"><?= $modulo->getMinEstrelasLiberacao() ?></td>
+                                <td data-label="Estado"><?php if ($modulo->getEstado() === 'ATIVO'): ?>
                                     <span class="badge badge-ativo">Ativo</span>
                                 <?php else: ?>
                                     <span class="badge badge-inativo">Inativo</span>
                                 <?php endif; ?></td>
-                                <td id="acao">
+                                <td id="acao" data-label="Ações">
                                     <a href="<?= URL_BASE ?>/administrador/modulos/editar?id=<?= $modulo->getId() ?>" class="botao brilho"><i class="bi bi-pencil"></i> Editar</a>
-                                    <form action="<?= URL_BASE ?>/administrador/modulos/excluir" method="post" onsubmit="return confirm('Deseja desativar este módulo?')">
-                                        <input type="hidden" name="id" value="<?= $modulo->getId() ?>">
-                                        <button type="submit" class="botao brilhinho"><i class="bi bi-x-circle"></i> Desativar</button>
-                                    </form>
+                                    <?php if ($modulo->getEstado() === 'ATIVO'): ?>
+                                        <form action="<?= URL_BASE ?>/administrador/modulos/desativar" method="post" onsubmit="return confirm('Deseja desativar este módulo?')">
+                                            <input type="hidden" name="id" value="<?= $modulo->getId() ?>">
+                                            <button type="submit" class="botao brilhinho botao-desativar"><i class="bi bi-x-circle"></i> Desativar</button>
+                                        </form>
+                                    <?php else: ?>
+                                        <form action="<?= URL_BASE ?>/administrador/modulos/ativar" method="post" onsubmit="return confirm('Deseja reativar este módulo?')">
+                                            <input type="hidden" name="id" value="<?= $modulo->getId() ?>">
+                                            <button type="submit" class="botao brilho botao-ativar"><i class="bi bi-check-circle"></i> Ativar</button>
+                                        </form>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

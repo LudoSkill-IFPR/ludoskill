@@ -36,12 +36,12 @@
                                 : count($conteudo['questoes'] ?? (array_is_list($conteudo) ? $conteudo : []));
                             ?>
                             <tr>
-                                <td><?= $exercicio->getId() ?></td>
-                                <td><?= $tipo ?></td>
-                                <td><?= htmlspecialchars($exercicio->getDescricao()) ?></td>
-                                <td><?= htmlspecialchars($exercicio->getAtividade()->getNome()) ?></td>
-                                <td><?= $quantidadeItens ?></td>
-                                <td><div id="acao">
+                                <td data-label="ID"><?= $exercicio->getId() ?></td>
+                                <td data-label="Tipo"><?= $tipo ?></td>
+                                <td data-label="Descrição"><?= htmlspecialchars($exercicio->getDescricao()) ?></td>
+                                <td data-label="Atividade"><?= htmlspecialchars($exercicio->getAtividade()->getNome()) ?></td>
+                                <td data-label="Itens"><?= $quantidadeItens ?></td>
+                                <td data-label="Ações"><div id="acao">
                                     <a class="botao brilho" href="<?= URL_BASE ?>/administrador/exercicios/editar?id=<?= $exercicio->getId() ?>">Editar</a>
                                     <form method="post" action="<?= URL_BASE ?>/administrador/exercicios/excluir" onsubmit="return confirm('Deseja excluir este exercício?')">
                                         <input type="hidden" name="id" value="<?= $exercicio->getId() ?>">

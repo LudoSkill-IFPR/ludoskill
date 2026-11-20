@@ -57,8 +57,14 @@ class ModuloRepository {
         return $stm->execute();
     }
 
-    public function deleteModulo(int $id){
+    public function desativarModulo(int $id): bool {
         $stm = $this->connection->prepare("UPDATE Modulos SET estado = 'INATIVO' WHERE id_modulo = :id");
+        $stm->bindValue('id', $id, PDO::PARAM_INT);
+        return $stm->execute();
+    }
+
+    public function ativarModulo(int $id): bool {
+        $stm = $this->connection->prepare("UPDATE Modulos SET estado = 'ATIVO' WHERE id_modulo = :id");
         $stm->bindValue('id', $id, PDO::PARAM_INT);
         return $stm->execute();
     }

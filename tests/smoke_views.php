@@ -22,7 +22,9 @@ set_error_handler(static function (int $severity, string $message, string $file,
 
 $empresa = new Empresa(1, '12345678000199', 'Empresa', 'empresa@example.com');
 $modulo = new Modulo(1, 'Módulo', str_repeat('Descrição ', 4), 0, 'ATIVO');
+$moduloInativo = new Modulo(2, 'Módulo inativo', 'Descrição', 0, 'INATIVO');
 $atividade = new Atividade(1, $modulo, 'INTRODUCAO', 'Atividade', 'ATIVO', 1, 180, '<h2>Introdução</h2><p>Conteúdo da atividade.</p>');
+$atividadeInativa = new Atividade(3, $modulo, 'INTRODUCAO', 'Atividade inativa', 'INATIVO', 3, 180, '<p>Conteúdo.</p>');
 $atividadeTexto = new Atividade(2, $modulo, 'TEXTO', 'Leitura', 'ATIVO', 2, 180, '<p>Conteúdo somente para leitura.</p>');
 $conteudoQuestao = ['tipo' => 'exercicio', 'questoes' => [['enunciado' => 'Questão?', 'alternativas' => ['A', 'B'], 'alternativa_correta' => 0, 'justificativa' => 'Justificativa']]];
 $conteudoSimulacao = [
@@ -53,10 +55,10 @@ $casos = [
     ]],
     ['administrador/empresas/empresa_create', ['empresa' => ['nome' => 'Empresa'], 'erros' => ['cnpj' => 'Inválido']]],
     ['administrador/empresas/empresa_edit', ['empresa' => ['id_empresa' => 1, 'cnpj' => '123', 'nome' => 'Empresa', 'email' => 'invalido', 'plano' => 'BASICO'], 'erros' => ['email' => 'Inválido']]],
-    ['administrador/modulos/modulo_list', ['lista' => [$modulo]]],
+    ['administrador/modulos/modulo_list', ['lista' => [$modulo, $moduloInativo]]],
     ['administrador/modulos/modulo_create', ['modulo' => ['nome' => 'Módulo'], 'erros' => ['descricao' => 'Inválida']]],
     ['administrador/modulos/modulo_edit', ['modulo' => $modulo]],
-    ['administrador/atividades/atividade_list', ['lista' => [$atividade]]],
+    ['administrador/atividades/atividade_list', ['lista' => [$atividade, $atividadeInativa]]],
     ['administrador/atividades/atividade_create', ['atividade' => ['nome' => 'Atividade', 'descricao' => '<p>Conteúdo</p>'], 'modulos' => [$modulo], 'erros' => ['ordem' => 'Inválida']]],
     ['administrador/atividades/atividade_edit', ['atividade' => $atividade, 'modulos' => [$modulo]]],
     ['administrador/exercicios/exercicio_list', ['lista' => [$exercicio]]],
@@ -110,11 +112,31 @@ foreach ($casos as [$view, $dados]) {
             throw new RuntimeException('O botão de exclusão conjunta não foi renderizado.');
         }
     }
+    if ($view === 'administrador/modulos/modulo_list'
+        && (!str_contains($html, '/administrador/modulos/desativar')
+            || !str_contains($html, '/administrador/modulos/ativar'))) {
+        throw new RuntimeException('A listagem de módulos não exibiu as duas ações de estado.');
+    }
+    if ($view === 'administrador/atividades/atividade_list'
+        && (!str_contains($html, '/administrador/atividades/desativar')
+            || !str_contains($html, '/administrador/atividades/ativar'))) {
+        throw new RuntimeException('A listagem de atividades não exibiu as duas ações de estado.');
+    }
     if ($view === 'administrador/gestores/gestor_list' && str_contains($html, '/administrador/gestores/editar')) {
         throw new RuntimeException('A listagem de gestores ainda permite edição pelo administrador.');
     }
+    if ($view === 'administrador/gestores/gestor_list'
+        && (!str_contains($html, 'data-abrir-modal-usuario="modal-gestor-')
+            || !str_contains($html, '<dialog class="modal-usuario"'))) {
+        throw new RuntimeException('A visualização dos dados do gestor não foi renderizada.');
+    }
     if ($view === 'gestor/funcionarios/funcionario_list' && str_contains($html, '/gestor/funcionarios/editar')) {
         throw new RuntimeException('A listagem de funcionários ainda permite edição pelo gestor.');
+    }
+    if ($view === 'gestor/funcionarios/funcionario_list'
+        && (!str_contains($html, 'data-abrir-modal-usuario="modal-funcionario-')
+            || !str_contains($html, '<dialog class="modal-usuario"'))) {
+        throw new RuntimeException('A visualização dos dados do funcionário não foi renderizada.');
     }
     if (preg_match('/<form\b[^>]*method=["\']?post/i', $html) && !str_contains($html, 'name="_csrf"')) {
         throw new RuntimeException("Formulário POST sem token CSRF: {$view}");

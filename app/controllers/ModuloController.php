@@ -81,15 +81,30 @@ class ModuloController extends Controller
         $this->view('/administrador/modulos/modulo_edit', $data);
     }
 
-    public function excluir(){
+    public function desativar(){
         $this->adminRequired();
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
         if (!$id) {
             $this->redirect(URL_BASE . '/administrador/modulos');
         }
 
-        $this->moduloService->deleteModulo($id);
+        $this->moduloService->desativarModulo($id);
         $this->redirect(URL_BASE . '/administrador/modulos');
+    }
+
+    public function ativar(){
+        $this->adminRequired();
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
+            $this->redirect(URL_BASE . '/administrador/modulos');
+        }
+
+        $this->moduloService->ativarModulo($id);
+        $this->redirect(URL_BASE . '/administrador/modulos');
+    }
+
+    public function excluir(){
+        $this->desativar();
     }
 
     public function atualizar(){
