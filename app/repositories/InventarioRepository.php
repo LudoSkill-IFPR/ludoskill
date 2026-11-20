@@ -107,4 +107,22 @@ class InventarioRepository
             throw $exception;
         }
     }
+
+    public function desequiparTema(int $idUsuario, int $idItem): void
+    {
+        $sql = "UPDATE Inventarios i
+                INNER JOIN Funcionarios f ON f.id_funcionario = i.id_funcionario
+                INNER JOIN Itens it ON it.id_item = i.id_item
+                SET i.em_uso = b'0'
+                WHERE f.id_usuario = :usuario
+                  AND i.id_item = :item
+                  AND i.em_uso = b'1'
+                  AND it.tipo = 'TEMA'";
+        $stm = $this->connection->prepare($sql);
+        $stm->execute(['usuario' => $idUsuario, 'item' => $idItem]);
+
+        if ($stm->rowCount() === 0) {
+            throw new DomainException('Este tema não está equipado no seu inventário.');
+        }
+    }
 }

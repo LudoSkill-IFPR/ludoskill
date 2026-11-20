@@ -173,4 +173,24 @@ class FuncionarioController extends Controller
         }
         $this->redirect(URL_BASE . '/funcionario/inicial');
     }
+
+    public function desequipaTema()
+    {
+        $this->funcionarioRequired();
+        $idItem = filter_input(INPUT_POST, 'id_item', FILTER_VALIDATE_INT);
+        if (!$idItem) $this->redirect(URL_BASE . '/funcionario/inicial');
+
+        try {
+            (new InventarioService())->desequiparTema($_SESSION['usuario_logado']->getId(), $idItem);
+            unset($_SESSION['tema_equipado']);
+            $_SESSION['mensagem'] = 'Tema desequipado com sucesso.';
+        } catch (\Throwable $exception) {
+            error_log($exception->__toString());
+            $_SESSION['erro'] = $exception instanceof DomainException
+                ? $exception->getMessage()
+                : 'Não foi possível desequipar o tema.';
+        }
+
+        $this->redirect(URL_BASE . '/funcionario/inicial');
+    }
 }

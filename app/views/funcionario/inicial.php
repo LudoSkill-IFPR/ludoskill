@@ -19,12 +19,12 @@
 
     <main>
         <div class="container">
+            <?php if ($mensagem): ?><div class="mensagem msg-inventario"><?= htmlspecialchars($mensagem) ?></div><?php endif; ?>
             <div id="foto" style="background-image: url('<?= URL_BASE ?>/assets/imagens/esquilo-pfp.jpg');">
                 <?php $equipado = null; foreach ($inventario as $registro) { if ($registro->isEmUso() && $registro->getItem()->getTipo() === 'VISUAL_ESQUILOSO') { $equipado = $registro->getItem(); break; } } ?>
                 <?php if ($equipado): ?><img src="<?= URL_BASE ?>/<?= htmlspecialchars(ltrim($equipado->getImagem(), '/')) ?>" alt="Item equipado"><?php endif; ?>
             </div>
             <h1>Olá, <?= htmlspecialchars($funcionario->getNomeCompleto()) ?>!</h1>
-            <?php if ($mensagem): ?><div class="mensagem"><?= htmlspecialchars($mensagem) ?></div><?php endif; ?>
             <?php if ($erro): ?><div class="erro"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
             <h2 class="mensagem">Continue trilhando seu caminho para a qualificação</h2>
             
@@ -87,7 +87,17 @@
                                 <img src="<?= URL_BASE ?>/<?= htmlspecialchars(ltrim($item->getImagem(), '/')) ?>" alt="imagem do item" width='200px' height='200px'>
                                 <h4><?= htmlspecialchars($item->getNome()) ?></h4>
                                 <p><?= $registro->isEmUso() ? 'Equipado' : 'Livre' ?></p>
-                                <form action="<?= URL_BASE ?>/funcionario/equipar" method="post"><input type="hidden" name="id_item" value="<?= $item->getId() ?>"><button class="botao brilho" type="submit">Equipar</button></form>
+                                <?php if ($registro->isEmUso() && $item->getTipo() === 'TEMA'): ?>
+                                    <form action="<?= URL_BASE ?>/funcionario/tema/desequipar" method="post">
+                                        <input type="hidden" name="id_item" value="<?= $item->getId() ?>">
+                                        <button class="botao brilho" type="submit">Desequipar</button>
+                                    </form>
+                                <?php elseif (!$registro->isEmUso()): ?>
+                                    <form action="<?= URL_BASE ?>/funcionario/equipar" method="post">
+                                        <input type="hidden" name="id_item" value="<?= $item->getId() ?>">
+                                        <button class="botao brilho" type="submit">Equipar</button>
+                                    </form>
+                                <?php endif; ?>
                             </div>
                         </li>
                         <?php endforeach; ?>

@@ -20,6 +20,25 @@ section{
     
 }
 
+.msg-inventario{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: fit-content;         /* a caixa fica do tamanho do texto */
+    max-width: 100%;
+    margin: 0 auto 20px;        /* centraliza na tela e dá espaço embaixo */
+    padding: 12px 24px;         /* respiro interno, para parecer uma "box" */
+
+    border: 1px solid var(--verde-escuro);
+    border-radius: 14px;
+    background: rgba(31, 173, 84, 0.15);   /* verde translúcido de fundo */
+    color: var(--texto-principal);
+    font-weight: 600;
+    text-align: center;
+}
+
 .infobase .card{
     width: 350px;
     height: 100px;

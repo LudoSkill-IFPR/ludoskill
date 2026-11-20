@@ -25,4 +25,9 @@ class InventarioService
     {
         return $this->repository->equipar($idUsuario, $idItem);
     }
+
+    public function desequiparTema(int $idUsuario, int $idItem): void
+    {
+        $this->repository->desequiparTema($idUsuario, $idItem);
+    }
 }

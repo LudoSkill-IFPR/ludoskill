@@ -106,6 +106,7 @@ $router->get('/funcionario/loja', 'ItemController@listarTodosFuncionario');
 $router->post('/funcionario/comprar', 'ItemController@comprar');
 $router->get('/funcionario/modulos', 'ModuloController@listarTodosFuncionario');
 $router->post('/funcionario/equipar', 'FuncionarioController@equipaItem');
+$router->post('/funcionario/tema/desequipar', 'FuncionarioController@desequipaTema');
 
 try {
     $router->run();
