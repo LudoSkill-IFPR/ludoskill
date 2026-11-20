@@ -211,7 +211,11 @@
                                 </div>
                                 <div class="item-info">
                                     <span class="rotulo">Total de funcionários na plataforma:</span>
-                                    <span class="valor"><?= (int) ($qtdFuncionarios ?? 0) ?> colaboradores</span>
+                                    <?php if ($qtdFuncionarios == 1): ?>
+                                        <span class="valor"><?= (int) ($qtdFuncionarios ?? 0) ?> colaborador</span>
+                                    <?php else: ?>
+                                        <span class="valor"><?= (int) ($qtdFuncionarios ?? 0) ?> colaboradores</span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>

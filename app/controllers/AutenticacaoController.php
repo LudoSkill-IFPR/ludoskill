@@ -114,7 +114,7 @@ class AutenticacaoController extends Controller
                 . "<p><a href=\"{$linkSeguro}\">Criar uma nova senha</a></p>"
                 . '<p>O link expira em 30 minutos. Se você não fez essa solicitação, ignore este e-mail.</p>';
 
-            if (!$this->sendMailHelper->sendMail($usuario->getEmail(), 'Recuperação de senha - LudoSkill', $mensagem)) {
+            if (!$this->sendMailHelper->sendMail($usuario->getEmail(), 'Recuperação de senha - LudoSkill <NAO RESPONDER>', $mensagem)) {
                 unset($_SESSION['recuperacoes_senha'][$token]);
                 $this->view('entrada/esqueciSenha', [
                     'erro' => 'Não foi possível enviar o e-mail agora. Tente novamente mais tarde.',

@@ -58,7 +58,8 @@ class InventarioRepository
             }
 
             $stm = $this->connection->prepare(
-                'INSERT INTO Inventarios (id_funcionario, id_item) VALUES (:funcionario, :item)'
+                'INSERT INTO Inventarios (id_funcionario, id_item, data_aquisicao)
+                 VALUES (:funcionario, :item, CURRENT_DATE)'
             );
             $stm->execute(['funcionario' => $funcionario['id_funcionario'], 'item' => $idItem]);
 
