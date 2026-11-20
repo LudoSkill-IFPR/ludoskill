@@ -41,7 +41,7 @@
                             <th>Tempo limite</th>
                             <th>Estrelas</th>
                             <th>Bolotas</th>
-                            <th>Acoes</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
 

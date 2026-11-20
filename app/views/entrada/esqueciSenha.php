@@ -25,7 +25,7 @@
                     <input class="botao" type="email" name="email" id="email" value="<?= htmlspecialchars($email ?? '') ?>" autocomplete="email" required>
                 </div>
                 <button class="botao brilho" type="submit">Enviar link</button>
-                <a href="<?= URL_BASE ?>/login">Voltar para o login</a>
+                <a href="<?= URL_BASE ?>/login" class="voltar-botao">Voltar para o login</a>
             </form>
         </div>
     </main>

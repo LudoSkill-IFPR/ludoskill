@@ -39,7 +39,7 @@
                             <th>Descrição</th>
                             <th>Mínimo de Estrelas para Liberação</th>
                             <th>Estado</th>
-                            <th>Acoes</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
 

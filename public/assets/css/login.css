@@ -1,4 +1,7 @@
-/*  */
+.voltar-botao {
+    padding: 9px;
+    margin-top: 12px;
+}
 
 .chuva-bolotas {
     position: fixed;
