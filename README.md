@@ -103,6 +103,8 @@ ludoskill/
 
 3. **Crie o banco.** Na primeira conexão, se o banco informado em `DB_NAME` ainda não existir, o sistema o cria sozinho a partir do `app/database/banco.sql` e cadastra o administrador inicial com os dados das variáveis `LUDOSKILL_ADMIN_*`. Se preferir, importe o `banco.sql` manualmente pelo phpMyAdmin.
 
+3.1 **Para a banca.** A criação do banco deve acompanhar o arquivo "SQLBanca.sql". A partir dele serão criados usuários para acessar o sistema entre os demais tipos: funcionário, gestor e administrador.
+
 4. **Acesse** `http://localhost/ludoskill/` e entre com o e-mail e a senha do administrador.
 
 ### Variáveis de ambiente
