@@ -1,260 +1,812 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form-simulacao');
-    if (!form) return;
 
-    const valorTimer = document.getElementById('valor-timer');
-    const cronometro = document.getElementById('cronometro-atividade');
-    if (valorTimer && cronometro) {
-        const rotulo = document.getElementById('rotulo-timer');
-        const mensagem = document.getElementById('mensagem-timer');
-        const final = Date.now() + Math.max(0, Number.parseInt(valorTimer.dataset.segundos || '0', 10)) * 1000;
-        let intervalo;
-
-        const atualizarTimer = () => {
-            const segundos = Math.max(0, Math.ceil((final - Date.now()) / 1000));
-            valorTimer.textContent = `${String(Math.floor(segundos / 60)).padStart(2, '0')}:${String(segundos % 60).padStart(2, '0')}`;
-            cronometro.classList.toggle('timer-alerta', segundos > 0 && segundos <= 60);
-            cronometro.classList.toggle('timer-esgotado', segundos === 0);
-            if (segundos === 0) {
-                rotulo.textContent = 'Tempo esgotado';
-                mensagem.textContent = 'Você ainda pode concluir, mas esta tentativa não receberá estrelas.';
-                if (intervalo) window.clearInterval(intervalo);
-            }
-        };
-
-        atualizarTimer();
-        intervalo = window.setInterval(atualizarTimer, 1000);
+    if (!form) {
+        console.error('Formulário da simulação não encontrado.');
+        return;
     }
 
-    const ferramentasPermitidas = ['pinca', 'aquecedor', 'solda', 'palheta', 'alcool'];
+    const botoesFinalizar = document.getElementById('finalizar-simulacao');
+    const tabuleiros = Array.from(
+        form.querySelectorAll('.simulacao-interativa')
+    );
 
-    const criarEstado = (pecaQuebrada) => {
-        const componentes = { bateria: true, camera: true, chip: true };
-        componentes[pecaQuebrada] = false;
+    const finalizada = form.dataset.finalizada === '1';
+    const storageKey = form.dataset.storageKey;
+
+    const ferramentasPermitidas = [
+        'pinca',
+        'aquecedor',
+        'solda',
+        'palheta',
+        'alcool'
+    ];
+
+    const componentesPermitidos = [
+        'bateria',
+        'camera',
+        'chip'
+    ];
+
+    let dadosSalvos = {};
+
+    try {
+        dadosSalvos = JSON.parse(
+            localStorage.getItem(storageKey) || '{}'
+        );
+    } catch (erro) {
+        dadosSalvos = {};
+    }
+
+    // --------------------------------------------------
+    // CRIAÇÃO DO ESTADO INICIAL
+    // --------------------------------------------------
+
+    function criarEstado(defeito) {
+        const componentes = {
+            bateria: true,
+            camera: true,
+            chip: true
+        };
+
+        if (componentesPermitidos.includes(defeito)) {
+            componentes[defeito] = false;
+        }
+
         return {
             componentes,
-            removidos: { bateria: false, camera: false, chip: false },
-            ferramenta: '',
+            removidos: {
+                bateria: false,
+                camera: false,
+                chip: false
+            },
+            ferramenta: null,
             tampaRemovida: false,
-            tampaFoiRemovida: false,
-            colaTampaAquecida: false,
+            tampaAquecida: false,
             colaBateriaSolta: false,
             soldaChipSolta: false,
             concluida: false,
-            erros: 0,
+            erros: 0
         };
-    };
+    }
 
-    const registrarErro = (estado, mensagem) => {
+    // --------------------------------------------------
+    // REGISTRO DE ERROS
+    // --------------------------------------------------
+
+    function registrarErro(estado, mensagem) {
         estado.erros++;
-        return { mensagem, erro: true };
-    };
 
-    const executarAcao = (estado, acao) => {
+        return {
+            mensagem,
+            erro: true
+        };
+    }
+
+    // --------------------------------------------------
+    // EXECUÇÃO DAS AÇÕES
+    // --------------------------------------------------
+
+    function executarAcao(estado, acao) {
         const partes = String(acao).split(':');
-        const tipo = partes[0] || '';
-        const alvo = partes[1] || '';
 
-        if (tipo === 'ferramenta' && ferramentasPermitidas.includes(alvo)) {
+        const tipo = partes[0];
+        const alvo = partes[1];
+
+        // Selecionar ferramenta
+        if (
+            tipo === 'ferramenta' &&
+            ferramentasPermitidas.includes(alvo)
+        ) {
             estado.ferramenta = alvo;
-            return { mensagem: 'Ferramenta selecionada. Agora interaja com a peça adequada.', erro: false };
+
+            return {
+                mensagem: 'Ferramenta selecionada.',
+                erro: false
+            };
         }
 
+        // Interação com a tampa
         if (tipo === 'interagir' && alvo === 'tampa') {
-            if (!estado.tampaRemovida && estado.ferramenta === 'aquecedor') {
-                estado.colaTampaAquecida = true;
-                return { mensagem: 'A cola da tampa foi aquecida. Use a palheta para removê-la.', erro: false };
+
+            if (
+                estado.ferramenta === 'aquecedor' &&
+                !estado.tampaRemovida
+            ) {
+                estado.tampaAquecida = true;
+
+                return {
+                    mensagem: 'Tampa aquecida. Utilize a palheta para removê-la.',
+                    erro: false
+                };
             }
-            if (!estado.tampaRemovida && estado.ferramenta === 'palheta' && estado.colaTampaAquecida) {
+
+            if (
+                estado.ferramenta === 'palheta' &&
+                estado.tampaAquecida &&
+                !estado.tampaRemovida
+            ) {
                 estado.tampaRemovida = true;
-                estado.tampaFoiRemovida = true;
-                return { mensagem: 'Tampa removida. Agora conserte o componente defeituoso.', erro: false };
+
+                return {
+                    mensagem: 'Tampa removida com sucesso.',
+                    erro: false
+                };
             }
-            if (estado.tampaRemovida && estado.ferramenta === 'aquecedor') {
-                estado.componentes.bateria = false;
-                return registrarErro(estado, 'O calor atingiu a bateria e a danificou. Você precisará substituí-la.');
-            }
-            return registrarErro(estado, 'A tampa precisa ser aquecida e depois removida com a palheta.');
+
+            return registrarErro(
+                estado,
+                'Aqueça a tampa e depois utilize a palheta.'
+            );
         }
 
-        if (tipo === 'interagir' && alvo in estado.componentes) {
-            if (!estado.tampaRemovida) return registrarErro(estado, 'Remova a tampa antes de acessar os componentes.');
-            if (estado.removidos[alvo]) return registrarErro(estado, 'Esse componente já foi retirado.');
+        // Interação com componentes
+        if (
+            tipo === 'interagir' &&
+            componentesPermitidos.includes(alvo)
+        ) {
+            if (!estado.tampaRemovida) {
+                return registrarErro(
+                    estado,
+                    'Primeiro remova a tampa traseira.'
+                );
+            }
 
+            if (estado.removidos[alvo]) {
+                return registrarErro(
+                    estado,
+                    'Esse componente já foi removido.'
+                );
+            }
+
+            // BATERIA
             if (alvo === 'bateria') {
-                if (estado.ferramenta === 'aquecedor') {
-                    estado.componentes.bateria = false;
-                    return registrarErro(estado, 'A bateria foi danificada pelo calor. Use álcool e palheta para retirá-la.');
-                }
+
                 if (estado.ferramenta === 'alcool') {
                     estado.colaBateriaSolta = true;
-                    return { mensagem: 'A cola da bateria foi dissolvida. Agora use a palheta.', erro: false };
+
+                    return {
+                        mensagem: 'Cola da bateria dissolvida. Utilize a palheta.',
+                        erro: false
+                    };
                 }
-                if (estado.ferramenta === 'palheta' && estado.colaBateriaSolta && !estado.componentes.bateria) {
+
+                if (
+                    estado.ferramenta === 'palheta' &&
+                    estado.colaBateriaSolta &&
+                    !estado.componentes.bateria
+                ) {
                     estado.removidos.bateria = true;
-                    return { mensagem: 'Bateria retirada. Insira uma bateria nova.', erro: false };
+
+                    return {
+                        mensagem: 'Bateria removida.',
+                        erro: false
+                    };
                 }
-                return registrarErro(estado, estado.componentes.bateria
-                    ? 'A bateria está funcionando e não precisa ser retirada.'
-                    : 'Dissolva a cola com álcool e retire a bateria usando a palheta.');
+
+                if (estado.ferramenta === 'aquecedor') {
+                    estado.componentes.bateria = false;
+
+                    return registrarErro(
+                        estado,
+                        'Você danificou a bateria com o calor!'
+                    );
+                }
+
+                return registrarErro(
+                    estado,
+                    'Utilize álcool e palheta para remover a bateria.'
+                );
             }
 
+            // CÂMERA
             if (alvo === 'camera') {
+
+                if (
+                    estado.ferramenta === 'pinca' &&
+                    !estado.componentes.camera
+                ) {
+                    estado.removidos.camera = true;
+
+                    return {
+                        mensagem: 'Câmera removida.',
+                        erro: false
+                    };
+                }
+
                 if (estado.ferramenta === 'aquecedor') {
                     estado.componentes.camera = false;
-                    return registrarErro(estado, 'O calor danificou a câmera. Agora ela também precisa ser substituída.');
+
+                    return registrarErro(
+                        estado,
+                        'A câmera foi danificada pelo calor!'
+                    );
                 }
-                if (estado.ferramenta === 'pinca' && !estado.componentes.camera) {
-                    estado.removidos.camera = true;
-                    return { mensagem: 'Câmera retirada. Insira uma câmera nova.', erro: false };
-                }
-                return registrarErro(estado, estado.componentes.camera
-                    ? 'A câmera está funcionando e não precisa ser retirada.'
-                    : 'Use a pinça para retirar a câmera defeituosa.');
+
+                return registrarErro(
+                    estado,
+                    'Utilize a pinça para remover a câmera defeituosa.'
+                );
             }
 
+            // CHIP
             if (alvo === 'chip') {
+
                 if (estado.ferramenta === 'solda') {
-                    const estavaFuncionando = estado.componentes.chip;
                     estado.componentes.chip = false;
                     estado.soldaChipSolta = true;
-                    if (estavaFuncionando) {
-                        return registrarErro(estado, 'O chip estava funcionando e foi danificado pela solda. Agora substitua-o.');
-                    }
-                    return { mensagem: 'A solda do chip foi liberada. Agora use a pinça.', erro: false };
+
+                    return {
+                        mensagem: 'Solda do chip removida. Utilize a pinça.',
+                        erro: false
+                    };
                 }
-                if (estado.ferramenta === 'pinca' && estado.soldaChipSolta && !estado.componentes.chip) {
+
+                if (
+                    estado.ferramenta === 'pinca' &&
+                    estado.soldaChipSolta &&
+                    !estado.componentes.chip
+                ) {
                     estado.removidos.chip = true;
-                    return { mensagem: 'Chip retirado. Insira um chip novo.', erro: false };
+
+                    return {
+                        mensagem: 'Chip removido.',
+                        erro: false
+                    };
                 }
-                return registrarErro(estado, estado.componentes.chip
-                    ? 'O chip está funcionando e não precisa ser retirado.'
-                    : 'Solte a solda e depois use a pinça para retirar o chip.');
+
+                return registrarErro(
+                    estado,
+                    'Utilize o ferro de solda e depois a pinça.'
+                );
             }
         }
 
-        if (tipo === 'instalar' && alvo in estado.componentes) {
-            if (estado.tampaRemovida && estado.removidos[alvo]) {
+        // Instalação de componentes novos
+        if (
+            tipo === 'instalar' &&
+            componentesPermitidos.includes(alvo)
+        ) {
+            if (
+                estado.tampaRemovida &&
+                estado.removidos[alvo]
+            ) {
                 estado.removidos[alvo] = false;
                 estado.componentes[alvo] = true;
-                if (alvo === 'bateria') estado.colaBateriaSolta = false;
-                if (alvo === 'chip') estado.soldaChipSolta = false;
-                return { mensagem: 'Componente novo instalado corretamente.', erro: false };
+
+                return {
+                    mensagem: 'Novo componente instalado.',
+                    erro: false
+                };
             }
-            return registrarErro(estado, 'Retire o componente danificado antes de inserir uma peça nova.');
+
+            return registrarErro(
+                estado,
+                'Remova o componente antigo antes de instalar o novo.'
+            );
         }
 
+        // Recolocar tampa
         if (tipo === 'instalar' && alvo === 'tampa') {
-            const algumaRemovida = Object.values(estado.removidos).includes(true);
-            const algumaQuebrada = Object.values(estado.componentes).includes(false);
-            if (estado.tampaRemovida && !algumaRemovida && !algumaQuebrada) {
+
+            const componentesRemovidos = Object.values(
+                estado.removidos
+            ).some(valor => valor);
+
+            const componentesDanificados = Object.values(
+                estado.componentes
+            ).some(valor => !valor);
+
+            if (
+                estado.tampaRemovida &&
+                !componentesRemovidos &&
+                !componentesDanificados
+            ) {
                 estado.tampaRemovida = false;
                 estado.concluida = true;
-                return { mensagem: 'Aparelho consertado e fechado. Você pode concluir a simulação.', erro: false };
+
+                return {
+                    mensagem: 'Manutenção concluída! Aparelho montado corretamente.',
+                    erro: false
+                };
             }
-            return registrarErro(estado, 'Ainda existe um componente quebrado ou fora do aparelho. Termine os reparos antes de fechar.');
+
+            return registrarErro(
+                estado,
+                'Ainda existem componentes que precisam de manutenção.'
+            );
         }
 
-        return registrarErro(estado, 'Essa ação não pode ser realizada agora.');
-    };
+        return registrarErro(
+            estado,
+            'Ação inválida.'
+        );
+    }
 
-    const finalizada = form.dataset.finalizada === '1';
-    const chave = form.dataset.storageKey;
-    const botaoFinalizar = document.getElementById('finalizar-simulacao');
-    const tabuleiros = [...form.querySelectorAll('.simulacao-interativa')];
-    let armazenadas = {};
-    try { armazenadas = JSON.parse(localStorage.getItem(chave) || '{}'); } catch (_) { armazenadas = {}; }
+    // --------------------------------------------------
+    // ATUALIZAÇÃO DA INTERFACE
+    // --------------------------------------------------
 
-    const atualizarBotaoFinalizar = () => {
-        if (botaoFinalizar) {
-            botaoFinalizar.disabled = tabuleiros.some((tabuleiro) => tabuleiro.dataset.concluida !== '1');
+    function atualizarInterface(tabuleiro, estado, acoes) {
+
+        const input = tabuleiro.querySelector('.registro-acoes');
+
+        if (input) {
+            input.value = JSON.stringify(acoes);
         }
-    };
 
-    const prepararTabuleiro = (tabuleiro) => {
+        // Estado da tampa
+        tabuleiro.classList.toggle(
+            'tampa-removida',
+            estado.tampaRemovida
+        );
+
+        tabuleiro.classList.toggle(
+            'simulacao-concluida',
+            estado.concluida
+        );
+
+        // Troca da imagem do verso conforme componentes removidos
+        // (portado do tela.js antigo: pelado.png -> celular-sem-X.png)
+        const estrutura = tabuleiro.querySelector(
+            '.face.verso .estrutura-celular'
+        );
+
+        if (estrutura) {
+            let urlImagem = estrutura.dataset.imgDefault || '';
+
+            if (estado.removidos.bateria) {
+                urlImagem = estrutura.dataset.imgSemBateria || urlImagem;
+            } else if (estado.removidos.camera) {
+                urlImagem = estrutura.dataset.imgSemCamera || urlImagem;
+            } else if (estado.removidos.chip) {
+                urlImagem = estrutura.dataset.imgSemChip || urlImagem;
+            }
+
+            if (urlImagem) {
+                estrutura.style.backgroundImage = `url("${urlImagem}")`;
+            }
+        }
+
+        // Componentes
+        componentesPermitidos.forEach(componente => {
+
+            const elemento = tabuleiro.querySelector(
+                '.componente-' + componente
+            );
+
+            if (elemento) {
+                elemento.classList.toggle(
+                    'componente-removido',
+                    estado.removidos[componente]
+                );
+
+                elemento.classList.toggle(
+                    'componente-defeituoso',
+                    !estado.componentes[componente] &&
+                    !estado.removidos[componente]
+                );
+            }
+
+            const linha = tabuleiro.querySelector(
+                '[data-estado-componente="' + componente + '"]'
+            );
+
+            if (linha) {
+                let texto = 'Funcionando';
+
+                if (estado.removidos[componente]) {
+                    texto = 'Removido';
+                } else if (!estado.componentes[componente]) {
+                    texto = 'Com defeito';
+                }
+
+                const strong = linha.querySelector('strong');
+
+                if (strong) {
+                    strong.textContent = texto;
+                }
+
+                linha.classList.toggle(
+                    'estado-ok',
+                    estado.componentes[componente] &&
+                    !estado.removidos[componente]
+                );
+
+                linha.classList.toggle(
+                    'estado-problema',
+                    !estado.componentes[componente] ||
+                    estado.removidos[componente]
+                );
+            }
+        });
+
+        // Ferramenta selecionada
+        tabuleiro.querySelectorAll(
+            '.ferramenta-simulacao'
+        ).forEach(botao => {
+
+            botao.classList.toggle(
+                'ferramenta-selecionada',
+                botao.dataset.acao ===
+                'ferramenta:' + estado.ferramenta
+            );
+        });
+
+        // Erros
+        const contador = tabuleiro.querySelector(
+            '.contador-erros strong'
+        );
+
+        if (contador) {
+            contador.textContent = estado.erros;
+        }
+
+        // Progresso
+        const progresso = tabuleiro.querySelector(
+            '.progresso-simulacao'
+        );
+
+        if (progresso) {
+            progresso.textContent = estado.concluida
+                ? 'Manutenção concluída'
+                : 'Manutenção em andamento';
+        }
+
+        tabuleiro.dataset.concluida =
+            estado.concluida ? '1' : '0';
+
+        // Mensagem
+        if (estado.concluida) {
+            const mensagem = tabuleiro.querySelector(
+                '.mensagem-acao'
+            );
+
+            if (mensagem) {
+                mensagem.textContent =
+                    'Aparelho consertado corretamente!';
+            }
+        }
+
+        if (estado.concluida || finalizada) {
+            tabuleiro.querySelectorAll('[data-acao]').forEach(botao => {
+                botao.disabled = true;
+            });
+        }
+
+        // Persistência local
+        dadosSalvos[tabuleiro.dataset.id] = acoes;
+
+        if (!finalizada && storageKey) {
+            try {
+                localStorage.setItem(
+                    storageKey,
+                    JSON.stringify(dadosSalvos)
+                );
+            } catch (erro) {
+                console.warn('Não foi possível salvar o progresso local.', erro);
+            }
+        }
+
+        atualizarBotaoFinalizar();
+    }
+
+    // --------------------------------------------------
+    // BOTÃO DE CONCLUSÃO
+    // --------------------------------------------------
+
+    function atualizarBotaoFinalizar() {
+
+        if (!botoesFinalizar) {
+            return;
+        }
+
+        const todosConcluidos = tabuleiros.every(
+            tabuleiro => tabuleiro.dataset.concluida === '1'
+        );
+
+        botoesFinalizar.disabled =
+            !todosConcluidos || finalizada;
+    }
+
+    // --------------------------------------------------
+    // ROTAÇÃO 3D DO CELULAR
+    // --------------------------------------------------
+
+    function configurarRotacao(tabuleiro) {
+
+    const palco = tabuleiro.querySelector('.palco-tela');
+    const tela = tabuleiro.querySelector('.tela3d');
+
+    if (!palco || !tela) {
+        return;
+    }
+
+    let arrastando = false;
+    let rotX = 18;
+    let rotY = 0;
+    let startX = 0;
+    let startY = 0;
+
+    function atualizar() {
+        tela.style.transform =
+            `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    }
+
+    atualizar();
+
+    palco.addEventListener('pointerdown', evento => {
+
+        if (evento.target.closest('button')) {
+            return;
+        }
+
+        arrastando = true;
+        startX = evento.clientX;
+        startY = evento.clientY;
+
+        if (palco.setPointerCapture) {
+            palco.setPointerCapture(evento.pointerId);
+        }
+    });
+
+    palco.addEventListener('pointermove', evento => {
+
+        if (!arrastando) {
+            return;
+        }
+
+        const deltaX = evento.clientX - startX;
+        const deltaY = evento.clientY - startY;
+
+        rotY += deltaX * 0.5;
+        rotX -= deltaY * 0.5;
+
+        tela.style.transform =
+            `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+
+        startX = evento.clientX;
+        startY = evento.clientY;
+    });
+
+    function pararArraste() {
+        arrastando = false;
+    }
+
+    palco.addEventListener('pointerup', pararArraste);
+    palco.addEventListener('pointercancel', pararArraste);
+    palco.addEventListener('lostpointercapture', pararArraste);
+}
+
+    // --------------------------------------------------
+    // INICIALIZAÇÃO DE CADA EXERCÍCIO
+    // --------------------------------------------------
+
+    function inicializarTabuleiro(tabuleiro) {
+
         const id = tabuleiro.dataset.id;
         const defeito = tabuleiro.dataset.defeito;
-        let acoesServidor = [];
-        try { acoesServidor = JSON.parse(tabuleiro.dataset.acoes || '[]'); } catch (_) { acoesServidor = []; }
-        const acoes = Array.isArray(armazenadas[id]) && acoesServidor.length === 0 ? armazenadas[id] : acoesServidor;
-        const estado = criarEstado(defeito);
+
         const input = tabuleiro.querySelector('.registro-acoes');
-        const progresso = tabuleiro.querySelector('.progresso-simulacao');
         const mensagem = tabuleiro.querySelector('.mensagem-acao');
 
-        acoes.forEach((acao) => executarAcao(estado, acao));
+        let acoesServidor = [];
 
-        const atualizarVisual = () => {
+        try {
+            acoesServidor = JSON.parse(
+                tabuleiro.dataset.acoes || '[]'
+            );
+        } catch (erro) {
+            console.error('Erro ao ler ações anteriores:', erro);
+        }
+
+        let acoes = acoesServidor;
+
+        if (
+            Array.isArray(dadosSalvos[id]) &&
+            acoesServidor.length === 0
+        ) {
+            acoes = dadosSalvos[id];
+        }
+
+        if (!Array.isArray(acoes)) {
+            acoes = [];
+        }
+
+        const estado = criarEstado(defeito);
+
+        // Reconstruir o estado usando as ações anteriores
+        acoes.forEach(acao => {
+            executarAcao(estado, acao);
+        });
+
+        if (input) {
             input.value = JSON.stringify(acoes);
-            armazenadas[id] = acoes;
-            if (!finalizada) localStorage.setItem(chave, JSON.stringify(armazenadas));
-
-            tabuleiro.classList.toggle('tampa-removida', estado.tampaRemovida);
-            tabuleiro.classList.toggle('simulacao-concluida', estado.concluida);
-
-            ['bateria', 'camera', 'chip'].forEach((componente) => {
-                const botaoComponente = tabuleiro.querySelector(`.componente-${componente}`);
-                botaoComponente.classList.toggle('componente-removido', estado.removidos[componente]);
-                botaoComponente.classList.toggle('componente-defeituoso', !estado.componentes[componente] && !estado.removidos[componente]);
-
-                const linhaEstado = tabuleiro.querySelector(`[data-estado-componente="${componente}"]`);
-                const texto = estado.removidos[componente]
-                    ? 'Fora do aparelho'
-                    : (estado.componentes[componente] ? 'Funcionando' : 'Com defeito');
-                linhaEstado.querySelector('strong').textContent = texto;
-                linhaEstado.className = estado.componentes[componente] ? 'estado-ok' : 'estado-problema';
-            });
-
-            tabuleiro.querySelectorAll('.ferramenta-simulacao').forEach((botao) => {
-                botao.classList.toggle('ferramenta-selecionada', botao.dataset.acao === `ferramenta:${estado.ferramenta}`);
-            });
-
-            tabuleiro.querySelector('.contador-erros strong').textContent = estado.erros;
-            progresso.textContent = estado.concluida ? 'Manutenção concluída' : 'Manutenção em andamento';
-            tabuleiro.dataset.concluida = estado.concluida ? '1' : '0';
-
-            if (estado.concluida || finalizada) {
-                tabuleiro.querySelectorAll('[data-acao]').forEach((botao) => { botao.disabled = true; });
-            }
-            atualizarBotaoFinalizar();
-        };
+        }
 
         if (!finalizada) {
-            tabuleiro.querySelectorAll('[data-acao]').forEach((botao) => {
+
+            tabuleiro.querySelectorAll('[data-acao]').forEach(botao => {
+
                 botao.addEventListener('click', () => {
-                    const resultado = executarAcao(estado, botao.dataset.acao);
-                    acoes.push(botao.dataset.acao);
-                    mensagem.textContent = resultado.mensagem;
-                    mensagem.className = resultado.erro ? 'mensagem-acao acao-incorreta' : 'mensagem-acao acao-correta';
-                    if (resultado.erro) {
-                        tabuleiro.classList.remove('erro-acao');
-                        window.requestAnimationFrame(() => tabuleiro.classList.add('erro-acao'));
+
+                    if (estado.concluida) {
+                        return;
                     }
-                    atualizarVisual();
+
+                    const acao = botao.dataset.acao;
+
+                    const resultado = executarAcao(
+                        estado,
+                        acao
+                    );
+
+                    acoes.push(acao);
+
+                    if (mensagem) {
+                        mensagem.textContent = resultado.mensagem;
+
+                        mensagem.className = resultado.erro
+                            ? 'mensagem-acao acao-incorreta'
+                            : 'mensagem-acao acao-correta';
+                    }
+
+                    atualizarInterface(
+                        tabuleiro,
+                        estado,
+                        acoes
+                    );
                 });
             });
         }
 
-        atualizarVisual();
-    };
+        configurarRotacao(tabuleiro);
 
-    tabuleiros.forEach(prepararTabuleiro);
-    if (finalizada) localStorage.removeItem(chave);
+        atualizarInterface(
+            tabuleiro,
+            estado,
+            acoes
+        );
+    }
 
-    form.addEventListener('submit', (evento) => {
-        if (tabuleiros.some((tabuleiro) => tabuleiro.dataset.concluida !== '1')) {
-            evento.preventDefault();
-            window.alert('Conserte todos os componentes e recoloque a tampa antes de concluir.');
+    // --------------------------------------------------
+    // CRONÔMETRO
+    // --------------------------------------------------
+
+    function inicializarCronometro() {
+
+        const cronometro = document.getElementById('cronometro-atividade');
+
+        if (!cronometro) {
             return;
         }
+
+        const valorEl = document.getElementById('valor-timer');
+        const rotuloEl = document.getElementById('rotulo-timer');
+        const mensagemEl = document.getElementById('mensagem-timer');
+
+        if (!valorEl) {
+            return;
+        }
+
+        let segundos = parseInt(valorEl.dataset.segundos, 10);
+
+        if (Number.isNaN(segundos) || segundos < 0) {
+            segundos = 0;
+        }
+
+        function formatar(valor) {
+            const minutos = Math.floor(valor / 60);
+            const resto = valor % 60;
+
+            return String(minutos).padStart(2, '0') + ':' +
+                   String(resto).padStart(2, '0');
+        }
+
+        function atualizar() {
+            valorEl.textContent = formatar(segundos);
+
+            cronometro.classList.toggle(
+                'timer-alerta',
+                segundos > 0 && segundos <= 60
+            );
+
+            cronometro.classList.toggle(
+                'timer-esgotado',
+                segundos <= 0
+            );
+
+            if (segundos <= 0) {
+                if (rotuloEl) rotuloEl.textContent = 'Tempo esgotado';
+                if (mensagemEl) {
+                    mensagemEl.textContent =
+                        'Tempo esgotado. A entrega não receberá estrelas.';
+                }
+            } else if (segundos <= 60) {
+                if (rotuloEl) rotuloEl.textContent = 'Falta pouco tempo';
+                if (mensagemEl) {
+                    mensagemEl.textContent =
+                        'Conclua a manutenção rapidamente!';
+                }
+            } else {
+                if (rotuloEl) rotuloEl.textContent = 'Tempo restante';
+                if (mensagemEl) {
+                    mensagemEl.textContent =
+                        'Conclua no tempo para receber todas as estrelas.';
+                }
+            }
+        }
+
+        atualizar();
+
+        const intervalo = setInterval(() => {
+            if (segundos > 0) {
+                segundos--;
+                atualizar();
+            }
+
+            if (segundos <= 0) {
+                clearInterval(intervalo);
+            }
+        }, 1000);
+    }
+
+    // --------------------------------------------------
+    // INICIALIZAÇÃO GERAL
+    // --------------------------------------------------
+
+    inicializarCronometro();
+
+    tabuleiros.forEach(inicializarTabuleiro);
+
+    if (finalizada && storageKey) {
+        try {
+            localStorage.removeItem(storageKey);
+        } catch (erro) {
+            console.warn(erro);
+        }
+    }
+
+    // --------------------------------------------------
+    // ENVIO DO FORMULÁRIO
+    // --------------------------------------------------
+
+    form.addEventListener('submit', evento => {
+
+        const todosConcluidos = tabuleiros.every(
+            tabuleiro => tabuleiro.dataset.concluida === '1'
+        );
+
+        if (!todosConcluidos) {
+            evento.preventDefault();
+
+            alert(
+                'Conserte todos os componentes e recoloque a tampa antes de concluir.'
+            );
+
+            return;
+        }
+
         form.dataset.enviando = '1';
     });
 
-    document.getElementById('voltar-conteudo')?.addEventListener('click', () => { form.dataset.enviando = '1'; });
-    window.addEventListener('beforeunload', (evento) => {
-        if (!finalizada && form.dataset.enviando !== '1') {
+    const voltar = document.getElementById('voltar-conteudo');
+
+    if (voltar) {
+        voltar.addEventListener('click', () => {
+            form.dataset.enviando = '1';
+        });
+    }
+
+    window.addEventListener('beforeunload', evento => {
+
+        if (
+            !finalizada &&
+            form.dataset.enviando !== '1'
+        ) {
             evento.preventDefault();
             evento.returnValue = '';
         }
     });
+
 });
