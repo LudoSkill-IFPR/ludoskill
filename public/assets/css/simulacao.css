@@ -174,7 +174,7 @@
 .componente-bateria { top: 32.75%; left: 9.5%; width: 81%; height: 45%; }
 .componente-camera { top: 5%; left: 10%; width: 22%; height: 24%; }
 .componente-chip { top: 7%; left: 42%; width: 50%; height: 20.75%; }
-.tampa-removida .componente-removido { opacity: .08; pointer-events: none; }
+.tampa-removida .componente-removido { display: none; }
 .componente-defeituoso { border-color: #ff405d; filter: drop-shadow(0 0 8px #ff405d); }
 
 .acoes-componentes {
@@ -202,7 +202,7 @@
 .acao-simulacao:disabled { cursor: not-allowed; opacity: .48; }
 .botao-fechar { background: #087458; }
 
-.lista-ferramentas { display: grid; gap: 10px; }
+.lista-ferramentas { display: grid; gap: 8px; }
 .ferramenta-simulacao {
     display: flex;
     width: 100%;
@@ -219,6 +219,63 @@
 .ferramenta-simulacao span { display: grid; place-items: center; flex: 0 0 50px; width: 50px; height: 50px; border-radius: 12px; background: #e9f8f2; }
 .ferramenta-simulacao img { width: 38px; height: 38px; object-fit: contain; }
 .ferramenta-simulacao.ferramenta-selecionada { border-color: #1bab78; background: #dff8ee; color: #152a23; }
+
+.componentes-novos {
+    display: grid;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #ded7e9;
+}
+.componentes-novos h2 {
+    margin-bottom: 4px;
+    color: #231934;
+    font-size: 17px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+.componentes-novos .acao-simulacao {
+    width: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 9px;
+    border-color: #ded7e9;
+    background: #f7f3fb;
+    color: #2b2038;
+    text-align: left;
+}
+.componentes-novos .acao-simulacao:hover:not(:disabled),
+.componentes-novos .acao-simulacao:focus-visible {
+    background: #e3f6ef;
+    color: #152a23;
+}
+.componentes-novos .acao-simulacao > span {
+    display: inline-grid;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+    border-radius: 50%;
+    background: #8134d8;
+    color: #fff;
+    font-size: 18px;
+}
+.componentes-novos .botao-fechar {
+    justify-content: center;
+    margin-top: 5px;
+    border-color: #087458;
+    background: #087458;
+    color: #fff;
+}
+.componentes-novos .botao-fechar:hover:not(:disabled) {
+    background: #075b46;
+    color: #fff;
+}
+.painel-ferramentas .estado-componentes {
+    margin-top: 24px;
+}
 
 .estado-componentes { margin-top: 26px; padding-top: 20px; border-top: 1px solid #ded7e9; }
 .estado-componentes p { display: flex; align-items: center; gap: 6px; margin: 9px 0; color: #443a52; font-size: 14px; }
@@ -256,4 +313,98 @@
     .resultado-simulacao-geral { grid-template-columns: 1fr; }
     .centro-simulacao { padding-inline: 12px; }
     .bancada-celular { width: 200px; height: 400px; }
+}
+
+/* ============================================
+   ESTRUTURA 3D
+   ============================================ */
+
+.bancada3d {
+    display: flex;
+    width: 100%;
+    min-height: 540px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 12px auto 0;
+    perspective: 1100px;
+}
+.palco-tela {
+    display: grid;
+    width: 100%;
+    min-height: 500px;
+    place-items: center;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+}
+.palco-tela:active { cursor: grabbing; }
+.tela3d {
+    position: relative;
+    width: 210px;
+    height: 420px;
+    transform: rotateX(12deg) rotateY(0deg);
+    transform-style: preserve-3d;
+    transition: transform .08s linear;
+    /* SEM filter: drop-shadow — ele quebra preserve-3d.
+       A sombra foi movida para box-shadow das faces. */
+}
+.face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border: 5px solid #17151c;
+    border-radius: 25px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 16px 24px rgba(20, 7, 48, .35);
+}
+
+/* SWAP DE FACES:
+   Antes: .frente = translateZ(9)  / .verso = rotateY(180) translateZ(9)
+   Agora: .frente = rotateY(180) translateZ(9) / .verso = translateZ(9)
+   Resultado: em rotY=0 a face dos componentes (.verso) fica de frente. */
+
+.face.frente {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #25232b, #050507 65%);
+    color: #d7d2df;
+    transform: rotateY(180deg) translateZ(9px);
+}
+.face.frente span { font-size: 22px; letter-spacing: .08em; }
+.camera-frontal { position: absolute; top: 12px; left: 50%; width: 42px; height: 9px; border-radius: 10px; background: #030305; transform: translateX(-50%); }
+
+.face.verso {
+    background: #24212a;
+    transform: translateZ(9px);
+}
+.face.verso .estrutura-celular {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../imagens/simulacao/pelado.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    image-rendering: pixelated;
+}
+.face.verso .tampa-celular { position: absolute; inset: 0; z-index: 10; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 18px; background: transparent; cursor: pointer; transition: opacity .35s, transform .35s; }
+.face.verso .tampa-celular img { display: block; width: 100%; height: 100%; object-fit: fill; image-rendering: pixelated; }
+.tampa-removida .face.verso .tampa-celular { opacity: 0; transform: translateX(115%) rotate(8deg); pointer-events: none; }
+.face.verso .componente-celular { opacity: 0; }
+.tampa-removida .face.verso .componente-celular { opacity: 1; }
+.face.verso .componente-bateria { top: 32.75%; left: 9.5%; width: 81%; height: 45%; }
+.face.verso .componente-camera { top: 5%; left: 10%; width: 22%; height: 24%; }
+.face.verso .componente-chip { top: 7%; left: 42%; width: 50%; height: 20.75%; }
+.face.verso .componente-celular.componente-removido { display: none; }
+.face.verso .componente-celular.componente-defeituoso { border-color: #ff405d; filter: drop-shadow(0 0 8px #ff405d); }
+.instrucao-giro { margin-top: -2px; color: #eee5ff; font-size: 12px; }
+
+@media (max-width: 440px) {
+    .bancada3d { min-height: 460px; }
+    .palco-tela { min-height: 420px; }
+    .tela3d { width: 180px; height: 360px; }
 }
