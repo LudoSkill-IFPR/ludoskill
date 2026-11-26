@@ -106,36 +106,40 @@
 
                         <div class="andamento-simulacao" aria-live="polite">
                             <strong class="progresso-simulacao">Aparelho aguardando manutenção</strong>
-                            <span class="mensagem-acao">Escolha uma ferramenta e interaja com o celular.</span>
+                            <span class="mensagem-acao" aria-live="polite">Escolha uma ferramenta e interaja com o celular.</span>
                         </div>
 
-                        <div class="bancada-celular" aria-label="Celular interativo para manutenção">
-                            <img class="estrutura-celular" src="<?= URL_BASE ?>/assets/imagens/simulacao/pelado.png" alt="Parte interna do celular">
-
-                            <button type="button" class="componente-celular componente-bateria" data-acao="interagir:bateria" aria-label="Interagir com a bateria">
-                                <img src="<?= URL_BASE ?>/assets/imagens/simulacao/bateria.png" alt="Bateria">
-                            </button>
-                            <button type="button" class="componente-celular componente-camera" data-acao="interagir:camera" aria-label="Interagir com a câmera">
-                                <img src="<?= URL_BASE ?>/assets/imagens/simulacao/camera.png" alt="Câmera">
-                            </button>
-                            <button type="button" class="componente-celular componente-chip" data-acao="interagir:chip" aria-label="Interagir com o chip">
-                                <img src="<?= URL_BASE ?>/assets/imagens/simulacao/chip.png" alt="Chip">
-                            </button>
-
-                            <button type="button" class="tampa-celular" data-acao="interagir:tampa" aria-label="Interagir com a tampa traseira">
-                                <img src="<?= URL_BASE ?>/assets/imagens/simulacao/verso-celular.png" alt="Tampa traseira do celular">
-                            </button>
+                        <div class="bancada3d" aria-label="Celular 3D interativo. Arraste para girar o aparelho.">
+                            <div class="palco-tela">
+                                <div class="tela3d">
+                                    <div class="face frente" aria-label="Parte frontal do celular">
+                                        <div class="camera-frontal"></div>
+                                        <span>Tela</span>
+                                    </div>
+                                    <div class="face verso" aria-label="Parte traseira do celular">
+                                        <div class="estrutura-celular"
+data-img-default="<?= URL_BASE ?>/assets/imagens/simulacao/pelado.png"
+data-img-sem-bateria="<?= URL_BASE ?>/assets/imagens/simulacao/celular-sem-bateria.png"
+data-img-sem-camera="<?= URL_BASE ?>/assets/imagens/simulacao/celular-sem-camera.png"
+data-img-sem-chip="<?= URL_BASE ?>/assets/imagens/simulacao/celular-sem-chip.png"></div>
+                                        <button type="button" class="componente-celular componente-bateria" data-acao="interagir:bateria" aria-label="Interagir com a bateria">
+                                            <img src="<?= URL_BASE ?>/assets/imagens/simulacao/bateria.png" alt="Bateria" draggable="false">
+                                        </button>
+                                        <button type="button" class="componente-celular componente-camera" data-acao="interagir:camera" aria-label="Interagir com a câmera">
+                                            <img src="<?= URL_BASE ?>/assets/imagens/simulacao/camera.png" alt="Câmera" draggable="false">
+                                        </button>
+                                        <button type="button" class="componente-celular componente-chip" data-acao="interagir:chip" aria-label="Interagir com o chip">
+                                            <img src="<?= URL_BASE ?>/assets/imagens/simulacao/chip.png" alt="Chip" draggable="false">
+                                        </button>
+                                        <button type="button" class="tampa-celular" data-acao="interagir:tampa" aria-label="Interagir com a tampa traseira">
+                                            <img src="<?= URL_BASE ?>/assets/imagens/simulacao/verso-celular.png" alt="Tampa traseira" draggable="false">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="instrucao-giro">Clique e arraste para girar o celular</small>
                         </div>
 
-                        <div class="acoes-componentes">
-                            <h3>Peças novas</h3>
-                            <?php foreach ($nomesComponentes as $componente => $rotulo): ?>
-                                <button type="button" class="acao-simulacao botao-instalar" data-acao="instalar:<?= $componente ?>" <?= isset($resultado) ? 'disabled' : '' ?>>
-                                    Inserir <?= htmlspecialchars($rotulo) ?>
-                                </button>
-                            <?php endforeach; ?>
-                            <button type="button" class="acao-simulacao botao-fechar" data-acao="instalar:tampa" <?= isset($resultado) ? 'disabled' : '' ?>>Recolocar tampa</button>
-                        </div>
 
                         <input class="registro-acoes" type="hidden" name="respostas_simulacao[<?= (int) $idExercicio ?>][acoes]" value="<?= htmlspecialchars(json_encode($acoesAtuais), ENT_QUOTES, 'UTF-8') ?>">
                     </section>
@@ -150,6 +154,18 @@
                                     <?= htmlspecialchars($dadosFerramentas[$ferramenta][0]) ?>
                                 </button>
                             <?php endforeach; ?>
+                        </div>
+
+                        <div class="componentes-novos">
+                            <h2>Peças novas</h2>
+                            <?php foreach ($nomesComponentes as $componente => $rotulo): ?>
+                                <button type="button" class="acao-simulacao botao-instalar" data-acao="instalar:<?= $componente ?>" <?= isset($resultado) ? 'disabled' : '' ?>>
+                                    <span>+</span> Inserir <?= htmlspecialchars($rotulo) ?>
+                                </button>
+                            <?php endforeach; ?>
+                            <button type="button" class="acao-simulacao botao-fechar" data-acao="instalar:tampa" <?= isset($resultado) ? 'disabled' : '' ?>>
+                                Recolocar tampa traseira
+                            </button>
                         </div>
 
                         <div class="estado-componentes">
